@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-/* eslint-disable react/no-unescaped-entities */
+
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -60,7 +60,7 @@ export default function LoginForm() {
           )}
 
           <Link className="mt-3 text-sm text-right" href={"/register"}>
-            Don't have an account? <span className="underline">Register</span>
+            Don&#39;t have an account? <span className="underline">Register</span>
           </Link>
         </form>
       </div>
