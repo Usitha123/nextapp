@@ -63,6 +63,7 @@ export default function LoginForm() {
             Don&#39;t have an account? <span className="underline">Register</span>
           </Link>
         </form>
+        <p>admin</p>
       </div>
     </div>
   );
