@@ -64,7 +64,7 @@ export default function LoginForm() {
           </Link>
         </form>
           <Link className="mt-3 text-sm text-right" href={"/adminlogin"}>
-        <span className="underline">Admin llogin</span>
+        <span className="underline">Addmin llogin</span>
           </Link>
       </div>
     </div>
