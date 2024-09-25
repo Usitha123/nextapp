@@ -63,7 +63,7 @@ export default function LoginForm() {
             Don&#39;t have an account? <span className="underline">Register</span>
           </Link>
         </form>
-          <Link className="mt-3 text-sm text-right" href={"/"}>
+          <Link className="mt-3 text-sm text-right" href={"/adminlogin"}>
         <span className="underline">Admin login</span>
           </Link>
       </div>
