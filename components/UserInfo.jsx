@@ -13,7 +13,7 @@ export default function UserInfo() {
           Name: <span className="font-bold">{session?.user?.name}</span>
         </div>
         <div>
-          Email: <span className="font-bold">{session?.user?.email}</span>
+          email: <span className="font-bold">{session?.user?.email}</span>
         </div>
         <button
           onClick={() => signOut()}
