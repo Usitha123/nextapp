@@ -44,7 +44,7 @@ export default function LoginForm() {
             required
           />
           <button className="px-6 py-2 font-bold text-white bg-green-600 cursor-pointer">
-            Login
+            SUubmit
           </button>
           {error && (
             <div className="px-3 py-1 mt-2 text-sm text-white bg-red-500 rounded-md w-fit">
