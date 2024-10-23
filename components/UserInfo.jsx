@@ -9,8 +9,8 @@ export default function UserInfo() {
 
   return (
     <div>
-      <div className="grid h-screen place-items-center">
-        <div className="flex flex-col gap-2 p-8 my-6 shadow-lg bg-zinc-300/10">
+      <div>
+        
           <div>
             Name: <span className="font-bold">{session?.user?.name}</span>
           </div>
@@ -23,7 +23,7 @@ export default function UserInfo() {
           >
             Log Out
           </button>
-        </div>
+        
 
         <div>
           <header className="p-4 bg-gray-100">
@@ -41,6 +41,13 @@ export default function UserInfo() {
                   ) : (
                     <li><Link href="#" className="hover:text-gray-600">Login</Link></li>
                   )}
+                   <button
+            onClick={() => signOut()}
+            className="px-6 py-2 mt-3 font-bold text-white bg-red-500"
+          >
+            Log Out
+          </button>
+          
                 </ul>
               </nav>
             </div>
@@ -59,7 +66,9 @@ export default function UserInfo() {
               <h3 className="mb-4 text-xl font-semibold text-center">Canteens</h3>
               <div className="grid grid-cols-3 gap-4">
                 <div className="p-4 bg-white rounded-lg shadow-md">
-                  <h4 className="mb-2 text-lg font-medium">Canteen 1</h4>
+                <Link className="mb-2 text-lg font-medium" href={"/opencanteen"}>
+        <span>Canteen 1</span>
+          </Link>
                   <p className="text-gray-600">Description</p>
                 </div>
               </div>
