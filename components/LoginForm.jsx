@@ -66,6 +66,18 @@ export default function LoginForm() {
           <Link className="mt-3 text-sm text-right" href={"/adminlogin"}>
         <span className="underline">Admin login</span>
           </Link>
+          <br/>
+          <Link className="mt-3 text-sm text-right" href={"/admindashboard"}>
+        <span className="underline">Admin dashboard</span>
+          </Link>
+          <br/>
+          <Link className="mt-3 text-sm text-right" href={"/CanteenView"}>
+        <span className="underline">CanteenView</span>
+          </Link>
+          <br/>
+          <Link className="mt-3 text-sm text-right" href={"/Canteendashboard"}>
+        <span className="underline">Canteendashboard</span>
+          </Link>
       </div>
     </div>
   );
