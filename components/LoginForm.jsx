@@ -37,7 +37,7 @@ export default function LoginForm() {
   return (
     <div className="grid h-screen place-items-center">
       <div className="p-5 border-t-4 border-green-400 rounded-lg shadow-lg">
-        <h1 className="my-4 text-xl font-bold">Login</h1>
+        <h1 className="my-4 text-xl font-bold">User Login</h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
@@ -71,8 +71,8 @@ export default function LoginForm() {
         <span className="underline">Admin dashboard</span>
           </Link>
           <br/>
-          <Link className="mt-3 text-sm text-right" href={"/CanteenView"}>
-        <span className="underline">CanteenView</span>
+          <Link className="mt-3 text-sm text-right" href={"/UserView"}>
+        <span className="underline">UserView</span>
           </Link>
           <br/>
           <Link className="mt-3 text-sm text-right" href={"/Canteendashboard"}>
