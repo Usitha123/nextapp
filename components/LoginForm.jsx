@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import backgroundImage from "../src/loginbackground.jpeg";
 
 
 export default function LoginForm() {
@@ -35,79 +36,56 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-200">
-      <div className="flex w-[700px] rounded-lg overflow-hidden bg-gray-300">
-        
-        {/* Left Side (Image or Placeholder) */}
-        <div className="flex items-center justify-center w-1/2 bg-gray-400">
-          <div className="w-4/5 bg-gray-200 rounded-md h-4/5"></div>
-        </div>
-
-        {/* Right Side (Login Form) */}
-        <div className="w-1/2 p-10">
-          <h1 className="mb-6 text-3xl font-bold text-center">Welcome To CMS</h1>
-           
-          <div className="p-6 bg-gray-100 rounded-lg shadow-lg">
-            {/* Tab for Login */}
-            <div className="flex justify-center mb-4">
-              <button className="px-4 py-1 font-semibold text-black rounded-full bg-black/20">Login</button>
-            </div>
-
-            {/* Login Form */}
-            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-              <div className="mb-4">
-                <input
-                  onChange={(e) => setEmail(e.target.value)}
-                  type="email"
-                  placeholder="Email"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600"
-                />
-              </div>
-              
-              <div className="relative mb-6">
-                <input
-                  onChange={(e) => setPassword(e.target.value)}
-                  type="password"
-                  placeholder="Password"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600"
-                />
-                
-              </div>
-              
-              <button
-                type="submit"
-                className="w-full p-3 font-semibold text-white bg-black rounded-lg hover:bg-gray-800"
-              >
-                Login
-              </button>
-
-              {/* Register Link */}
-            
-        
-          
-            </form>
-
-            
+    <div
+      className="flex items-center justify-center h-screen bg-center bg-cover"
+      style={{ backgroundImage: `url(${backgroundImage.src})`}} 
+    >
+      <div className="w-full max-w-sm p-8 bg-white rounded-lg shadow-lg bg-opacity-90">
+        <h2 className="mb-6 text-2xl font-bold text-center text-orange-500">Login</h2>
+        <form>
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
+              Email
+            </label>
+            <input
+              className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+              id="email"
+              type="email"
+              placeholder="Email"
+            />
           </div>
-          <Link className="mt-3 text-sm text-right" href={"/adminlogin"}>
-        <span className="underline">Admin login</span>
-          </Link>
-          <br/>
-          <Link className="mt-3 text-sm text-right" href={"/admindashboard"}>
-        <span className="underline">Admin dashboard</span>
-          </Link>
-          <br/>
-          <Link className="mt-3 text-sm text-right" href={"/UserView"}>
-        <span className="underline">UserView</span>
-          </Link>
-          <br/>
-          <Link className="mt-3 text-sm text-right" href={"/Canteendashboard"}>
-        <span className="underline">Canteendashboard</span>
-          </Link>
-        </div>
-        
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                id="password"
+                type="password"
+                placeholder="Password"
+              />
+              <span className="absolute inset-y-0 flex items-center text-gray-600 cursor-pointer right-3">
+                👁️
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center justify-center">
+            <button
+              className="px-4 py-2 font-bold text-white bg-orange-500 rounded hover:bg-orange-600 focus:outline-none focus:shadow-outline"
+              type="button"
+            >
+              Login
+            </button>
+          </div>
+          <div className="mt-4 text-sm text-center text-gray-600">
+            Don’t have an account?{' '}
+            <a href="#" className="font-semibold text-orange-500 hover:text-orange-600">
+              Register
+            </a>
+          </div>
+        </form>
       </div>
-      
     </div>
 
   );
