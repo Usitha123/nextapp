@@ -46,7 +46,7 @@ export default function LoginForm() {
         {/* Right Side (Login Form) */}
         <div className="w-1/2 p-10">
           <h1 className="mb-6 text-3xl font-bold text-center">Welcome To CMS</h1>
-
+           
           <div className="p-6 bg-gray-100 rounded-lg shadow-lg">
             {/* Tab for Login */}
             <div className="flex justify-center mb-4">
@@ -82,16 +82,32 @@ export default function LoginForm() {
               </button>
 
               {/* Register Link */}
-            <Link className="mt-4 text-sm text-center text-gray-600" href={"/register"}>
-              Don't have an account? <span href="#" className="text-blue-500 underline">Register</span>
-            </Link>
             
+        
+          
             </form>
 
             
           </div>
+          <Link className="mt-3 text-sm text-right" href={"/adminlogin"}>
+        <span className="underline">Admin login</span>
+          </Link>
+          <br/>
+          <Link className="mt-3 text-sm text-right" href={"/admindashboard"}>
+        <span className="underline">Admin dashboard</span>
+          </Link>
+          <br/>
+          <Link className="mt-3 text-sm text-right" href={"/UserView"}>
+        <span className="underline">UserView</span>
+          </Link>
+          <br/>
+          <Link className="mt-3 text-sm text-right" href={"/Canteendashboard"}>
+        <span className="underline">Canteendashboard</span>
+          </Link>
         </div>
+        
       </div>
+      
     </div>
 
   );
