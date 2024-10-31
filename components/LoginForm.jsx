@@ -5,10 +5,12 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import backgroundImage from "../src/loginbackground.jpeg";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
   const router = useRouter();
@@ -30,7 +32,7 @@ export default function LoginForm() {
 
       router.replace("dashboard");
     } catch (error) {
-      console.error(error);
+      console.error("Login error:", error);
     }
   };
 
@@ -54,6 +56,7 @@ export default function LoginForm() {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
 
@@ -65,13 +68,17 @@ export default function LoginForm() {
               <input
                 className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
                 id="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
               />
-              <span className="absolute inset-y-0 flex items-center text-gray-600 cursor-pointer right-3">
-                👁️
+              <span
+                className="absolute inset-y-0 flex items-center text-gray-600 cursor-pointer right-3"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>
           </div>
@@ -98,15 +105,12 @@ export default function LoginForm() {
             <Link href="/adminlogin" className="text-gray-600 underline hover:text-orange-500">
               Admin login
             </Link>
-            <br />
             <Link href="/admindashboard" className="text-gray-600 underline hover:text-orange-500">
               Admin dashboard
             </Link>
-            <br />
             <Link href="/UserView" className="text-gray-600 underline hover:text-orange-500">
               UserView
             </Link>
-            <br />
             <Link href="/Canteendashboard" className="text-gray-600 underline hover:text-orange-500">
               Canteendashboard
             </Link>

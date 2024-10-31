@@ -3,23 +3,24 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import backgroundImage from "../src/loginbackground.jpeg"
+import backgroundImage from "../src/loginbackground.jpeg";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function RegisterForm() {
-  const [firstName, setFirstName] = useState(""); // State for first name
-  const [lastName, setLastName] = useState("");   // State for last name
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState(""); // State for confirm password
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate form inputs
-    if (!firstName || !lastName || !email || !password || !confirmPassword ) {
+    if (!firstName || !lastName || !email || !password || !confirmPassword) {
       setError("All fields are required.");
       return;
     }
@@ -30,12 +31,9 @@ export default function RegisterForm() {
     }
 
     try {
-      // Check if user already exists
       const resUserExists = await fetch("/api/userExists", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
 
@@ -45,23 +43,15 @@ export default function RegisterForm() {
         return;
       }
 
-      // Register the new user
       const res = await fetch("/api/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstName, // Send first name
-          lastName,  // Send last name
-          email,
-          password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ firstName, lastName, email, password }),
       });
 
       if (res.ok) {
-        e.target.reset(); // Reset form on success
-        router.push("/"); // Redirect after successful registration
+        e.target.reset();
+        router.push("/");
       } else {
         setError("User registration failed.");
       }
@@ -81,79 +71,87 @@ export default function RegisterForm() {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="firstName">
               First Name
             </label>
             <input
               className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
               type="text"
               placeholder="First Name"
-              value={firstName} // Use firstName state
+              value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
             />
           </div>
 
-
           <div className="mb-4">
-            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="lastName">
               Last Name
             </label>
             <input
               className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
               type="text"
               placeholder="Last Name"
-              value={lastName} // Use lastName state
+              value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               required
             />
           </div>
 
           <div className="mb-4">
-            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
               Email
+            </label>
+            <input
+              className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">
+              Password
             </label>
             <div className="relative">
               <input
                 className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <span className="absolute inset-y-0 flex items-center text-gray-600 cursor-pointer right-3">
-                👁️
+              <span
+                className="absolute inset-y-0 flex items-center text-gray-600 cursor-pointer right-3"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>
           </div>
 
+          
           <div className="mb-4">
-            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">
               Password
             </label>
-            <input
-              className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
-              Confirm Password
-            </label>
-            <input
-              className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
-              type="password"
-              placeholder="Confirm Password"
-              value={confirmPassword} // Update the state for confirm password
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <input
+                className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+            </div>
           </div>
 
           <div className="flex items-center justify-center">
@@ -168,13 +166,11 @@ export default function RegisterForm() {
           {error && <p className="mt-4 text-center text-red-500">{error}</p>}
 
           <div className="mt-4 text-sm text-center text-gray-600">
-          Already have an account?{" "}
+            Already have an account?{" "}
             <Link href="/" className="font-semibold text-orange-500 hover:text-orange-600">
               Login
             </Link>
           </div>
-
-         
         </form>
       </div>
     </div>
