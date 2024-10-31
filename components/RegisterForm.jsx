@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import backgroundImage from "../src/loginbackground.jpeg"
 
 export default function RegisterForm() {
   const [firstName, setFirstName] = useState(""); // State for first name
@@ -71,59 +72,109 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="grid h-screen place-items-center">
-      <div className="p-5 border-t-4 border-green-400 rounded-lg shadow-lg">
-        <h1 className="my-4 text-xl font-bold">Register</h1>
+    <div
+      className="flex items-center justify-center h-screen bg-center bg-cover"
+      style={{ backgroundImage: `url(${backgroundImage.src})` }}
+    >
+      <div className="w-full max-w-sm p-8 bg-white rounded-lg shadow-lg bg-opacity-90">
+        <h2 className="mb-6 text-2xl font-bold text-center text-orange-500">Jpura CMS</h2>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <input
-            type="text"
-            placeholder="First Name"
-            value={firstName} // Use firstName state
-            onChange={(e) => setFirstName(e.target.value)}
-            required
-          />
-          <input
-            type="text"
-            placeholder="Last Name"
-            value={lastName} // Use lastName state
-            onChange={(e) => setLastName(e.target.value)}
-            required
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            value={confirmPassword} // Update the state for confirm password
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-          <button className="px-6 py-2 font-bold text-white bg-green-600">
-            Register
-          </button>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
+              First Name
+            </label>
+            <input
+              className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
+              type="text"
+              placeholder="First Name"
+              value={firstName} // Use firstName state
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+            />
+          </div>
 
-          {error && (
-            <div className="px-3 py-1 mt-2 text-sm text-white bg-red-500 rounded-md">
-              {error}
+
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
+              Last Name
+            </label>
+            <input
+              className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
+              type="text"
+              placeholder="Last Name"
+              value={lastName} // Use lastName state
+              onChange={(e) => setLastName(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">
+              Email
+            </label>
+            <div className="relative">
+              <input
+                className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <span className="absolute inset-y-0 flex items-center text-gray-600 cursor-pointer right-3">
+                👁️
+              </span>
             </div>
-          )}
+          </div>
 
-          <Link className="mt-3 text-sm text-right" href={"/"}>
-            Already have an account? <span className="underline">Login</span>
-          </Link>
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
+              Password
+            </label>
+            <input
+              className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
+              Confirm Password
+            </label>
+            <input
+              className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword} // Update the state for confirm password
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="flex items-center justify-center">
+            <button
+              className="px-4 py-2 font-bold text-white bg-orange-500 rounded hover:bg-orange-600 focus:outline-none focus:shadow-outline"
+              type="submit"
+            >
+              Register
+            </button>
+          </div>
+
+          {error && <p className="mt-4 text-center text-red-500">{error}</p>}
+
+          <div className="mt-4 text-sm text-center text-gray-600">
+          Already have an account?{" "}
+            <Link href="/" className="font-semibold text-orange-500 hover:text-orange-600">
+              Login
+            </Link>
+          </div>
+
+         
         </form>
       </div>
     </div>
