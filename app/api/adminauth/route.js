@@ -1,60 +1,29 @@
-import { MongoClient } from 'mongodb';
+// pages/api/auth/adminauth.js
 
-const uri = process.env.MONGODB_URI;
+import { connectMongoDB } from "@/lib/mongodb";
 
-export async function POST(request) {
-  const { email, password } = await request.json();
-  console.log("Received email:", email);
-  console.log("Received password:", password);
+export default async function handler(req, res) {
+  await connectMongoDB();
 
-  // Validate request body
-  if (!email || !password) {
-    return new Response(
-      JSON.stringify({ message: "Email and password are required." }),
-      { status: 400 }
-    );
-  }
+  if (req.method === 'POST') {
+    const { email, password } = req.body;
 
-  const client = new MongoClient(uri);
-  try {
-    await client.connect();
-    const database = client.db('yourDatabaseName'); // Replace with your actual database name
-    const admins = database.collection('admins'); // Replace with your actual collection name
+    try {
+      // Find admin by email
+      const admin = await Admin.findOne({ email });
 
-    // Find the admin by email
-    const admin = await admins.findOne({ email });
-
-    if (!admin) {
-      return new Response(
-        JSON.stringify({ message: "Invalid credentials." }),
-        { status: 401 }
-      );
+      // Check if admin exists and password matches
+      if (admin && admin.password === password) {
+        return res.status(200).json({ message: 'Login successful', admin });
+      } else {
+        return res.status(401).json({ message: 'Invalid email or password' });
+      }
+    } catch (error) {
+      return res.status(500).json({ message: 'Server error', error });
     }
-
-    // Validate password (direct comparison)
-    if (admin.password !== password) {
-      return new Response(
-        JSON.stringify({ message: "Invalid credentials." }),
-        { status: 401 }
-      );
-    }
-
-    // If login is successful, return a success response
-    return new Response(
-      JSON.stringify({ message: "Login successful." }),
-      { status: 200 } // You might want to use a redirect instead
-    );
-
-    // Optional: Uncomment the following lines to redirect to the dashboard
-    // return Response.redirect('/admindashboard', 302);
-
-  } catch (error) {
-    console.error("Database connection error:", error);
-    return new Response(
-      JSON.stringify({ message: "Internal server error." }),
-      { status: 500 }
-    );
-  } finally {
-    await client.close();
+  } else {
+    // Method not allowed
+    res.setHeader('Allow', ['POST']);
+    return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
