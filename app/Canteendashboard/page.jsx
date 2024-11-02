@@ -1,15 +1,18 @@
-"use client"
+"use client";
 
 import React, { useState } from 'react';
 import Sidebar from './Sidebar/page';
 import Topbar from './Topbar/page';
 import Header from './Header/page';
-import Dashboard from './Body/Dashboard/page';
-import Meals from './Body/Meals/page';
-import Orders from './Body/Orders/page';
-import Reports from './Body/Reports_/page';
-import Profile from './Body/Profile/page';
-import Cashier from './Body/Cashier/page';
+import dynamic from 'next/dynamic';
+
+// Dynamically import each section to improve load time and reduce static build issues.
+const Dashboard = dynamic(() => import('./Body/Dashboard/page'), { ssr: false });
+const Meals = dynamic(() => import('./Body/Meals/page'), { ssr: false });
+const Orders = dynamic(() => import('./Body/Orders/page'), { ssr: false });
+const Reports = dynamic(() => import('./Body/Reports_/page'), { ssr: false });
+const Profile = dynamic(() => import('./Body/Profile/page'), { ssr: false });
+const Cashier = dynamic(() => import('./Body/Cashier/page'), { ssr: false });
 
 export default function MainLayout() {
   const [activeSection, setActiveSection] = useState('Dashboard');
