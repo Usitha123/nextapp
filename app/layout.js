@@ -4,8 +4,8 @@ import { Outfit } from 'next/font/google';
 
 const outfit = Outfit({
   subsets: ['latin'],
-  weight: ['400', '700'], // Adjust weights as needed
-  variable: '--font-outfit', // A CSS variable for easy usage
+  weight: ['400', '700'],
+  variable: '--font-outfit', 
 });
 
 export const metadata = {
