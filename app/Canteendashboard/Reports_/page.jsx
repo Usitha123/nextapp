@@ -9,7 +9,7 @@ function page() {
       <Sidebar/>
       <div className="flex-1">
         <Topbar />
-        <Header />
+        <Header title="Reports"/>
         <div className="p-4">
             <h1>Reports</h1>
         </div>

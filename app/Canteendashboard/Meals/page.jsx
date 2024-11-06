@@ -1,21 +1,25 @@
-import React from 'react'
+// Meals/page.js
+"use client";
+
+import React from 'react';
 import Sidebar from '../Sidebar/page';
 import Topbar from '../Topbar/page';
 import Header from '../Header/page';
 
-function page() {
+const Meals = () => {
   return (
     <div className="flex">
-      <Sidebar/>
+      <Sidebar />
       <div className="flex-1">
         <Topbar />
-        <Header />
+        <Header title="Meals" /> {/* Pass another route-specific title */}
         <div className="p-4">
-            <h1>Meals</h1>
+          <h1>Meals</h1>
+          {/* Meals content */}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default Meals;
