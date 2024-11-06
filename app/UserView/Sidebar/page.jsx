@@ -1,33 +1,43 @@
 "use client";
 
 import React from 'react';
-import {LayoutDashboard, LogOut, Package, UserRound, Utensils, 
-} from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { BoxIcon, LayoutDashboardIcon, LayoutGrid, LogOut, UserRound, Utensils } from 'lucide-react';
 
-const navItems = [
-  { icon: <LayoutDashboard/> , text: "Dashboard" },
-  { icon: <Utensils/>, text:"Canteens" },
-  { icon: <Package/>, text:"Orders" },
-  { icon: <UserRound/>, text:"Profile" },
-  { icon: <LogOut/>, text:"Logout" }
-]
+const Sidebar = () => {
+  const router = useRouter();
 
-const Sidebar = ({ onSectionChange }) => {
-  return (    
+  return (
     <div className="w-20 md:w-60 h-screen p-4 text-black bg-white">
-      <h1 className="mb-10 hidden md:block text-center text-2xl font-bold text-orange-500">LOGO</h1>
+      <h1 className="mb-10 hidden md:block text-center text-2xl font-bold text-[#ff842f]">LOGO</h1>
       <ul className="space-y-4">
-        {navItems.map((item) => (
-          
-          <li
-            key={item.text}
-            className="p-2 rounded-md cursor-pointer hover:bg-orange-100 active:text-orange-500 flex items-center space-x-2"
-            onClick={() => onSectionChange(item.text)}
-          >
-            {item.icon}
-            <span className='hidden md:inline-flex'>{item.text}</span>
-          </li>
-        ))}
+        {/* Correct usage of Link without <a> */}
+        <li>
+          <Link href="/UserView" className="gap-3 flex p-2 rounded hover:bg-orange-50 hover:text-orange-500 ">
+            <span><LayoutDashboardIcon/></span>  <span className='hidden md:flex'>Dashboard</span>
+          </Link>
+        </li>
+        <li>
+          <Link href="/UserView/Canteens" className="gap-3 flex p-2 rounded hover:bg-orange-50 hover:text-orange-500">
+            <span><Utensils/></span><span className='hidden md:flex'>Canteens </span>
+          </Link>
+        </li>
+        <li>
+          <Link href="/UserView/Orders" className="gap-3 flex p-2 rounded hover:bg-orange-50 hover:text-orange-500">
+            <BoxIcon/> <span className='hidden md:flex'>Orders</span>
+          </Link>
+        </li>
+        <li>
+          <Link href="/UserView/Profile" className="gap-3 flex p-2 rounded hover:bg-orange-50 hover:text-orange-500">
+          <span><UserRound/></span>  <span className='hidden md:flex'>Profile</span> 
+          </Link>
+        </li>
+        <li>
+          <Link href="/UserView/Logout" className="gap-3 flex p-2 rounded hover:bg-orange-50 hover:text-orange-500">
+            <span><LogOut/></span>   <span className='hidden md:flex'>Logout</span>
+          </Link>
+        </li>
       </ul>
     </div>
   );
