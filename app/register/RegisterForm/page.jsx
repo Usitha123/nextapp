@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import backgroundImage from "../src/loginbackground.jpeg";
+import backgroundImage from "../../../src/loginbackground.jpeg";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function RegisterForm() {

@@ -30,7 +30,7 @@ export default function LoginForm() {
         return;
       }
 
-      router.replace("dashboard");
+      router.replace("UserView");
     } catch (error) {
       console.error("Login error:", error);
     }

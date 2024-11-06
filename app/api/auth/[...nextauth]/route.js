@@ -12,7 +12,6 @@ export const authOptions = {
         email: { label: "Email", type: "text", placeholder: "you@example.com" },
         password: { label: "Password", type: "password" },
       },
-
       async authorize(credentials) {
         const { email, password } = credentials;
 
@@ -30,11 +29,11 @@ export const authOptions = {
             throw new Error("Incorrect password.");
           }
 
-          // Return user object to be stored in session
-          return { email: user.email, role: user.role }; // Include user role if needed
+          // Return user object to be stored in session, including firstName
+          return { email: user.email, role: user.role, firstName: user.firstName };
         } catch (error) {
           console.error("Error: ", error);
-          throw new Error(error.message); // Throw the error message
+          throw new Error(error.message);
         }
       },
     }),
@@ -45,20 +44,22 @@ export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/",
-    error: "/auth/error", // Redirect to an error page if needed
+    error: "/auth/error",
   },
   callbacks: {
     async jwt({ token, user }) {
-      // Add user role to the token if user is present
+      // Add user role and firstName to the token if user is present
       if (user) {
-        token.role = user.role; // Storing user role in token
+        token.role = user.role;
+        token.firstName = user.firstName;
       }
       return token;
     },
     async session({ session, token }) {
-      // Include the user role in the session
+      // Include the user role and firstName in the session
       if (token) {
-        session.user.role = token.role; // Accessing role from token
+        session.user.role = token.role;
+        session.user.firstName = token.firstName;
       }
       return session;
     },

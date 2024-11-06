@@ -1,11 +1,6 @@
 import React from "react";
-import Sidebar from "./Sidebar/page";
-const page = () => {
-  return (
-      <div className="bg-gray-50">
-        <Sidebar />
-      </div>
-  );
-};
+import UserInfo from "@/app/UserView/Info/UserInfo";
 
-export default page;
+export default function Dashboard() {
+  return <UserInfo />;
+}

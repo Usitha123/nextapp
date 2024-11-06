@@ -12,11 +12,11 @@ export async function middleware(req) {
   }
 
   // Role-based access control for admindashboard
- /*if (pathname.startsWith('/admindashboard')) {
+ if (pathname.startsWith('/admindashboard')) {
     if (!token || token.role !== 'admin') {
       return NextResponse.redirect(new URL('/dashboard', req.url));
     }
-  } */
+  } 
 
   // Role-based access control for opencanteendashboard
   if (pathname.startsWith('/opencanteendashboard')) {
