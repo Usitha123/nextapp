@@ -3,15 +3,21 @@
 import React from 'react';
 import Link from 'next/link';
 import { BoxIcon, LayoutDashboardIcon, LayoutGrid, LogOut, UserRound, Utensils } from 'lucide-react';
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 const Sidebar = ({ activePath }) => {
+  const { data: session } = useSession();
+
   const links = [
     { href: "/UserView", label: "Dashboard", icon: <LayoutDashboardIcon /> },
     { href: "/UserView/Canteens", label: "Canteens", icon: <Utensils /> },
     { href: "/UserView/Orders", label: "Orders", icon: <BoxIcon /> },
     { href: "/UserView/Profile", label: "Profile", icon: <UserRound /> },
   ];
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/' });
+  };
 
   return (
     <div className="w-20 h-screen p-4 text-black bg-white md:w-60">
@@ -36,7 +42,7 @@ const Sidebar = ({ activePath }) => {
         })}
         <li>
           <button
-            onClick={() => signOut()}
+            onClick={handleSignOut}
             className="flex w-full gap-3 p-2 text-black rounded hover:bg-orange-50 hover:text-orange-500"
           >
             <LogOut />
