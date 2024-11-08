@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { BoxIcon, LayoutDashboardIcon, LayoutGrid, LogOut, UserRound, Utensils } from 'lucide-react';
+import { signOut } from "next-auth/react";
 
 const Sidebar = ({ activePath }) => {
   const links = [
@@ -10,11 +11,10 @@ const Sidebar = ({ activePath }) => {
     { href: "/UserView/Canteens", label: "Canteens", icon: <Utensils /> },
     { href: "/UserView/Orders", label: "Orders", icon: <BoxIcon /> },
     { href: "/UserView/Profile", label: "Profile", icon: <UserRound /> },
-    { href: "/UserView/Logout", label: "Logout", icon: <LogOut /> },
   ];
 
   return (
-    <div className="w-20 md:w-60 h-screen p-4 text-black bg-white">
+    <div className="w-20 h-screen p-4 text-black bg-white md:w-60">
       <h1 className="mb-10 hidden md:block text-center text-2xl font-bold text-[#ff842f]">LOGO</h1>
       <ul className="space-y-4">
         {links.map((link) => {
@@ -34,6 +34,15 @@ const Sidebar = ({ activePath }) => {
             </li>
           );
         })}
+        <li>
+          <button
+            onClick={() => signOut()}
+            className="flex w-full gap-3 p-2 text-black rounded hover:bg-orange-50 hover:text-orange-500"
+          >
+            <LogOut />
+            <span className="hidden md:flex">Logout</span>
+          </button>
+        </li>
       </ul>
     </div>
   );
