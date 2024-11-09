@@ -5,5 +5,10 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: 'jsdom',
+    coverage: {
+      provider:'v8'
+    },
+    globals: true,
+    setupFiles: ['./test/setup.js'],
   },
 })
