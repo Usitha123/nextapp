@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Head from 'next/head';
+import Image from 'next/image'; // Import Next.js Image component
 
 export default function Home() {
   const [imageSrc, setImageSrc] = useState(null);
@@ -10,7 +11,7 @@ export default function Home() {
 
   function handleOnChange(changeEvent) {
     const file = changeEvent.target.files[0];
-    if (!file) return;
+    if (!file || !file.type.startsWith('image/')) return;  // Ensure file is an image
 
     const reader = new FileReader();
     reader.onload = function (onLoadEvent) {
@@ -72,7 +73,15 @@ export default function Home() {
             />
           </p>
 
-          {imageSrc && <img src={imageSrc} alt="Uploaded Image" className="mt-4" />}
+          {imageSrc && (
+            <Image
+              src={imageSrc}
+              alt="Uploaded Image"
+              width={500} // Adjust width as needed
+              height={300} // Adjust height as needed
+              className="mt-4"
+            />
+          )}
 
           {progress > 0 && (
             <p className="text-gray-500">{progress}% Uploaded</p>  // Show upload percentage
