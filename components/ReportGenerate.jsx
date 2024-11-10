@@ -4,7 +4,8 @@ import html2pdf from 'html2pdf.js';
 import { useRef } from "react";
 import Invoice from "./Invoice";
 
-export default function dashboard() {
+// Change the function name to start with an uppercase letter
+export default function Dashboard() {
   const contentRef = useRef();
 
   const exportPDF = () => {
