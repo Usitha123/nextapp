@@ -1,20 +1,26 @@
 "use client"; // Add this line to mark the component as a client component
 
-import html2pdf from 'html2pdf.js';
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
+import html2pdf from "html2pdf.js"; // Import normally
 import Invoice from "./Invoice";
 
-// Change the function name to start with an uppercase letter
 export default function Dashboard() {
   const contentRef = useRef();
+  const [isClient, setIsClient] = useState(false); // State to check if we're on the client side
+
+  useEffect(() => {
+    setIsClient(true); // Update state when the component mounts (client-side only)
+  }, []);
 
   const exportPDF = () => {
+    if (!isClient) return; // Ensure code only runs on the client-side
+
     const options = {
-      filename: 'canteen-dashboard.pdf',
+      filename: "canteen-dashboard.pdf",
       margin: [10, 10, 10, 10],
       x: 10,
       y: 10,
-      html2canvas: { scale: 2 },  // Optional: Enhance quality of rendering
+      html2canvas: { scale: 2 }, // Optional: Enhance quality of rendering
     };
     html2pdf().from(contentRef.current).set(options).save();
   };
@@ -28,7 +34,7 @@ export default function Dashboard() {
         <div className="p-4" ref={contentRef}>
           <Invoice />
         </div>
-        
+
         <button
           onClick={exportPDF}
           className="px-4 py-2 text-white bg-blue-500 rounded"
