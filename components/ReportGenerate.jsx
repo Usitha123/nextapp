@@ -1,20 +1,25 @@
-"use client"; // Add this line to mark the component as a client component
+"use client"; // Ensure this component runs on the client side
 
-import { useRef, useState, useEffect } from "react";
-import html2pdf from "html2pdf.js"; // Import normally
+import { useRef, useEffect } from "react";
 import Invoice from "./Invoice";
 
 export default function Dashboard() {
   const contentRef = useRef();
-  const [isClient, setIsClient] = useState(false); // State to check if we're on the client side
 
   useEffect(() => {
-    setIsClient(true); // Update state when the component mounts (client-side only)
+    // Dynamically load html2pdf.js from CDN
+    const script = document.createElement("script");
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js";
+    script.onload = () => {
+      window.html2pdf = window.html2pdf || html2pdf;  // Ensure html2pdf is available globally
+    };
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script); // Cleanup on unmount
+    };
   }, []);
 
   const exportPDF = () => {
-    if (!isClient) return; // Ensure code only runs on the client-side
-
     const options = {
       filename: "canteen-dashboard.pdf",
       margin: [10, 10, 10, 10],
@@ -22,7 +27,13 @@ export default function Dashboard() {
       y: 10,
       html2canvas: { scale: 2 }, // Optional: Enhance quality of rendering
     };
-    html2pdf().from(contentRef.current).set(options).save();
+
+    // Ensure html2pdf() is available before calling it
+    if (window.html2pdf) {
+      window.html2pdf().from(contentRef.current).set(options).save();
+    } else {
+      console.error("html2pdf.js not loaded.");
+    }
   };
 
   return (
