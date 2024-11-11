@@ -1,4 +1,3 @@
-// app/components/ClearCookies.js
 "use client";  // Marks this component as a Client Component
 
 import { useEffect } from "react";
@@ -7,7 +6,7 @@ const ClearCookies = () => {
   useEffect(() => {
     const handleTabClose = () => {
       // Delete the session cookie when the tab/window is closed
-      document.cookie = "next-auth.session-token=; Max-Age=0; path=/";
+      document.cookie = "__Secure-next-auth.session-token=; Max-Age=0; path=/";
       // Optionally clear other cookies if necessary
     };
 
