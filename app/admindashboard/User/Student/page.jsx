@@ -2,6 +2,7 @@ import React from 'react'
 import Sidebar from '../../Sidebar/page';
 import Topbar from '../../Topbar/page';
 import Header from '../../Header/page';
+import Hello from '../hello';
 
 function page() {
   return (
@@ -11,7 +12,7 @@ function page() {
         <Topbar />
         <Header title="Cashier" />
         <div className="p-4">
-            <h1>Cashier</h1>
+            <Hello />
         </div>
       </div>
     </div>

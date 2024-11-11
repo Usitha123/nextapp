@@ -8,6 +8,7 @@ export default function Home() {
   const [imageSrc, setImageSrc] = useState(null);
   const [uploadData, setUploadData] = useState(null);
   const [progress, setProgress] = useState(0);  // Add progress state
+  const [imageURL, setImageURL] = useState(''); // State for storing the image URL
 
   function handleOnChange(changeEvent) {
     const file = changeEvent.target.files[0];
@@ -49,6 +50,7 @@ export default function Home() {
       const response = JSON.parse(xhr.responseText);
       setImageSrc(response.secure_url);
       setUploadData(response);
+      setImageURL(response.secure_url); // Set image URL to state
       setProgress(100);  // Set progress to 100 on completion
     };
 
@@ -70,15 +72,15 @@ export default function Home() {
               type="file"
               name="file"
               className="px-6 py-4 text-base border border-gray-300 rounded-lg"
-            />
+            /> 
           </p>
 
           {imageSrc && (
             <Image
               src={imageSrc}
               alt="Uploaded Image"
-              width={500} // Adjust width as needed
-              height={300} // Adjust height as needed
+              width={100} // Adjust width as needed
+              height={90} // Adjust height as needed
               className="mt-4"
             />
           )}
@@ -95,21 +97,26 @@ export default function Home() {
               Upload Files
             </button>
           </p>
-
-          {uploadData && (
-            <div>
-              <p><strong>Uploaded Image URL:</strong></p>
-              <a
-                href={imageSrc}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500"
-              >
-                {imageSrc}
-              </a>
-            </div>
-          )}
         </form>
+
+        {/* Always show Image URL field */}
+        <div className="mt-4">
+          <p>Image URL: 
+            <a href={imageURL || '#'} target="_blank" rel="noopener noreferrer" className="text-blue-500">
+              {imageURL || 'No image uploaded'}
+            </a>
+          </p>
+          
+          {/* Input field for Image URL */}
+          <p>
+            <input
+              type="text"
+              value={imageURL || ''}
+              readOnly
+              className="w-full px-6 py-4 mt-2 text-base border border-gray-300 rounded-lg"
+            />
+          </p>
+        </div>
       </main>
     </div>
   );
