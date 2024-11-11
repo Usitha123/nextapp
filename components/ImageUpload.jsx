@@ -59,11 +59,7 @@ export default function Home() {
 
   return (
     <div className="max-w-screen-xl mx-auto p-8 min-h-screen grid grid-rows-[1fr_auto]">
-      <Head>
-        <title>Image Uploader</title>
-        <meta name="description" content="Upload your image to Cloudinary!" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      
 
       <main className="flex flex-col items-center justify-center py-8 text-center">
         <form className="space-y-8" method="post" onChange={handleOnChange} onSubmit={handleOnSubmit}>
@@ -71,7 +67,7 @@ export default function Home() {
             <input
               type="file"
               name="file"
-              className="px-6 py-4 text-base border border-gray-300 rounded-lg"
+              className="block w-full mt-1 text-gray-300 bg-gray-900 border border-gray-700 rounded-md file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-orange-600 file:text-white hover:file:bg-orange-700"
             /> 
           </p>
 
@@ -92,9 +88,9 @@ export default function Home() {
           <p>
             <button
               type="submit"
-              className="px-4 py-2 text-base text-white transition-transform duration-200 bg-blue-500 rounded-md hover:bg-blue-600 hover:scale-105"
+              className="px-4 py-2 text-base text-white transition-transform duration-200 bg-orange-600 rounded-md hover:bg-orange-700 hover:scale-105"
             >
-              Upload Files
+              Upload
             </button>
           </p>
         </form>

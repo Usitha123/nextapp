@@ -5,7 +5,8 @@ import React from 'react';
 import Sidebar from '../Sidebar/page';
 import Topbar from '../Topbar/page';
 import Header from '../Header/page';
-import Hello from './hello';
+import Hello from '../Canteens/Addcanteens';
+import Userdetails from './Userdetails';
 
 const Meals = () => {
   return (
@@ -15,7 +16,7 @@ const Meals = () => {
         <Topbar />
         <Header title="User" /> {/* Pass another route-specific title */}
         <div className="p-4">
-        <Hello />
+        <Userdetails />
           {/* Meals content */}
         </div>
       </div>

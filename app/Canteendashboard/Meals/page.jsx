@@ -6,6 +6,7 @@ import Sidebar from '../Sidebar/page';
 import Topbar from '../Topbar/page';
 import Header from '../Header/page';
 import AddMealForm from './Addmeals';
+import ImageUpload from '../../../components/ImageUpload'
 
 const Meals = () => {
   return (
@@ -16,6 +17,7 @@ const Meals = () => {
         <Header title="Meals" /> {/* Pass another route-specific title */}
         <div className="p-4">
           <AddMealForm />
+          <ImageUpload />
           {/* Meals content */}
         </div>
       </div>
