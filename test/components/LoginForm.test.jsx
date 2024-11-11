@@ -53,7 +53,7 @@ describe('LoginForm Component', () => {
         expect(await screen.findByText(/invalid credentials/i)).toBeInTheDocument();
     });
 
-    it('navigates to UserView on successful login', async () => {
+    test('navigates to UserView on successful login', async () => {
         const mockReplace = vi.fn();
         useRouter.mockReturnValue({ replace: mockReplace });
 
