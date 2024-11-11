@@ -3,9 +3,14 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 
 const Sidebar = () => {
   const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/' });
+  };
 
   return (
     <div className="w-64 h-screen p-4 text-white bg-gray-800">
@@ -43,9 +48,9 @@ const Sidebar = () => {
           </Link>
         </li>
         <li>
-          <Link href="/Canteendashboard/Logout" className="block p-2 rounded hover:bg-gray-700">
+          <button onClick={handleSignOut} className="block p-2 rounded hover:bg-gray-700">
             Logout
-          </Link>
+          </button>
         </li>
       </ul>
     </div>

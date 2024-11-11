@@ -46,7 +46,7 @@ const Sidebar = ({ activePath }) => {
             className="flex w-full gap-3 p-2 text-black rounded hover:bg-orange-50 hover:text-orange-500"
           >
             <LogOut />
-            <span className="hidden md:flex">Logout</span>
+            
           </button>
         </li>
       </ul>

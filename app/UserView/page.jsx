@@ -19,6 +19,7 @@ const Dashboard = () => {
         <Header title="Dashboard" /> {/* Pass route-specific title */}
         <div className="p-4">
           {/* Dashboard content */}
+          <h1>hello</h1>
         </div>
       </div>
     </div>
