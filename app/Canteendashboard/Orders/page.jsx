@@ -2,6 +2,7 @@ import React from 'react'
 import Sidebar from '../Sidebar/page';
 import Topbar from '../Topbar/page';
 import Header from '../Header/page';
+import Orderlist from './Orderslist';
 
 
 function page() {
@@ -12,7 +13,7 @@ function page() {
         <Topbar />
         <Header title="Orders" />
         <div className="p-4">
-        <h1>hello</h1>
+        <Orderlist/>
         </div>
       </div>
     </div>

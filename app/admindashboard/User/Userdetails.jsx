@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
 
 // Sample data for demonstration
 const students = [
@@ -55,7 +56,10 @@ const StudentTable = () => {
               <td className="p-2">{student.date}</td>
               <td className="p-2">
                 <button className="text-red-500 hover:text-red-700">
-                  <i className="fas fa-trash-alt"></i> {/* Font Awesome delete icon */}
+                <FaRegTrashAlt/> {/* Font Awesome delete icon */}
+                </button>
+                <button className="text-red-500 hover:text-red-700">
+                <FaEdit/> {/* Font Awesome edit icon */}
                 </button>
               </td>
             </tr>
