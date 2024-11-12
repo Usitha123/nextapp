@@ -5,6 +5,7 @@ import React from 'react';
 import Sidebar from '@/app/admindashboard/Sidebar/page';
 import Topbar from '@/app/admindashboard/Topbar/page';
 import Header from '@/app/admindashboard/Header/page';
+import Dashboardcards from './Dashboardcards';
 
 const CanteenDashboard = () => {
   return (
@@ -14,7 +15,7 @@ const CanteenDashboard = () => {
         <Topbar />
         <Header title="Dashboard" /> {/* Pass route-specific title */}
         <div className="p-4">
-          {/* Dashboard content */}
+          <Dashboardcards/>
         </div>
       </div>
     </div>

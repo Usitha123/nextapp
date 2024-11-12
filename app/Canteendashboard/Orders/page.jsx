@@ -2,7 +2,8 @@ import React from 'react'
 import Sidebar from '../Sidebar/page';
 import Topbar from '../Topbar/page';
 import Header from '../Header/page';
-import ImageUpload from '../../../components/ImageUpload'
+import Orderlist from './Orderslist';
+
 
 function page() {
   return (
@@ -12,7 +13,7 @@ function page() {
         <Topbar />
         <Header title="Orders" />
         <div className="p-4">
-        <ImageUpload />
+        <Orderlist/>
         </div>
       </div>
     </div>

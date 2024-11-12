@@ -1,7 +1,8 @@
 import React from 'react'
-import Sidebar from '../Sidebar/page';
-import Topbar from '../Topbar/page';
-import Header from '../Header/page';
+import Sidebar from '../../Sidebar/page';
+import Topbar from '../../Topbar/page';
+import Header from '../../Header/page';
+import Add from './Add';
 
 function page() {
   return (
@@ -9,9 +10,9 @@ function page() {
       <Sidebar/>
       <div className="flex-1">
         <Topbar />
-        <Header title="Canteens" />
+        <Header title="Add New" />
         <div className="p-4">
-            <h1>Cashier</h1>
+             <Add />
         </div>
       </div>
     </div>

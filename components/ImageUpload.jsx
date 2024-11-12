@@ -8,6 +8,7 @@ export default function Home() {
   const [imageSrc, setImageSrc] = useState(null);
   const [uploadData, setUploadData] = useState(null);
   const [progress, setProgress] = useState(0);  // Add progress state
+  const [imageURL, setImageURL] = useState(''); // State for storing the image URL
 
   function handleOnChange(changeEvent) {
     const file = changeEvent.target.files[0];
@@ -49,6 +50,7 @@ export default function Home() {
       const response = JSON.parse(xhr.responseText);
       setImageSrc(response.secure_url);
       setUploadData(response);
+      setImageURL(response.secure_url); // Set image URL to state
       setProgress(100);  // Set progress to 100 on completion
     };
 
@@ -57,11 +59,7 @@ export default function Home() {
 
   return (
     <div className="max-w-screen-xl mx-auto p-8 min-h-screen grid grid-rows-[1fr_auto]">
-      <Head>
-        <title>Image Uploader</title>
-        <meta name="description" content="Upload your image to Cloudinary!" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      
 
       <main className="flex flex-col items-center justify-center py-8 text-center">
         <form className="space-y-8" method="post" onChange={handleOnChange} onSubmit={handleOnSubmit}>
@@ -69,16 +67,16 @@ export default function Home() {
             <input
               type="file"
               name="file"
-              className="px-6 py-4 text-base border border-gray-300 rounded-lg"
-            />
+              className="block w-full mt-1 text-gray-300 bg-gray-900 border border-gray-700 rounded-md file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-orange-600 file:text-white hover:file:bg-orange-700"
+            /> 
           </p>
 
           {imageSrc && (
             <Image
               src={imageSrc}
               alt="Uploaded Image"
-              width={500} // Adjust width as needed
-              height={300} // Adjust height as needed
+              width={100} // Adjust width as needed
+              height={90} // Adjust height as needed
               className="mt-4"
             />
           )}
@@ -90,26 +88,31 @@ export default function Home() {
           <p>
             <button
               type="submit"
-              className="px-4 py-2 text-base text-white transition-transform duration-200 bg-blue-500 rounded-md hover:bg-blue-600 hover:scale-105"
+              className="px-4 py-2 text-base text-white transition-transform duration-200 bg-orange-600 rounded-md hover:bg-orange-700 hover:scale-105"
             >
-              Upload Files
+              Upload
             </button>
           </p>
-
-          {uploadData && (
-            <div>
-              <p><strong>Uploaded Image URL:</strong></p>
-              <a
-                href={imageSrc}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500"
-              >
-                {imageSrc}
-              </a>
-            </div>
-          )}
         </form>
+
+        {/* Always show Image URL field */}
+        <div className="mt-4">
+          <p>Image URL: 
+            <a href={imageURL || '#'} target="_blank" rel="noopener noreferrer" className="text-blue-500">
+              {imageURL || 'No image uploaded'}
+            </a>
+          </p>
+          
+          {/* Input field for Image URL */}
+          <p>
+            <input
+              type="text"
+              value={imageURL || ''}
+              readOnly
+              className="w-full px-6 py-4 mt-2 text-base border border-gray-300 rounded-lg"
+            />
+          </p>
+        </div>
       </main>
     </div>
   );

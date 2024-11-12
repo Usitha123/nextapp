@@ -47,6 +47,7 @@ const Sidebar = ({ activePath }) => {
           >
             <LogOut />
             <span className="hidden md:flex">Logout</span>
+
           </button>
         </li>
       </ul>

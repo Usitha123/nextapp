@@ -2,9 +2,11 @@
 "use client";
 
 import React from 'react';
-import Sidebar from '../Sidebar/page';
-import Topbar from '../Topbar/page';
-import Header from '../Header/page';
+import Sidebar from '../../Sidebar/page';
+import Topbar from '../../Topbar/page';
+import Header from '../../Header/page';
+import Updatemeal from './Updatemeal';
+
 
 const Meals = () => {
   return (
@@ -12,9 +14,9 @@ const Meals = () => {
       <Sidebar />
       <div className="flex-1">
         <Topbar />
-        <Header title="User" /> {/* Pass another route-specific title */}
+        <Header title="Update Meals" /> {/* Pass another route-specific title */}
         <div className="p-4">
-          <h1>Students</h1>
+          <Updatemeal/>
           {/* Meals content */}
         </div>
       </div>

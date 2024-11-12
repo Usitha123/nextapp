@@ -11,6 +11,9 @@ vi.mock('../../../../app/Canteendashboard/Topbar/page', () => ({
 vi.mock('../../../../app/Canteendashboard/Header/page', () => ({
     default: ({ title }) => <div>{title}</div>,
 }));
+vi.mock('../../../../app/Canteendashboard/Profile/Profile', () => ({
+    default: () => <div>Mocked Profile</div>,
+}));
 
 describe('Canteendashboard Profile Page', () => {
 
@@ -18,7 +21,8 @@ describe('Canteendashboard Profile Page', () => {
         render(<Profile />);
         expect(screen.getByText('Mocked Sidebar')).toBeInTheDocument();
         expect(screen.getByText('Mocked Topbar')).toBeInTheDocument();
-        expect(screen.getByRole('heading', { level:1 })).toHaveTextContent('Profile');
+        expect(screen.getByText('Profile')).toBeInTheDocument();
+        expect(screen.getByText('Mocked Profile')).toBeInTheDocument();
     });
 
 });
