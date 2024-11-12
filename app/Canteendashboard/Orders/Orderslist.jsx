@@ -1,12 +1,16 @@
-import React from "react";
+"use client"
+import React, { useState } from "react";
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
+import UpdateStatusModal from "./Modal";
 
 const OrderTable = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const orders = [
     { id: "#od1234", customer: "Usitha", status: "Accepted", date: "12/07/24", description: "Click" },
-    { id: "#od1234", customer: "Srimal", status: "Accepted", date: "12/07/24", description: "Click" },
-    { id: "#od1234", customer: "Akila", status: "Picked", date: "12/07/24", description: "Click" },
-    { id: "#od1234", customer: "Akila", status: "Cancelled", date: "12/07/24", description: "Click" },
+    { id: "#od1235", customer: "Srimal", status: "Accepted", date: "12/07/24", description: "Click" },
+    { id: "#od1236", customer: "Akila", status: "Picked", date: "12/07/24", description: "Click" },
+    { id: "#od1237", customer: "Akila", status: "Cancelled", date: "12/07/24", description: "Click" },
   ];
 
   const getStatusClasses = (status) => {
@@ -55,10 +59,13 @@ const OrderTable = () => {
                 </td>
                 <td className="flex px-4 py-2 space-x-2">
                   <button className="text-gray-400 hover:text-red-500">
-                  <FaRegTrashAlt/> 
+                    <FaRegTrashAlt />
                   </button>
-                  <button className="text-gray-400 hover:text-orange-500">
-                  <FaEdit/>
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="text-gray-400 hover:text-orange-500"
+                  >
+                    <FaEdit />
                   </button>
                 </td>
               </tr>
@@ -66,6 +73,12 @@ const OrderTable = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Modal Component */}
+      <UpdateStatusModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };
