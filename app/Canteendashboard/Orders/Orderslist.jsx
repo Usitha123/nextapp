@@ -1,16 +1,21 @@
-"use client"
+"use client";
 import React, { useState } from "react";
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
 import UpdateStatusModal from "./Modal";
+import Deleteorder from "./Deleteorder";
+import Descriptionmodel from "./Descriptionmodel"; // Assuming this exists
 
 const OrderTable = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDescriptionModelOpen, setIsDescriptionModelOpen] = useState(false);
+  const [isDeleteOrderModalOpen, setIsDeleteOrderModalOpen] = useState(false);
+  const [selectedDescription, setSelectedDescription] = useState("");
 
   const orders = [
-    { id: "#od1234", customer: "Usitha", status: "Accepted", date: "12/07/24", description: "Click" },
-    { id: "#od1235", customer: "Srimal", status: "Accepted", date: "12/07/24", description: "Click" },
-    { id: "#od1236", customer: "Akila", status: "Picked", date: "12/07/24", description: "Click" },
-    { id: "#od1237", customer: "Akila", status: "Cancelled", date: "12/07/24", description: "Click" },
+    { id: "#od1234", customer: "Usitha", status: "Accepted", date: "12/07/24", description: "Order details for Usitha" },
+    { id: "#od1235", customer: "Srimal", status: "Accepted", date: "12/07/24", description: "Order details for Srimal" },
+    { id: "#od1236", customer: "Akila", status: "Picked", date: "12/07/24", description: "Order details for Akila" },
+    { id: "#od1237", customer: "Akila", status: "Cancelled", date: "12/07/24", description: "Cancellation details for Akila" },
   ];
 
   const getStatusClasses = (status) => {
@@ -24,6 +29,11 @@ const OrderTable = () => {
       default:
         return "bg-gray-500 text-white";
     }
+  };
+
+  const handleDescriptionClick = (description) => {
+    setSelectedDescription(description);
+    setIsDescriptionModelOpen(true);
   };
 
   return (
@@ -53,12 +63,18 @@ const OrderTable = () => {
                 </td>
                 <td className="px-4 py-2">{order.date}</td>
                 <td className="px-4 py-2">
-                  <a href="#" className="text-orange-400 hover:underline">
-                    {order.description}
-                  </a>
+                  <button
+                    onClick={() => handleDescriptionClick(order.description)}
+                    className="text-orange-400 hover:underline"
+                  >
+                    View
+                  </button>
                 </td>
                 <td className="flex px-4 py-2 space-x-2">
-                  <button className="text-gray-400 hover:text-red-500">
+                  <button
+                    onClick={() => setIsDeleteOrderModalOpen(true)}
+                    className="text-gray-400 hover:text-red-500"
+                  >
                     <FaRegTrashAlt />
                   </button>
                   <button
@@ -74,10 +90,23 @@ const OrderTable = () => {
         </table>
       </div>
 
-      {/* Modal Component */}
+      {/* Update Status Modal */}
       <UpdateStatusModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+      />
+
+      {/* Description Modal */}
+      <Descriptionmodel
+        isOpen={isDescriptionModelOpen}
+        onClose={() => setIsDescriptionModelOpen(false)}
+        description={selectedDescription}
+      />
+
+      {/* Delete Order Modal */}
+      <Deleteorder
+        isOpen={isDeleteOrderModalOpen}
+        onClose={() => setIsDeleteOrderModalOpen(false)}
       />
     </div>
   );

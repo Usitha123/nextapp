@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import Link from 'next/link';
+import Link from "next/link";
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
+import Deletemealmodel from "./Deletemealmodel";
 
 const MealsTable = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Breakfast");
 
   const meals = [
@@ -19,21 +21,15 @@ const MealsTable = () => {
   return (
     <div className="p-6 bg-gray-800 rounded-lg shadow-lg">
       <h2 className="mb-6 text-2xl font-bold text-white">Meals</h2>
-      
+
       {/* Enable and Add Meal Buttons */}
-      <div>
-      <ul className="flex items-center justify-between mb-4">
-        <li>
-          <Link href="#" className="px-4 py-2 text-gray-900 bg-orange-500 rounded">
-            Enable
-          </Link>
-        </li>
-        <li>
-          <Link href="/Canteendashboard/Meals/Addmeal" className="px-4 py-2 text-gray-900 bg-orange-500 rounded">
-            Add Meal
-          </Link>
-        </li>
-        </ul>
+      <div className="flex justify-between mb-4">
+        <Link href="#" className="px-4 py-2 text-gray-900 bg-orange-500 rounded">
+          Enable
+        </Link>
+        <Link href="/Canteendashboard/Meals/Addmeal" className="px-4 py-2 text-gray-900 bg-orange-500 rounded">
+          Add Meal
+        </Link>
       </div>
 
       {/* Tabs for Meal Types */}
@@ -74,19 +70,16 @@ const MealsTable = () => {
                 <td className="px-4 py-2">
                   <img src={meal.imageUrl} alt={meal.name} className="w-16 h-16 rounded" />
                 </td>
-                <td className="flex px-4 py-2 space-x-2">
-                <ul>
-        <li>
-          <Link href="#" className="text-gray-400 hover:text-red-500">
-            <FaRegTrashAlt/> 
-          </Link>
-        </li>
-        <li>
-          <Link href="/Canteendashboard/Meals/Updatemeal" className="text-gray-400 hover:text-orange-500">
-             <FaEdit/>
-          </Link>
-        </li>
-        </ul>
+                <td className="flex items-center px-4 py-2 space-x-2">
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="text-gray-400 hover:text-red-500"
+                  >
+                    <FaRegTrashAlt />
+                  </button>
+                  <Link href="/Canteendashboard/Meals/Updatemeal" className="text-gray-400 hover:text-orange-500">
+                    <FaEdit />
+                  </Link>
                 </td>
               </tr>
             ))}
@@ -99,6 +92,9 @@ const MealsTable = () => {
         <button className="text-orange-400 hover:underline">Prev</button>
         <button className="text-orange-400 hover:underline">Next</button>
       </div>
+
+      {/* Delete Meal Modal */}
+      <Deletemealmodel isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };

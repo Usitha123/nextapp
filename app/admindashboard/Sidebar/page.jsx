@@ -100,9 +100,9 @@ const Sidebar = () => {
                   Owner
                 </Link>
                 <Link
-                  href="/admindashboard/User"
+                  href="/admindashboard/User/Student"
                   className={`block p-2 rounded ${
-                    isActive("/admindashboard/User") ? "bg-gray-700 text-white" : "hover:bg-gray-700"
+                    isActive("/admindashboard/User/Student") ? "bg-gray-700 text-white" : "hover:bg-gray-700"
                   }`}
                 >
                   Student
@@ -122,9 +122,9 @@ const Sidebar = () => {
 
         <li>
           <Link
-            href="/admindashboard/Reports"
+            href="/admindashboard/Reports_"
             className={`block p-2 rounded ${
-              isActive("/admindashboard/Reports") ? "bg-gray-700 text-white" : "hover:bg-gray-700"
+              isActive("/admindashboard/Reports_") ? "bg-gray-700 text-white" : "hover:bg-gray-700"
             }`}
           >
             Reports

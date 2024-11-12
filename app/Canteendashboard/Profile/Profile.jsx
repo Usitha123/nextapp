@@ -1,7 +1,11 @@
 // Profile.js
-import React from 'react';
+"use client"
+import React, { useState } from "react";
+import ChangePassword from "./ChangePassword";
 
 export default function Profile() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="bg-[#1b1b1b] p-6 rounded-md shadow-lg w-full max-w-xl mx-auto">
       <h2 className="mb-6 text-2xl font-semibold text-white">Profile</h2>
@@ -19,7 +23,7 @@ export default function Profile() {
         <form className="flex-1 space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm text-gray-400">First name</label>
+              <label className="block text-sm text-gray-400">First Name</label>
               <input
                 type="text"
                 className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -64,8 +68,15 @@ export default function Profile() {
             />
           </div>
 
-          <div className="mt-2 text-sm text-orange-500 cursor-pointer hover:underline">
-            Change Password
+          {/* Change Password */}
+          <div className="mt-2">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              className="text-sm text-orange-500 hover:underline focus:outline-none"
+            >
+              Change Password
+            </button>
           </div>
 
           {/* Action Buttons */}
@@ -85,6 +96,12 @@ export default function Profile() {
           </div>
         </form>
       </div>
+
+      {/* Change Password Modal */}
+      <ChangePassword
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }
