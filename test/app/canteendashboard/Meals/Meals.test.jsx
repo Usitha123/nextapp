@@ -11,8 +11,8 @@ vi.mock('../../../../app/Canteendashboard/Topbar/page', () => ({
 vi.mock('../../../../app/Canteendashboard/Header/page', () => ({
     default: ({ title }) => <div>{title}</div>,
 }));
-vi.mock('../../../../app/Canteendashboard/Meals/Addmeals', () => ({
-    default: () => <div>Mocked AddMealForm</div>,
+vi.mock('../../../../app/Canteendashboard/Meals/Mealslist', () => ({
+    default: () => <div>Mocked Mealslist</div>,
 }));
 
 describe('Canteendashboard Meals Page', () => {
@@ -22,7 +22,7 @@ describe('Canteendashboard Meals Page', () => {
         expect(screen.getByText('Mocked Sidebar')).toBeInTheDocument();
         expect(screen.getByText('Mocked Topbar')).toBeInTheDocument();
         expect(screen.getByText('Meals')).toBeInTheDocument();
-        expect(screen.getByText('Mocked AddMealForm')).toBeInTheDocument();
+        expect(screen.getByText('Mocked Mealslist')).toBeInTheDocument();
     });
 
 });
