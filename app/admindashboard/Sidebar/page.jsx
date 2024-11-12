@@ -7,12 +7,18 @@ import { signOut } from "next-auth/react";
 
 const Sidebar = () => {
   const pathname = usePathname(); // Get the current path
-  const [openMenu, setOpenMenu] = useState(false);
+  const [openUserMenu, setOpenUserMenu] = useState(false);
+  const [openCanteensMenu, setOpenCanteensMenu] = useState(false);
 
   useEffect(() => {
-    // Automatically open the dropdown if the current path matches a User submenu
+    // Automatically open the "User" menu if the path matches any "User" submenu
     if (pathname.startsWith("/admindashboard/User")) {
-      setOpenMenu(true);
+      setOpenUserMenu(true);
+    }
+
+    // Automatically open the "Canteens" menu if the path matches any "Canteens" submenu
+    if (pathname.startsWith("/admindashboard/Canteens")) {
+      setOpenCanteensMenu(true);
     }
   }, [pathname]);
 
@@ -39,28 +45,51 @@ const Sidebar = () => {
             Dashboard
           </Link>
         </li>
+
+        {/* Canteens Dropdown Menu */}
         <li>
-          <Link
-            href="/admindashboard/Canteens"
-            className={`block p-2 rounded ${
-              isActive("/admindashboard/Canteens") ? "bg-gray-700 text-white" : "hover:bg-gray-700"
-            }`}
-          >
-            Canteens
-          </Link>
+          <div className="space-y-1">
+            <button
+              onClick={() => setOpenCanteensMenu(!openCanteensMenu)}
+              className="flex items-center justify-between w-full px-4 py-2 rounded hover:bg-gray-700"
+            >
+              Canteens
+              <span>{openCanteensMenu ? "-" : "+"}</span>
+            </button>
+            {openCanteensMenu && (
+              <div className="ml-4 space-y-2">
+                <Link
+                  href="/admindashboard/Canteens/AllCanteens"
+                  className={`block p-2 rounded ${
+                    isActive("/admindashboard/Canteens/AllCanteens") ? "bg-gray-700 text-white" : "hover:bg-gray-700"
+                  }`}
+                >
+                  All Canteens
+                </Link>
+                <Link
+                  href="/admindashboard/Canteens/AddNew"
+                  className={`block p-2 rounded ${
+                    isActive("/admindashboard/Canteens/AddNew") ? "bg-gray-700 text-white" : "hover:bg-gray-700"
+                  }`}
+                >
+                  Add New
+                </Link>
+              </div>
+            )}
+          </div>
         </li>
 
         {/* User Dropdown Menu */}
         <li>
           <div className="space-y-1">
             <button
-              onClick={() => setOpenMenu(!openMenu)}
+              onClick={() => setOpenUserMenu(!openUserMenu)}
               className="flex items-center justify-between w-full px-4 py-2 rounded hover:bg-gray-700"
             >
               User
-              <span>{openMenu ? "-" : "+"}</span>
+              <span>{openUserMenu ? "-" : "+"}</span>
             </button>
-            {openMenu && (
+            {openUserMenu && (
               <div className="ml-4 space-y-2">
                 <Link
                   href="/admindashboard/User/Owner"

@@ -5,7 +5,7 @@ import React from 'react';
 import Sidebar from '../Sidebar/page';
 import Topbar from '../Topbar/page';
 import Header from '../Header/page';
-import Hello from '../Canteens/Addcanteens';
+import Hello from '../Canteens/AddNew/Addcanteens';
 import Userdetails from './Userdetails';
 
 const Meals = () => {
