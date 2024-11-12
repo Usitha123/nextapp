@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
+import UpdateStatusModal from "./Modal";
 
 // Sample data for demonstration
 const students = [
@@ -14,6 +15,8 @@ const ITEMS_PER_PAGE = 4;
 
 const StudentTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentStudents = students.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -58,7 +61,9 @@ const StudentTable = () => {
                 <button className="text-red-500 hover:text-red-700">
                 <FaRegTrashAlt/> {/* Font Awesome delete icon */}
                 </button>
-                <button className="text-red-500 hover:text-red-700">
+                <button 
+                onClick={() => setIsModalOpen(true)}
+                className="text-red-500 hover:text-red-700">
                 <FaEdit/> {/* Font Awesome edit icon */}
                 </button>
               </td>
@@ -83,6 +88,11 @@ const StudentTable = () => {
           Next
         </button>
       </div>
+       {/* Modal Component */}
+       <UpdateStatusModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };
