@@ -11,7 +11,7 @@ vi.mock('../../../../app/Canteendashboard/Topbar/page', () => ({
 vi.mock('../../../../app/Canteendashboard/Header/page', () => ({
     default: ({ title }) => <div>{title}</div>,
 }));
-vi.mock('../../../../components/ReportGenerate', () => ({
+vi.mock('../../../../app/Canteendashboard/Reports_/ReportGenerate', () => ({
     default: () => <div>Mocked ReportGenerate</div>,
 }));
 
