@@ -10,19 +10,25 @@ import Link from 'next/link';
 
 const Page = () => {
   const currentPath = usePathname();
-
   const [canteens, setCanteens] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch canteen data
     const fetchCanteens = async () => {
       try {
-        const res = await fetch('/api/allcanteenslist');
+        const res = await fetch('/api/allcanteenslist', {
+          headers: { 'Content-Type': 'application/json' },
+        });
+        if (!res.ok) throw new Error('Failed to fetch data');
+        
         const data = await res.json();
-        setCanteens(data);
+        
+        const activeCanteens = data.filter(canteen => canteen.ownerstatus !== 'Inactive');
+        setCanteens(activeCanteens);
       } catch (error) {
         console.error('Error fetching canteens:', error);
+        setError('Failed to load canteens.');
       } finally {
         setLoading(false);
       }
@@ -31,14 +37,13 @@ const Page = () => {
     fetchCanteens();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="flex bg-gray-100">
-      <div className='fixed'>
-        <Sidebar activePath={currentPath} /> {/* Pass current path as activePath */}
+      <div className="fixed">
+        <Sidebar activePath={currentPath} />
       </div>
       <div className="flex-1 ml-20 md:ml-60">
         <Topbar />
@@ -46,7 +51,7 @@ const Page = () => {
         <div className="max-h-[70%] m-5">
           <div className="grid justify-between w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {canteens.map((canteen, index) => (
-              <Link key={index} href={`/canteen/${canteen._id}`}>
+              <Link key={index} href={`/UserView/Canteens/${canteen.canteenName}`}>
                 <CanteenCard name={canteen.canteenName} image={canteen.image} />
               </Link>
             ))}
