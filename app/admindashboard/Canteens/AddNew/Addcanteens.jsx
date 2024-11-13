@@ -68,35 +68,52 @@ export default function AddCanteens() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     // Validate form
     if (!validateCanteenForm()) {
       alert("Please fill out all canteen details.");
       return;
     }
-
+  
     const fullData = {
       ...canteenDetails,
       image: canteenImageURL, // Use the uploaded image URL
     };
-
+  
     try {
       const response = await fetch('/api/canteens', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(fullData),
       });
-
+  
       if (!response.ok) throw new Error('Failed to add canteen.');
-
+  
       const result = await response.json();
       alert(result.message);
+  
+      // Clear form fields after successful submission
+      setCanteenDetails({
+        canteenName: '',
+        businessEmail: '',
+        openHour: '',
+        closedHour: '',
+        image: null,
+        phoneNumber: '',
+        status: 'Active', // default status
+        openingDate: '',
+        ownerstatus: 'Inactive', // default owner status
+      });
+  
+      setCanteenImageSrc(null);
+      setCanteenImageURL('');
+      setCanteenProgress(0); // Reset progress bar
     } catch (error) {
       console.error('Error:', error);
       alert('There was an error submitting the form.');
     }
   };
-
+  
   // Validate canteen form
   const validateCanteenForm = () => {
     const phoneRegex = /^[0-9]{10}$/; // Phone number should be 10 digits
@@ -206,15 +223,7 @@ export default function AddCanteens() {
             <option value="Inactive">Inactive</option>
             <option value="Pending">Pending</option>
           </select>
-          <select
-            name="ownerstatus"
-            value={canteenDetails.ownerstatus}
-            onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
-          >
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-          </select>
+          
         </div>
 
         <div className="flex justify-between mt-4">
