@@ -1,10 +1,10 @@
 "use client";
 import { useState } from 'react';
-import Image from 'next/image';
 
 export default function AddCanteens() {
   const [activeTab, setActiveTab] = useState('canteen');
-  const [progress, setProgress] = useState(0);
+  const [canteenProgress, setCanteenProgress] = useState(0);
+  const [ownerProgress, setOwnerProgress] = useState(0);
   const [canteenImageSrc, setCanteenImageSrc] = useState(null);
   const [ownerImageSrc, setOwnerImageSrc] = useState(null);
   const [canteenImageURL, setCanteenImageURL] = useState('');
@@ -16,9 +16,9 @@ export default function AddCanteens() {
     businessEmail: '',
     openHour: '',
     closedHour: '',
-    date: '',
-    image: null, // This will hold the file object
+    image: null,
     phoneNumber: '',
+    status: 'Active', // default status
   });
 
   // State for owner details
@@ -28,10 +28,9 @@ export default function AddCanteens() {
     contactNumber: '',
     ownerEmail: '',
     nic: '',
-    ownerDate: '',
     password: '',
     confirmPassword: '',
-    image: null, // This will hold the file object for owner
+    image: null,
   });
 
   // Handle input changes
@@ -45,7 +44,7 @@ export default function AddCanteens() {
   };
 
   // Handle file change (image upload)
-  const handleFileChange = async (e, section) => {
+  const handleFileChange = (e, section) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -53,12 +52,12 @@ export default function AddCanteens() {
     if (section === 'canteen') {
       setCanteenDetails((prev) => ({
         ...prev,
-        image: file, // Store the file object
+        image: file,
       }));
     } else {
       setOwnerDetails((prev) => ({
         ...prev,
-        image: file, // Store the file object
+        image: file,
       }));
     }
 
@@ -72,7 +71,11 @@ export default function AddCanteens() {
     xhr.upload.onprogress = (event) => {
       if (event.lengthComputable) {
         const percent = Math.round((event.loaded / event.total) * 100);
-        setProgress(percent);
+        if (section === 'canteen') {
+          setCanteenProgress(percent);
+        } else {
+          setOwnerProgress(percent);
+        }
       }
     };
 
@@ -85,7 +88,6 @@ export default function AddCanteens() {
         setOwnerImageSrc(response.secure_url);
         setOwnerImageURL(response.secure_url);
       }
-      setProgress(100);
     };
 
     xhr.send(formData);
@@ -94,6 +96,10 @@ export default function AddCanteens() {
   // Handle the 'Next' button click
   const handleNext = (e) => {
     e.preventDefault();
+    if (!validateCanteenForm()) {
+      alert("Please fill out all canteen details.");
+      return;
+    }
     setActiveTab('owner');
   };
 
@@ -103,37 +109,55 @@ export default function AddCanteens() {
     setActiveTab('canteen');
   };
 
+  // Validate canteen form
+  const validateCanteenForm = () => {
+    return Object.values(canteenDetails).every(field => field !== '' && field !== null) && canteenImageURL;
+  };
+
+  // Validate owner form
+  const validateOwnerForm = () => {
+    return Object.values(ownerDetails).every(field => field !== '' && field !== null) && ownerImageURL;
+  };
+
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check for missing fields in both canteen and owner details
-    const isCanteenComplete = Object.values(canteenDetails).every(field => field !== '' && field !== null);
-    const isOwnerComplete = Object.values(ownerDetails).every(field => field !== '' && field !== null);
-
-    // Show specific alerts for missing fields
-    if (!isCanteenComplete) {
-      alert("Please fill in all canteen details.");
+    // First, validate the owner form before submitting
+    if (!validateOwnerForm()) {
+      alert("Please fill out all owner details and upload the image.");
       return;
     }
 
-    if (!isOwnerComplete) {
-      alert("Please fill in all owner details.");
-      return;
+    const fullData = {
+      ...canteenDetails,
+      canteenImageURL,
+      ownerDetails: {
+        ...ownerDetails,
+        ownerImageURL,
+      },
+    };
+
+    // Send the data to the API
+    try {
+      const res = await fetch('/api/Canteens', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(fullData),
+      });
+
+      if (res.ok) {
+        alert("Canteen and Owner created successfully!");
+      } else {
+        const error = await res.json();
+        alert(`Error: ${error.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error submitting the form.");
     }
-
-    if (!canteenImageURL || !ownerImageURL) {
-      alert("Please upload an image.");
-      return;
-    }
-
-    const fullData = { ...canteenDetails, ...ownerDetails, canteenImageURL, ownerImageURL };
-
-    // Log the submitted data in JSON format
-    console.log('Form submitted successfully:', JSON.stringify(fullData, null, 2));
-
-    // Handle form submission logic here (e.g., send data to API)
-    alert("Form submitted!");
   };
 
   return (
@@ -161,7 +185,7 @@ export default function AddCanteens() {
           <div className="space-y-4">
             <div className="flex items-center justify-center">
               <div className="flex items-center justify-center w-20 h-20 bg-gray-700 rounded-md">
-                <img src={canteenDetails.image ? URL.createObjectURL(canteenDetails.image) : "/placeholder.png"} alt="Upload" className="object-cover w-full h-full" />
+                <img src={canteenDetails.image ? URL.createObjectURL(canteenDetails.image) : "/placeholder.png"} alt="Canteen Upload" className="object-cover w-full h-full" />
               </div>
             </div>
             <input
@@ -188,7 +212,7 @@ export default function AddCanteens() {
               className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
               required
             />
-            {progress > 0 && <p>{progress}% Uploaded</p>}
+            {canteenProgress > 0 && <p>{canteenProgress}% Uploaded</p>}
             <input
               type="text"
               name="openHour"
@@ -216,17 +240,26 @@ export default function AddCanteens() {
               className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
               required
             />
-            <input
-              type="date"
-              name="date"
-              value={canteenDetails.date}
+            {/* Removed Date Input */}
+            {/* Status Dropdown for Canteen */}
+            <select
+              name="status"
+              value={canteenDetails.status}
               onChange={(e) => handleInputChange(e, 'canteen')}
               className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
-              required
-            />
+            >
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="Pending">Pending</option>
+            </select>
           </div>
         ) : (
           <div className="space-y-4">
+            <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center w-20 h-20 bg-gray-700 rounded-md">
+                <img src={ownerDetails.image ? URL.createObjectURL(ownerDetails.image) : "/placeholder.png"} alt="Owner Upload" className="object-cover w-full h-full" />
+              </div>
+            </div>
             <input
               type="text"
               name="firstName"
@@ -248,17 +281,8 @@ export default function AddCanteens() {
             <input
               type="email"
               name="ownerEmail"
-              placeholder="Owner Email Address"
+              placeholder="Owner Email"
               value={ownerDetails.ownerEmail}
-              onChange={(e) => handleInputChange(e, 'owner')}
-              className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
-              required
-            />
-            <input
-              type="text"
-              name="contactNumber"
-              placeholder="Contact Number"
-              value={ownerDetails.contactNumber}
               onChange={(e) => handleInputChange(e, 'owner')}
               className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
               required
@@ -269,20 +293,12 @@ export default function AddCanteens() {
               className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
               required
             />
-            {progress > 0 && <p>{progress}% Uploaded</p>}
+            {ownerProgress > 0 && <p>{ownerProgress}% Uploaded</p>}
             <input
               type="text"
-              name="nic"
-              placeholder="NIC"
-              value={ownerDetails.nic}
-              onChange={(e) => handleInputChange(e, 'owner')}
-              className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
-              required
-            />
-            <input
-              type="date"
-              name="ownerDate"
-              value={ownerDetails.ownerDate}
+              name="contactNumber"
+              placeholder="Contact Number"
+              value={ownerDetails.contactNumber}
               onChange={(e) => handleInputChange(e, 'owner')}
               className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
               required
@@ -305,37 +321,46 @@ export default function AddCanteens() {
               className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
               required
             />
+            <input
+              type="text"
+              name="nic"
+              placeholder="NIC"
+              value={ownerDetails.nic}
+              onChange={(e) => handleInputChange(e, 'owner')}
+              className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+              required
+            />
           </div>
         )}
 
         <div className="flex justify-between mt-4">
-          {activeTab === 'owner' && (
+          {activeTab === 'canteen' && (
             <button
               type="button"
-              onClick={handleBack}
-              className="px-4 py-2 text-white bg-gray-600 rounded-md"
+              className="px-4 py-2 text-white bg-blue-600 rounded-md"
+              onClick={handleNext}
             >
-              Back
+              Next
             </button>
           )}
-          <div>
-            {activeTab === 'canteen' ? (
+
+          {activeTab === 'owner' && (
+            <>
               <button
                 type="button"
-                onClick={handleNext}
-                className="px-4 py-2 text-black bg-orange-500 rounded-md"
+                className="px-4 py-2 text-white bg-gray-600 rounded-md"
+                onClick={handleBack}
               >
-                Next
+                Back
               </button>
-            ) : (
               <button
                 type="submit"
-                className="px-4 py-2 text-black bg-orange-500 rounded-md"
+                className="px-4 py-2 text-white bg-green-600 rounded-md"
               >
                 Submit
               </button>
-            )}
-          </div>
+            </>
+          )}
         </div>
       </form>
     </div>

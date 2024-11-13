@@ -1,7 +1,9 @@
+"use client";  // Add this to make the component work with useState
+
 import React, { useState } from 'react';
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
-import UpdateStatusModal from "./Modal";
-import Deleteowners from './Deleteowners';
+import Cashierstatus from './Cashierstatus';
+import Deletecashier from './Deletecashier';
 
 // Sample data for demonstration
 const students = [
@@ -17,7 +19,7 @@ const ITEMS_PER_PAGE = 4;
 const StudentTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteOwnerModalOpen, setIsDeleteOwnerModalOpen] = useState(false);
+  const [isDeleteCashierModalOpen, setIsDeleteCashierModalOpen] = useState(false);
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentStudents = students.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -36,7 +38,7 @@ const StudentTable = () => {
 
   return (
     <div className="p-4 text-white bg-gray-800 rounded-lg">
-      <h2 className="mb-4 text-xl font-semibold">Owners</h2>
+      <h2 className="mb-4 text-xl font-semibold">Cashiers</h2>
       <table className="w-full text-left text-gray-300">
         <thead>
           <tr className="text-white bg-orange-500">
@@ -60,16 +62,16 @@ const StudentTable = () => {
               <td className="p-2">{student.date}</td>
               <td className="flex p-2 space-x-2">
                 <button
-                  onClick={() => setIsDeleteOwnerModalOpen(true)}
+                  onClick={() => setIsDeleteCashierModalOpen(true)}
                   className="text-red-500 hover:text-red-700"
                 >
-                  <FaRegTrashAlt /> {/* Font Awesome delete icon */}
+                  <FaRegTrashAlt />
                 </button>
                 <button 
                   onClick={() => setIsModalOpen(true)}
                   className="text-red-500 hover:text-red-700"
                 >
-                  <FaEdit /> {/* Font Awesome edit icon */}
+                  <FaEdit />
                 </button>
               </td>
             </tr>
@@ -94,14 +96,14 @@ const StudentTable = () => {
         </button>
       </div>
       {/* Update Status Modal */}
-      <UpdateStatusModal
+      <Cashierstatus
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
-      {/* Delete Owner Modal */}
-      <Deleteowners
-        isOpen={isDeleteOwnerModalOpen}
-        onClose={() => setIsDeleteOwnerModalOpen(false)}
+      {/* Delete Cashier Modal */}
+      <Deletecashier
+        isOpen={isDeleteCashierModalOpen}
+        onClose={() => setIsDeleteCashierModalOpen(false)}
       />
     </div>
   );

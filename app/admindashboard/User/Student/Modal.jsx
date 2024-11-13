@@ -34,16 +34,25 @@ const UpdateStatusModal = ({ isOpen, onClose }) => {
               Block
             </label>
           </div>
-          <button
-            onClick={() => {
-              // Handle Save Action
-              console.log("Status Updated to:", status);
-              onClose();
-            }}
-            className="px-4 py-2 mt-6 text-white bg-orange-500 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400"
-          >
-            Save
-          </button>
+          <div className="flex justify-end mt-6 space-x-4">
+            <button
+              onClick={() => {
+                console.log(`Status updated to: ${status}`);
+                onClose();
+              }}
+              type="button"
+              className="px-4 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-400 focus:outline-none"
+            >
+              Save
+            </button>
+            <button
+              onClick={onClose}
+              type="button"
+              className="px-4 py-2 text-white bg-gray-600 rounded-md hover:bg-gray-500 focus:outline-none"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </div>

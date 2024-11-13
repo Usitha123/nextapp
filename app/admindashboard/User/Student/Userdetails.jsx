@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
 import UpdateStatusModal from "./Modal";
+import Deletestudents from './Deletestudents';
 
 // Sample data for demonstration
 const students = [
@@ -16,7 +17,7 @@ const ITEMS_PER_PAGE = 4;
 const StudentTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [isDeleteStudentsModalOpen, setIsDeleteStudentsModalOpen] = useState(false);
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentStudents = students.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -57,14 +58,18 @@ const StudentTable = () => {
               <td className="p-2">{student.faculty}</td>
               <td className="p-2">{student.status}</td>
               <td className="p-2">{student.date}</td>
-              <td className="p-2">
-                <button className="text-red-500 hover:text-red-700">
-                <FaRegTrashAlt/> {/* Font Awesome delete icon */}
+              <td className="flex p-2 space-x-2">
+                <button
+                  onClick={() => setIsDeleteStudentsModalOpen(true)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  <FaRegTrashAlt /> {/* Font Awesome delete icon */}
                 </button>
                 <button 
-                onClick={() => setIsModalOpen(true)}
-                className="text-red-500 hover:text-red-700">
-                <FaEdit/> {/* Font Awesome edit icon */}
+                  onClick={() => setIsModalOpen(true)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  <FaEdit /> {/* Font Awesome edit icon */}
                 </button>
               </td>
             </tr>
@@ -88,10 +93,15 @@ const StudentTable = () => {
           Next
         </button>
       </div>
-       {/* Modal Component */}
-       <UpdateStatusModal
+      {/* Update Status Modal */}
+      <UpdateStatusModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+      />
+      {/* Delete Students Modal */}
+      <Deletestudents
+        isOpen={isDeleteStudentsModalOpen}
+        onClose={() => setIsDeleteStudentsModalOpen(false)}
       />
     </div>
   );

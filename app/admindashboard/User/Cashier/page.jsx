@@ -1,7 +1,10 @@
-import React from 'react'
+"use client";
+
+import React, { useState } from 'react';
 import Sidebar from '../../Sidebar/page';
 import Topbar from '../../Topbar/page';
 import Header from '../../Header/page';
+import Cashierdetails from './Cashierdetails';
 
 function page() {
   return (
@@ -11,7 +14,7 @@ function page() {
         <Topbar />
         <Header title="Cashier" />
         <div className="p-4">
-            <h1>Cashier</h1>
+            <Cashierdetails/>
         </div>
       </div>
     </div>

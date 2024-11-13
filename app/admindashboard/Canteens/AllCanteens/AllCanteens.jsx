@@ -1,10 +1,13 @@
 "use client";
 
-import React from "react";
-import Link from "next/link"; // Ensure you import Link from "next/link"
+import React, { useState } from "react";
+import Link from "next/link";
 import { FaTrash, FaEdit } from "react-icons/fa";
+import Deletecanteens from './Deletecanteens';
 
 const CanteensTable = () => {
+  const [isDeleteCanteenModalOpen, setIsDeleteCanteenModalOpen] = useState(false);
+
   const canteens = [
     {
       name: "SkyCafe Canteen",
@@ -16,7 +19,7 @@ const CanteensTable = () => {
     },
     {
       name: "Open Canteen",
-      email: "skycafe@gmail.com",
+      email: "opencanteen@gmail.com",
       phone: "0112596347",
       owner: "Srimal",
       openedTime: "7.00 AM - 9.00 PM",
@@ -24,7 +27,7 @@ const CanteensTable = () => {
     },
     {
       name: "Rahula Canteen",
-      email: "skycafe@gmail.com",
+      email: "rahula@gmail.com",
       phone: "0112596347",
       owner: "Akila",
       openedTime: "7.00 AM - 9.00 PM",
@@ -32,7 +35,7 @@ const CanteensTable = () => {
     },
     {
       name: "Gym Canteen",
-      email: "skycafe@gmail.com",
+      email: "gymcanteen@gmail.com",
       phone: "0112596347",
       owner: "Kavindu",
       openedTime: "7.00 AM - 9.00 PM",
@@ -74,7 +77,10 @@ const CanteensTable = () => {
                 <td className="px-4 py-2">{canteen.openedTime}</td>
                 <td className="px-4 py-2">{canteen.dateRegistered}</td>
                 <td className="flex px-4 py-2 space-x-2">
-                  <button className="text-gray-400 hover:text-red-500">
+                  <button 
+                    onClick={() => setIsDeleteCanteenModalOpen(true)}
+                    className="text-gray-400 hover:text-red-500"
+                  >
                     <FaTrash />
                   </button>
                   <button className="text-gray-400 hover:text-orange-500">
@@ -94,6 +100,11 @@ const CanteensTable = () => {
           Next
         </button>
       </div>
+      {/* Delete Canteen Modal */}
+      <Deletecanteens
+        isOpen={isDeleteCanteenModalOpen}
+        onClose={() => setIsDeleteCanteenModalOpen(false)}
+      />
     </div>
   );
 };
