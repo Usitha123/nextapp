@@ -13,7 +13,7 @@ export default defineConfig({
     setupFiles: ['./test/setup.js'],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, './'),
+        '@': path.resolve(__dirname, 'app'),
       },
     },
   },
