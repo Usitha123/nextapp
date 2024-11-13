@@ -1,52 +1,45 @@
-import { connectMongoDB } from "@/lib/mongodb"; // Utility to connect to the database
-import Canteen from '@/models/Canteen';
+import Canteen from '../../../models/Canteen';
+import { connectMongoDB } from '@/lib/mongodb';
 
-export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    try {
-      // Connect to the database
-      await connectMongoDB();
+export async function POST(req) {
+  try {
+    // Parse the request body
+    const { canteenName, businessEmail, openHour, closedHour, phoneNumber, image, status, openingDate, ownerstatus } = await req.json();
 
-      const {
-        canteenName,
-        businessEmail,
-        openHour,
-        closedHour,
-        phoneNumber,
-        status,
-        canteenImageURL,
-        ownerDetails,
-      } = req.body;
+    // Connect to MongoDB
+    await connectMongoDB();
 
-      // Create a new canteen document
-      const canteen = new Canteen({
-        canteenName,
-        businessEmail,
-        openHour,
-        closedHour,
-        phoneNumber,
-        status,
-        canteenImageURL,
-        owner: {
-          firstName: ownerDetails.firstName,
-          lastName: ownerDetails.lastName,
-          contactNumber: ownerDetails.contactNumber,
-          ownerEmail: ownerDetails.ownerEmail,
-          nic: ownerDetails.nic,
-          password: ownerDetails.password, // Password should be hashed before storing
-          ownerImageURL: ownerDetails.ownerImageURL,
-        },
-      });
-
-      // Save the document to MongoDB
-      await canteen.save();
-
-      return res.status(201).json({ message: 'Canteen and owner created successfully' });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Error creating canteen and owner' });
+    // Ensure `openingDate` is properly parsed as a Date object
+    const openingDateObj = new Date(openingDate);
+    if (isNaN(openingDateObj.getTime())) {
+      return new Response(JSON.stringify({ message: 'Invalid opening date format' }), { status: 400 });
     }
-  } else {
-    return res.status(405).json({ message: 'Method Not Allowed' });
+
+    // Create the new canteen document
+    const newCanteen = new Canteen({
+      canteenName,
+      businessEmail,
+      openHour,
+      closedHour,
+      phoneNumber,
+      image,
+      status,
+      openingDate: openingDateObj, // Store as a Date object
+      ownerstatus: ownerstatus || 'Inactive', // Default to 'Inactive' if not provided
+    });
+
+    // Save the new canteen
+    await newCanteen.save();
+
+    return new Response(JSON.stringify({ message: 'Canteen added successfully' }), { status: 201 });
+  } catch (error) {
+    console.error('Error adding canteen:', error);
+
+    // Check if the error is a validation error
+    if (error.name === 'ValidationError') {
+      return new Response(JSON.stringify({ message: 'Validation failed', errors: error.errors }), { status: 400 });
+    }
+
+    return new Response(JSON.stringify({ message: 'Error adding canteen', error: error.message }), { status: 500 });
   }
 }

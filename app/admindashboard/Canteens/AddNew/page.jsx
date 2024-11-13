@@ -2,7 +2,7 @@ import React from 'react'
 import Sidebar from '../../Sidebar/page';
 import Topbar from '../../Topbar/page';
 import Header from '../../Header/page';
-import Add from './Add';
+import Addcanteens from './Addcanteens';
 
 function page() {
   return (
@@ -12,7 +12,7 @@ function page() {
         <Topbar />
         <Header title="Add New" />
         <div className="p-4">
-             <Add />
+             <Addcanteens />
         </div>
       </div>
     </div>

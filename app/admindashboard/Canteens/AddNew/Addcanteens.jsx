@@ -1,123 +1,231 @@
-'use client';
-import React from 'react';
+"use client"
+import { useState, useEffect } from 'react';
 
-const FormComponent = () => {
+export default function AddCanteens() {
+  const [canteenProgress, setCanteenProgress] = useState(0);
+  const [canteenImageSrc, setCanteenImageSrc] = useState(null);
+  const [canteenImageURL, setCanteenImageURL] = useState('');
+  const [isMounted, setIsMounted] = useState(false); // Track if the component has mounted
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const data = {
-      firstName: e.target.firstName.value,
-      lastName: e.target.lastName.value,
-      phone: e.target.phone.value,
-      email: e.target.email.value,
-      nicNumber: e.target.nicNumber.value,
-      imageURL: e.target.imageURL.value, // Capture the image URL
+  // State for canteen details
+  const [canteenDetails, setCanteenDetails] = useState({
+    canteenName: '',
+    businessEmail: '',
+    openHour: '',
+    closedHour: '',
+    image: null,
+    phoneNumber: '',
+    status: 'Active', // default status
+    openingDate: '', // added date field
+    ownerstatus: 'Inactive', // default owner status
+  });
+
+  // Run after the first render to indicate client-side rendering
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Handle input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setCanteenDetails((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle file change (image upload)
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Update the state with the selected file
+    setCanteenDetails((prev) => ({
+      ...prev,
+      image: file,
+    }));
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'my-uploads'); // replace with your Cloudinary upload preset
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://api.cloudinary.com/v1_1/dtvsl05hw/image/upload');
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100);
+        setCanteenProgress(percent);
+      }
     };
 
-    // Send data to the new API endpoint
-    const response = await fetch('/api/owner', {  // Ensure the endpoint is '/api/owner'
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+    xhr.onload = () => {
+      const response = JSON.parse(xhr.responseText);
+      setCanteenImageSrc(response.secure_url);
+      setCanteenImageURL(response.secure_url);
+    };
 
-    if (response.ok) {
-      alert('Owner saved successfully!');
-    } else {
-      const error = await response.json();
-      alert(`Failed to save owner: ${error.error || 'Unknown error'}`);
+    xhr.send(formData);
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validate form
+    if (!validateCanteenForm()) {
+      alert("Please fill out all canteen details.");
+      return;
+    }
+
+    const fullData = {
+      ...canteenDetails,
+      image: canteenImageURL, // Use the uploaded image URL
+    };
+
+    try {
+      const response = await fetch('/api/canteens', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(fullData),
+      });
+
+      if (!response.ok) throw new Error('Failed to add canteen.');
+
+      const result = await response.json();
+      alert(result.message);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('There was an error submitting the form.');
     }
   };
 
+  // Validate canteen form
+  const validateCanteenForm = () => {
+    const phoneRegex = /^[0-9]{10}$/; // Phone number should be 10 digits
+    const timeRegex = /^([01]?[0-9]|2[0-3]):([0-5][0-9])$/; // HH:MM format for hours
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/; // Check if the openingDate is a valid date string
+
+    const { phoneNumber, openHour, closedHour, openingDate, canteenName, businessEmail } = canteenDetails;
+
+    return (
+      canteenName &&
+      businessEmail &&
+      phoneNumber &&
+      openHour &&
+      closedHour &&
+      openingDate &&
+      phoneRegex.test(phoneNumber) &&
+      timeRegex.test(openHour) &&
+      timeRegex.test(closedHour) &&
+      dateRegex.test(openingDate) && // Validate opening date
+      canteenImageURL // Ensure image URL is valid
+    );
+  };
+
+  // Render content only after client-side has mounted
+  if (!isMounted) {
+    return null; // Or show a loading spinner or fallback UI
+  }
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-900">
-      <div className="p-8 bg-gray-800 rounded-lg shadow-lg w-96">
-        <h2 className="mb-6 text-2xl font-bold text-center text-white">Owner Registration Form</h2>
-
-        <form onSubmit={handleSubmit}>
-          <div className="flex flex-col mb-4">
-            <label className="mb-2 text-sm text-gray-300">First Name</label>
-            <input
-              type="text"
-              name="firstName"
-              placeholder="First name"
-              className="w-full px-4 py-2 text-gray-200 bg-gray-700 border border-gray-600 rounded focus:border-orange-500 focus:outline-none"
-              required
-            />
+    <div className="w-full max-w-lg p-6 mx-auto text-white bg-gray-900 rounded-md">
+      <h2 className="mb-4 text-xl font-bold">Add Canteens</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="space-y-4">
+          <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center w-20 h-20 bg-gray-700 rounded-md">
+              <img src={canteenDetails.image ? URL.createObjectURL(canteenDetails.image) : "/placeholder.png"} alt="Canteen Upload" className="object-cover w-full h-full" />
+            </div>
           </div>
+          <input
+            type="text"
+            name="canteenName"
+            placeholder="Canteen Name"
+            value={canteenDetails.canteenName}
+            onChange={handleInputChange}
+            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+            required
+          />
+          <input
+            type="email"
+            name="businessEmail"
+            placeholder="Business Email"
+            value={canteenDetails.businessEmail}
+            onChange={handleInputChange}
+            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+            required
+          />
+          <input
+            type="file"
+            onChange={handleFileChange}
+            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+            required
+          />
+          {canteenProgress > 0 && <p>{canteenProgress}% Uploaded</p>}
+          <input
+            type="text"
+            name="openHour"
+            placeholder="Open Hour (HH:MM)"
+            value={canteenDetails.openHour}
+            onChange={handleInputChange}
+            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+            required
+          />
+          <input
+            type="text"
+            name="closedHour"
+            placeholder="Closed Hour (HH:MM)"
+            value={canteenDetails.closedHour}
+            onChange={handleInputChange}
+            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+            required
+          />
+          <input
+            type="text"
+            name="phoneNumber"
+            placeholder="Phone Number (10 digits)"
+            value={canteenDetails.phoneNumber}
+            onChange={handleInputChange}
+            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+            required
+            pattern="^[0-9]{10}$"
+          />
+          <input
+            type="date"
+            name="openingDate"
+            value={canteenDetails.openingDate}
+            onChange={handleInputChange}
+            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+            required
+          />
+          <select
+            name="status"
+            value={canteenDetails.status}
+            onChange={handleInputChange}
+            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+          >
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+            <option value="Pending">Pending</option>
+          </select>
+          <select
+            name="ownerstatus"
+            value={canteenDetails.ownerstatus}
+            onChange={handleInputChange}
+            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+          >
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
 
-          <div className="flex flex-col mb-4">
-            <label className="mb-2 text-sm text-gray-300">Last Name</label>
-            <input
-              type="text"
-              name="lastName"
-              placeholder="Last Name"
-              className="w-full px-4 py-2 text-gray-200 bg-gray-700 border border-gray-600 rounded focus:border-orange-500 focus:outline-none"
-              required
-            />
-          </div>
-
-          <div className="flex flex-col mb-4">
-            <label className="mb-2 text-sm text-gray-300">Phone</label>
-            <input
-              type="text"
-              name="phone"
-              placeholder="Phone"
-              className="w-full px-4 py-2 text-gray-200 bg-gray-700 border border-gray-600 rounded focus:border-orange-500 focus:outline-none"
-              required
-            />
-          </div>
-
-          <div className="flex flex-col mb-4">
-            <label className="mb-2 text-sm text-gray-300">Email</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              className="w-full px-4 py-2 text-gray-200 bg-gray-700 border border-gray-600 rounded focus:border-orange-500 focus:outline-none"
-              required
-            />
-          </div>
-
-          <div className="flex flex-col mb-4">
-            <label className="mb-2 text-sm text-gray-300">NIC Number</label>
-            <input
-              type="text"
-              name="nicNumber"
-              placeholder="NIC Number"
-              className="w-full px-4 py-2 text-gray-200 bg-gray-700 border border-gray-600 rounded focus:border-orange-500 focus:outline-none"
-              required
-            />
-          </div>
-
-          <div className="flex flex-col mb-6">
-            <label className="mb-2 text-sm text-gray-300">Image URL</label>
-            <input
-              type="url"
-              name="imageURL"
-              placeholder="Enter image URL"
-              className="w-full px-4 py-2 text-gray-200 bg-gray-700 border border-gray-600 rounded focus:border-orange-500 focus:outline-none"
-            />
-          </div>
-
-          <div className="flex justify-end gap-4">
-            <button
-              type="button"
-              className="px-4 py-2 text-orange-400 bg-gray-700 rounded hover:bg-gray-600 focus:outline-none"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 text-white bg-orange-500 rounded hover:bg-orange-600 focus:outline-none"
-            >
-              Save
-            </button>
-          </div>
-        </form>
-      </div>
+        <div className="flex justify-between mt-4">
+          <button
+            type="submit"
+            className="px-4 py-2 text-white bg-green-600 rounded-md"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
     </div>
   );
-};
-
-export default FormComponent;
+}

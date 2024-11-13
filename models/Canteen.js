@@ -8,6 +8,8 @@ const canteenSchema = new mongoose.Schema({
   businessEmail: {
     type: String,
     required: true,
+    unique: true,
+    match: [/\S+@\S+\.\S+/, 'Please enter a valid email address'], // Email validation regex
   },
   openHour: {
     type: String,
@@ -20,45 +22,24 @@ const canteenSchema = new mongoose.Schema({
   phoneNumber: {
     type: String,
     required: true,
+    match: /^[0-9]{10}$/, // 10 digits phone number
+  },
+  image: {
+    type: String, // URL of the image
   },
   status: {
     type: String,
     enum: ['Active', 'Inactive', 'Pending'],
     default: 'Active',
   },
-  canteenImageURL: {
-    type: String,
+  openingDate: {
+    type: Date,
     required: true,
   },
-  owner: {
-    firstName: {
-      type: String,
-      required: true,
-    },
-    lastName: {
-      type: String,
-      required: true,
-    },
-    contactNumber: {
-      type: String,
-      required: true,
-    },
-    ownerEmail: {
-      type: String,
-      required: true,
-    },
-    nic: {
-      type: String,
-      required: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    ownerImageURL: {
-      type: String,
-      required: true,
-    },
+  ownerstatus: {
+    type: String,
+    enum: ['Inactive', 'Active'],
+    default: 'Inactive', // Default owner status
   },
 });
 
