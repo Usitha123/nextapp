@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from 'react';
@@ -6,11 +5,12 @@ import Sidebar from '../../Sidebar/page';
 import Topbar from '../../Topbar/page';
 import Header from '../../Header/page';
 import { usePathname } from 'next/navigation';
-import Cart from '../Cart/Cart'; // New Cart Component
+import Cart from '../Cart/Cart';
 import FoodDisplay from '../Food/FoodDisplay';
 
 const Page = () => {
-  const currentPath = usePathname("/UserView/Canteens");
+  const fullPath = usePathname();
+  const currentPath = fullPath.replace('/UserView/Canteens/', ''); // Remove prefix
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -18,11 +18,12 @@ const Page = () => {
         <Sidebar activePath={currentPath} />
       </div>
 
-      <div className="flex-1 ml-20 md:ml-60 ">
-      <Topbar />
-      
-        <Header title="Open Canteen" />
-        
+      <div className="flex-1 ml-20 md:ml-60">
+        <Topbar />
+
+        {/* Pass the modified path as the header title */}
+        <Header title={`${currentPath} Canteen`} />
+
         {/* Tabs for meal categories */}
         <div className="flex flex-wrap"></div>
         <div className="flex px-3 m-2 space-x-4 font-semibold">
@@ -32,7 +33,6 @@ const Page = () => {
         </div>
 
         {/* Note */}
-
         <div className="flex p-4 space-x-8">
           {/* Food display */}
           <div className="w-2/3">
@@ -41,16 +41,15 @@ const Page = () => {
 
           {/* Cart */}
           <div className="w-1/3">
-          <div className="p-4 mb-4 text-sm bg-white border border-orange-500 rounded-md shadow-sm shadow-orange-200">
-          <strong>Note:</strong> You are responsible for paying the full amount of your order and collecting it.
-        </div>
-
+            <div className="p-4 mb-4 text-sm bg-white border border-orange-500 rounded-md shadow-sm shadow-orange-200">
+              <strong>Note:</strong> You are responsible for paying the full amount of your order and collecting it.
+            </div>
             <Cart />
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default Page;

@@ -24,7 +24,7 @@ const Page = () => {
         
         const data = await res.json();
         
-        const activeCanteens = data.filter(canteen => canteen.ownerstatus !== 'Inactive');
+        const activeCanteens = data.filter(canteen => canteen.ownerstatus !== 'Inactive' && canteen.status == 'Active');
         setCanteens(activeCanteens);
       } catch (error) {
         console.error('Error fetching canteens:', error);
