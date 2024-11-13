@@ -5,10 +5,10 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req) {
   try {
-    const { firstName, lastName, email, password } = await req.json();
+    const { firstName, lastName, email, password, faculty, phoneNumber } = await req.json();
 
     // Check for required fields
-    if (!firstName || !lastName || !email || !password) {
+    if (!firstName || !lastName || !email || !password || !faculty || !phoneNumber) {
       return NextResponse.json({ message: "All fields are required." }, { status: 400 });
     }
 
@@ -29,15 +29,18 @@ export async function POST(req) {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user
-    await User.create({
+    // Create a new user with status as 'active' (timestamps are handled by Mongoose automatically)
+    const newUser = await User.create({
       firstName,
       lastName,
       email,
-      password: hashedPassword, 
+      password: hashedPassword,
+      faculty,
+      phoneNumber,
+      status: 'active', // Default status is active
     });
 
-    return NextResponse.json({ message: "User registered successfully." }, { status: 201 });
+    return NextResponse.json({ message: "User registered successfully.", user: newUser }, { status: 201 });
   } catch (error) {
     console.error("Error registering user:", error);
     return NextResponse.json(

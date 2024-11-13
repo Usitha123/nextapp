@@ -1,26 +1,45 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
 import UpdateStatusModal from "./Modal";
 import Deletestudents from './Deletestudents';
-
-// Sample data for demonstration
-const students = [
-  { id: 1, name: "Sarath", phone: "0112596347", email: "email123@gmail.com", faculty: "Computing", status: "Active", date: "20/03/2021" },
-  { id: 2, name: "Amal", phone: "0112596347", email: "email123@gmail.com", faculty: "Medical", status: "Active", date: "20/03/2021" },
-  { id: 3, name: "Kamal", phone: "0112596347", email: "email123@gmail.com", faculty: "Engineering", status: "Active", date: "20/03/2021" },
-  { id: 4, name: "Amal", phone: "0112596347", email: "email123@gmail.com", faculty: "Management", status: "Block", date: "20/03/2021" },
-];
 
 // Define pagination constants
 const ITEMS_PER_PAGE = 4;
 
 const StudentTable = () => {
+  const [students, setStudents] = useState([]); // State for storing student data
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteStudentsModalOpen, setIsDeleteStudentsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true); // State for loading status
+  const [selectedStudent, setSelectedStudent] = useState(null); // Track selected student for edit/delete
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentStudents = students.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    // Fetch student data from the API
+    const fetchStudents = async () => {
+      try {
+        const res = await fetch('/api/allstudentslist'); // Ensure this matches the API path
+        if (!res.ok) {
+          throw new Error('Failed to fetch students');
+        }
+        const data = await res.json();
+        setStudents(data); // Set the fetched data to state
+      } catch (error) {
+        console.error('Error fetching students:', error);
+      } finally {
+        setLoading(false); // Set loading to false after the fetch operation
+      }
+    };
+
+    fetchStudents();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>; // Loading state
+  }
 
   const handleNext = () => {
     if (currentPage < Math.ceil(students.length / ITEMS_PER_PAGE)) {
@@ -34,39 +53,57 @@ const StudentTable = () => {
     }
   };
 
+  const handleEdit = (student) => {
+    setSelectedStudent(student);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (student) => {
+    setSelectedStudent(student);
+    setIsDeleteStudentsModalOpen(true);
+  };
+
+  // Format the createdAt date
+  const formatDate = (dateString) => {
+    const createdAt = new Date(dateString);
+    return createdAt.toLocaleString(); // This will format the date and time to a default locale string
+  };
+
   return (
     <div className="p-4 text-white bg-gray-800 rounded-lg">
       <h2 className="mb-4 text-xl font-semibold">Student</h2>
       <table className="w-full text-left text-gray-300">
         <thead>
           <tr className="text-white bg-orange-500">
-            <th className="p-2">Name</th>
-            <th className="p-2">Phone</th>
+            <th className="p-2">First Name</th>
+            <th className="p-2">Last Name</th>
             <th className="p-2">Email</th>
             <th className="p-2">Faculty</th>
+            <th className="p-2">PhoneNumber</th>
             <th className="p-2">Status</th>
             <th className="p-2">Date Registered</th>
             <th className="p-2">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {currentStudents.map((student) => (
-            <tr key={student.id} className="border-b border-gray-700">
-              <td className="p-2">{student.name}</td>
-              <td className="p-2">{student.phone}</td>
+          {currentStudents.map((student, index) => (
+            <tr key={index} className="border-b border-gray-700">
+              <td className="p-2">{student.firstName}</td>
+              <td className="p-2">{student.lastName}</td>
               <td className="p-2">{student.email}</td>
               <td className="p-2">{student.faculty}</td>
+              <td className="p-2">{student.phoneNumber}</td>
               <td className="p-2">{student.status}</td>
-              <td className="p-2">{student.date}</td>
+              <td className="p-2">{formatDate(student.createdAt)}</td>
               <td className="flex p-2 space-x-2">
                 <button
-                  onClick={() => setIsDeleteStudentsModalOpen(true)}
+                  onClick={() => handleDelete(student)}
                   className="text-red-500 hover:text-red-700"
                 >
                   <FaRegTrashAlt /> {/* Font Awesome delete icon */}
                 </button>
                 <button 
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => handleEdit(student)}
                   className="text-red-500 hover:text-red-700"
                 >
                   <FaEdit /> {/* Font Awesome edit icon */}
@@ -96,11 +133,13 @@ const StudentTable = () => {
       {/* Update Status Modal */}
       <UpdateStatusModal
         isOpen={isModalOpen}
+        student={selectedStudent}
         onClose={() => setIsModalOpen(false)}
       />
       {/* Delete Students Modal */}
       <Deletestudents
         isOpen={isDeleteStudentsModalOpen}
+        student={selectedStudent}
         onClose={() => setIsDeleteStudentsModalOpen(false)}
       />
     </div>

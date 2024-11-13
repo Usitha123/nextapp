@@ -12,6 +12,8 @@ export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [faculty, setFaculty] = useState(""); // New state for faculty
+  const [phoneNumber, setPhoneNumber] = useState(""); // New state for phone number
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
@@ -20,11 +22,19 @@ export default function RegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+    // Validation for required fields
+    if (!firstName || !lastName || !email || !password || !confirmPassword || !faculty || !phoneNumber) {
       setError("All fields are required.");
       return;
     }
 
+    // Validate that phone number is 10 digits
+    if (!/^\d{10}$/.test(phoneNumber)) {
+      setError("Phone number must be 10 digits.");
+      return;
+    }
+
+    // Validate password match
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
@@ -46,7 +56,7 @@ export default function RegisterForm() {
       const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, lastName, email, password }),
+        body: JSON.stringify({ firstName, lastName, email, password, faculty, phoneNumber }),
       });
 
       if (res.ok) {
@@ -112,7 +122,42 @@ export default function RegisterForm() {
             />
           </div>
 
-          
+          {/* Faculty Dropdown */}
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="faculty">
+              Faculty
+            </label>
+            <select
+              className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
+              value={faculty}
+              onChange={(e) => setFaculty(e.target.value)}
+              required
+            >
+              <option value="">Select Faculty</option>
+              <option value="Science">Science</option>
+              <option value="Engineering">Engineering</option>
+              <option value="Business">Business</option>
+              <option value="Arts">Arts</option>
+              {/* Add more faculties as needed */}
+            </select>
+          </div>
+
+          {/* Phone Number */}
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="phoneNumber">
+              Phone Number
+            </label>
+            <input
+              className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
+              type="text"
+              placeholder="Phone Number"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              required
+              maxLength={10} // Limit input to 10 characters
+            />
+          </div>
+
           <div className="mb-4">
             <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">
               Password
@@ -136,15 +181,14 @@ export default function RegisterForm() {
             </div>
           </div>
 
-          
           <div className="mb-4">
-            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">
-              Password
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="confirmPassword">
+              Confirm Password
             </label>
             <div className="relative">
               <input
                 className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
-                id="password"
+                id="confirmPassword"
                 type={showPassword ? "text" : "password"}
                 placeholder="Confirm Password"
                 value={confirmPassword}
