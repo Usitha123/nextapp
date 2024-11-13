@@ -1,14 +1,17 @@
+import Image from 'next/image';
 import React from 'react';
 
 function CanteenCard({ name, image }) {
   return (
       <div className="flex flex-col my-auto text-xl  font-medium leading-none  text-center text-white ">
         <div className=" flex flex-col  pt-3.5 h-[220px] rounded-t-3xl   bg-white">
-          <img
+          <Image
             loading="lazy"
             src={image}
             alt={`${name} canteen`}
-            className="mx-auto object-contain h-[90%] w-[90%]"
+            className="mx-auto object-contain"
+            width= {260}  // Adjust the width as needed
+            height={250}  // Adjust the height as needed
           />
           
         </div>
