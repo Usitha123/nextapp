@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
 import UpdateStatusModal from "./Modal";
 import Deleteowners from './Deleteowners';
+import Link from "next/link";
 
 // Sample data for demonstration
 const students = [
@@ -36,7 +37,12 @@ const StudentTable = () => {
 
   return (
     <div className="p-4 text-white bg-gray-800 rounded-lg">
+      <div className="flex justify-between mb-4">
       <h2 className="mb-4 text-xl font-semibold">Owners</h2>
+        <Link href="/admindashboard/User/Owner/Addowners" className="px-4 py-2 text-gray-900 bg-orange-500 rounded">
+          Add Owner
+        </Link>
+      </div>
       <table className="w-full text-left text-gray-300">
         <thead>
           <tr className="text-white bg-orange-500">
