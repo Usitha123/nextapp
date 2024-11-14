@@ -1,23 +1,23 @@
-"use client"
-import { useState, useEffect } from 'react';
+"use client";
+import { useState, useEffect } from "react";
 
 export default function AddCanteens() {
   const [canteenProgress, setCanteenProgress] = useState(0);
   const [canteenImageSrc, setCanteenImageSrc] = useState(null);
-  const [canteenImageURL, setCanteenImageURL] = useState('');
-  const [isMounted, setIsMounted] = useState(false); // Track if the component has mounted
+  const [canteenImageURL, setCanteenImageURL] = useState("");
+  const [isMounted, setIsMounted] = useState(false);
 
   // State for canteen details
   const [canteenDetails, setCanteenDetails] = useState({
-    canteenName: '',
-    businessEmail: '',
-    openHour: '',
-    closedHour: '',
+    canteenName: "",
+    businessEmail: "",
+    openHour: "",
+    closedHour: "",
     image: null,
-    phoneNumber: '',
-    status: 'Active', // default status
-    openingDate: '', // added date field
-    ownerstatus: 'Inactive', // default owner status
+    phoneNumber: "",
+    status: "Active", // default status
+    openingDate: "", // added date field
+    ownerstatus: "Inactive", // default owner status
   });
 
   // Run after the first render to indicate client-side rendering
@@ -43,11 +43,11 @@ export default function AddCanteens() {
     }));
 
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', 'my-uploads'); // replace with your Cloudinary upload preset
+    formData.append("file", file);
+    formData.append("upload_preset", "my-uploads"); // replace with your Cloudinary upload preset
 
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://api.cloudinary.com/v1_1/dtvsl05hw/image/upload');
+    xhr.open("POST", "https://api.cloudinary.com/v1_1/dtvsl05hw/image/upload");
 
     xhr.upload.onprogress = (event) => {
       if (event.lengthComputable) {
@@ -58,8 +58,14 @@ export default function AddCanteens() {
 
     xhr.onload = () => {
       const response = JSON.parse(xhr.responseText);
+      console.log("Cloudinary Response:", response); // Debugging log
       setCanteenImageSrc(response.secure_url);
       setCanteenImageURL(response.secure_url);
+    };
+
+    xhr.onerror = () => {
+      console.error("Error uploading image to Cloudinary");
+      alert("Failed to upload the image. Please try again.");
     };
 
     xhr.send(formData);
@@ -68,52 +74,58 @@ export default function AddCanteens() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     // Validate form
     if (!validateCanteenForm()) {
-      alert("Please fill out all canteen details.");
+      alert("Please fill out all canteen details correctly.");
       return;
     }
-  
+
     const fullData = {
       ...canteenDetails,
       image: canteenImageURL, // Use the uploaded image URL
     };
-  
+
+    console.log("Submitted Data:", fullData); // Debugging log
+
     try {
-      const response = await fetch('/api/canteens', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/Canteens", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(fullData),
       });
-  
-      if (!response.ok) throw new Error('Failed to add canteen.');
-  
+
       const result = await response.json();
-      alert(result.message);
-  
+
+      if (!response.ok) {
+        console.error("API Error:", result); // Log API error details
+        throw new Error(result.message || "Failed to add canteen.");
+      }
+
+      alert(result.message || "Canteen added successfully!");
+
       // Clear form fields after successful submission
       setCanteenDetails({
-        canteenName: '',
-        businessEmail: '',
-        openHour: '',
-        closedHour: '',
+        canteenName: "",
+        businessEmail: "",
+        openHour: "",
+        closedHour: "",
         image: null,
-        phoneNumber: '',
-        status: 'Active', // default status
-        openingDate: '',
-        ownerstatus: 'Inactive', // default owner status
+        phoneNumber: "",
+        status: "Active",
+        openingDate: "",
+        ownerstatus: "Inactive",
       });
-  
+
       setCanteenImageSrc(null);
-      setCanteenImageURL('');
-      setCanteenProgress(0); // Reset progress bar
+      setCanteenImageURL("");
+      setCanteenProgress(0);
     } catch (error) {
-      console.error('Error:', error);
-      alert('There was an error submitting the form.');
+      console.error("Error submitting form:", error);
+      alert("There was an error submitting the form.");
     }
   };
-  
+
   // Validate canteen form
   const validateCanteenForm = () => {
     const phoneRegex = /^[0-9]{10}$/; // Phone number should be 10 digits
@@ -132,14 +144,14 @@ export default function AddCanteens() {
       phoneRegex.test(phoneNumber) &&
       timeRegex.test(openHour) &&
       timeRegex.test(closedHour) &&
-      dateRegex.test(openingDate) && // Validate opening date
-      canteenImageURL // Ensure image URL is valid
+      dateRegex.test(openingDate) &&
+      canteenImageURL
     );
   };
 
   // Render content only after client-side has mounted
   if (!isMounted) {
-    return null; // Or show a loading spinner or fallback UI
+    return null;
   }
 
   return (
@@ -149,7 +161,11 @@ export default function AddCanteens() {
         <div className="space-y-4">
           <div className="flex items-center justify-center">
             <div className="flex items-center justify-center w-20 h-20 bg-gray-700 rounded-md">
-              <img src={canteenDetails.image ? URL.createObjectURL(canteenDetails.image) : "/placeholder.png"} alt="Canteen Upload" className="object-cover w-full h-full" />
+              <img
+                src={canteenDetails.image ? URL.createObjectURL(canteenDetails.image) : "/placeholder.png"}
+                alt="Canteen Upload"
+                className="object-cover w-full h-full"
+              />
             </div>
           </div>
           <input
@@ -223,14 +239,10 @@ export default function AddCanteens() {
             <option value="Inactive">Inactive</option>
             <option value="Pending">Pending</option>
           </select>
-          
         </div>
 
         <div className="flex justify-between mt-4">
-          <button
-            type="submit"
-            className="px-4 py-2 text-white bg-green-600 rounded-md"
-          >
+          <button type="submit" className="px-4 py-2 text-white bg-green-600 rounded-md">
             Submit
           </button>
         </div>
