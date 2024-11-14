@@ -1,30 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
 import UpdateStatusModal from "./Modal";
 import Deleteowners from './Deleteowners';
 import Link from "next/link";
 
-// Sample data for demonstration
-const students = [
-  { id: 1, name: "Sarath", phone: "0112596347", email: "email123@gmail.com", faculty: "Computing", status: "Active", date: "20/03/2021" },
-  { id: 2, name: "Amal", phone: "0112596347", email: "email123@gmail.com", faculty: "Medical", status: "Active", date: "20/03/2021" },
-  { id: 3, name: "Kamal", phone: "0112596347", email: "email123@gmail.com", faculty: "Engineering", status: "Active", date: "20/03/2021" },
-  { id: 4, name: "Amal", phone: "0112596347", email: "email123@gmail.com", faculty: "Management", status: "Block", date: "20/03/2021" },
-];
-
 // Define pagination constants
 const ITEMS_PER_PAGE = 4;
 
-const StudentTable = () => {
+const OwnerTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteOwnerModalOpen, setIsDeleteOwnerModalOpen] = useState(false);
+  const [owners, setOwners] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentStudents = students.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const currentOwners = owners.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   const handleNext = () => {
-    if (currentPage < Math.ceil(students.length / ITEMS_PER_PAGE)) {
+    if (currentPage < Math.ceil(owners.length / ITEMS_PER_PAGE)) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -35,10 +30,37 @@ const StudentTable = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchOwnerDetails = async () => {
+      try {
+        const response = await fetch('/api/viewownerDetails');
+        if (!response.ok) {
+          throw new Error('Failed to fetch owner details');
+        }
+        const data = await response.json();
+        setOwners(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOwnerDetails();
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
+  const formatDate = (dateString) => {
+    const createdAt = new Date(dateString);
+    return createdAt.toLocaleString();
+  };
+
   return (
     <div className="p-4 text-white bg-gray-800 rounded-lg">
       <div className="flex justify-between mb-4">
-      <h2 className="mb-4 text-xl font-semibold">Owners</h2>
+        <h2 className="mb-4 text-xl font-semibold">Owners</h2>
         <Link href="/admindashboard/User/Owner/Addowners" className="px-4 py-2 text-gray-900 bg-orange-500 rounded">
           Add Owner
         </Link>
@@ -46,36 +68,40 @@ const StudentTable = () => {
       <table className="w-full text-left text-gray-300">
         <thead>
           <tr className="text-white bg-orange-500">
-            <th className="p-2">Name</th>
+            <th className="p-2">First Name</th>
+            <th className="p-2">Last Name</th>
             <th className="p-2">Phone</th>
             <th className="p-2">Email</th>
-            <th className="p-2">Faculty</th>
+            <th className="p-2">NIC</th>
             <th className="p-2">Status</th>
+            <th className="p-2">Canteen</th>
             <th className="p-2">Date Registered</th>
             <th className="p-2">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {currentStudents.map((student) => (
-            <tr key={student.id} className="border-b border-gray-700">
-              <td className="p-2">{student.name}</td>
-              <td className="p-2">{student.phone}</td>
-              <td className="p-2">{student.email}</td>
-              <td className="p-2">{student.faculty}</td>
-              <td className="p-2">{student.status}</td>
-              <td className="p-2">{student.date}</td>
+          {currentOwners.map((owner, index) => (
+            <tr key={owner.nicNumber} className="border-b border-gray-700">
+              <td className="p-2">{owner.firstName}</td>
+              <td className="p-2">{owner.lastName}</td>
+              <td className="p-2">{owner.phoneNumber}</td>
+              <td className="p-2">{owner.ownerEmail}</td>
+              <td className="p-2">{owner.nicNumber}</td>
+              <td className="p-2">{owner.status}</td>
+              <td className="p-2">{owner.selectcanteen}</td>
+              <td className="p-2">{formatDate(owner.createdAt)}</td>
               <td className="flex p-2 space-x-2">
                 <button
                   onClick={() => setIsDeleteOwnerModalOpen(true)}
                   className="text-red-500 hover:text-red-700"
                 >
-                  <FaRegTrashAlt /> {/* Font Awesome delete icon */}
+                  <FaRegTrashAlt />
                 </button>
                 <button 
                   onClick={() => setIsModalOpen(true)}
                   className="text-red-500 hover:text-red-700"
                 >
-                  <FaEdit /> {/* Font Awesome edit icon */}
+                  <FaEdit />
                 </button>
               </td>
             </tr>
@@ -94,17 +120,16 @@ const StudentTable = () => {
         <button
           onClick={handleNext}
           className="px-4 py-2 text-white bg-orange-500 rounded hover:bg-orange-600"
-          disabled={currentPage === Math.ceil(students.length / ITEMS_PER_PAGE)}
+          disabled={currentPage === Math.ceil(owners.length / ITEMS_PER_PAGE)}
         >
           Next
         </button>
       </div>
-      {/* Update Status Modal */}
+      {/* Modals */}
       <UpdateStatusModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
-      {/* Delete Owner Modal */}
       <Deleteowners
         isOpen={isDeleteOwnerModalOpen}
         onClose={() => setIsDeleteOwnerModalOpen(false)}
@@ -113,4 +138,4 @@ const StudentTable = () => {
   );
 };
 
-export default StudentTable;
+export default OwnerTable;
