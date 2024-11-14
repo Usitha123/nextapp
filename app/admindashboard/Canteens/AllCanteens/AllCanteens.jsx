@@ -75,9 +75,14 @@ const CanteensTable = () => {
                   >
                     <FaTrash />
                   </button>
-                  <button className="text-gray-400 hover:text-orange-500">
-                    <FaEdit />
-                  </button>
+                  
+                  <Link
+          href="/admindashboard/Canteens/UpdateCanteens"
+          className="text-gray-400 hover:text-orange-500"
+        >
+          <FaEdit />
+        </Link>
+
                 </td>
               </tr>
             ))}

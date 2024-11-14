@@ -156,7 +156,7 @@ export default function AddCanteens() {
 
   return (
     <div className="w-full max-w-lg p-6 mx-auto text-white bg-gray-900 rounded-md">
-      <h2 className="mb-4 text-xl font-bold">Add Canteens</h2>
+      <h2 className="mb-4 text-xl font-bold">Update Canteen</h2>
       <form onSubmit={handleSubmit}>
         <div className="space-y-4">
           <div className="flex items-center justify-center">
@@ -237,7 +237,7 @@ export default function AddCanteens() {
           >
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
-            
+            <option value="Pending">Pending</option>
           </select>
         </div>
 
