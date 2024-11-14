@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation'; // Import the useSearchParams hook
 
@@ -169,4 +169,11 @@ const UpdateCanteen = () => {
   );
 };
 
-export default UpdateCanteen;
+// Wrap the UpdateCanteen component in Suspense to handle the async loading state
+const SuspendedUpdateCanteen = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <UpdateCanteen />
+  </Suspense>
+);
+
+export default SuspendedUpdateCanteen;
