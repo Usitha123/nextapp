@@ -7,6 +7,7 @@ import Header from '../../Header/page';
 import { usePathname } from 'next/navigation';
 import Cart from '../Cart/Cart';
 import FoodDisplay from '../Food/FoodDisplay';
+import Breadcrumb from '../Breadcrumb';
 
 const Page = () => {
   const fullPath = usePathname();
@@ -15,11 +16,12 @@ const Page = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
       <div className="fixed">
-        <Sidebar activePath={currentPath} />
+        <Sidebar activePath={"/UserView/Canteens"} />
       </div>
 
       <div className="flex-1 ml-20 md:ml-60">
         <Topbar />
+        <Breadcrumb/>
 
         {/* Pass the modified path as the header title */}
         <Header title={`${currentPath} Canteen`} />
