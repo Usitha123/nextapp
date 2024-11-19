@@ -41,7 +41,7 @@ const Page = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="flex bg-gray-100">
+    <div className="flex h-screen bg-gray-100">
       <div className="fixed">
         <Sidebar activePath={currentPath} />
       </div>
