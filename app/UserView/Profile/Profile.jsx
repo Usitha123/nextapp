@@ -9,12 +9,12 @@ export default function Profile() {
 
   return (
     <div className="bg-white p-8 rounded-xl w-full max-w-3xl mx-auto">
-      <div className="relative mx-auto flex items-center justify-center w-24 h-24 text-3xl text-gray-500 bg-gray-100 rounded-full">
+      <div className="relative mx-auto flex items-center justify-center w-24 h-24  text-orange-600 bg-orange-100 rounded-full">
         {/* Placeholder Profile Icon */}
         <span className="text-3xl">
-          <User2Icon />
+          <User2Icon className="font-bold" />
         </span>
-        <button className="absolute bottom-0 right-0 p-1 text-xs text-white bg-orange-500 rounded-full">
+        <button className="absolute bottom-0 right-0 p-1  text-white bg-orange-500 rounded-full">
           <Pencil className="p-1" />
         </button>
       </div>
@@ -43,7 +43,7 @@ export default function Profile() {
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
-              className="text-sm text-orange-500 hover:underline focus:outline-none"
+              className=" text-orange-500 hover:underline focus:outline-none"
             >
               Change Password
             </button>
