@@ -5,6 +5,7 @@ import Sidebar from '../Sidebar/page';
 import Topbar from '../Topbar/page';
 import Header from '../Header/page';
 import { usePathname } from 'next/navigation';
+import Profile from './Profile';
 
 const Page = () => {
   const currentPath = usePathname();
@@ -16,6 +17,7 @@ const Page = () => {
         <Topbar />
         <Header title="Profile" />
         <div className="p-4">
+         <Profile/>
           {/* Dashboard content */}
         </div>
       </div>
