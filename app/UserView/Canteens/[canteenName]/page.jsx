@@ -6,8 +6,7 @@ import Topbar from '../../Topbar/page';
 import Header from '../../Header/page';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link'; // Added this import
-import Cart from '../Cart/Cart';
-import FoodDisplay from '../Food/FoodDisplay';
+import Foods from '../Foods/page';
 
 const Page = () => {
   // Get the current path from the router
@@ -46,7 +45,7 @@ const Page = () => {
         <div className="flex p-4 space-x-8">
           {/* Food Display Section */}
           <div className="w-2/3">
-            <FoodDisplay />
+            <Foods />
           </div>
 
           {/* Cart Section */}
@@ -54,7 +53,7 @@ const Page = () => {
             <div className="p-4 mb-4 text-sm bg-white border border-orange-500 rounded-md shadow-sm shadow-orange-200">
               <strong>Note:</strong> You are responsible for paying the full amount of your order and collecting it.
             </div>
-            <Cart />
+            
           </div>
         </div>
       </div>
