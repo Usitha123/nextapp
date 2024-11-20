@@ -134,9 +134,9 @@ export default function RegisterForm() {
               required
             >
               <option value="">Select Faculty</option>
-              <option value="Science">Science</option>
+              <option value="Computing">Computing</option>
               <option value="Engineering">Engineering</option>
-              <option value="Business">Business</option>
+              <option value="Science">Science</option>
               <option value="Arts">Arts</option>
               {/* Add more faculties as needed */}
             </select>

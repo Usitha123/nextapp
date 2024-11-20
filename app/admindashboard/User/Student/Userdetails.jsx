@@ -63,6 +63,28 @@ const StudentTable = () => {
     setIsDeleteStudentsModalOpen(true);
   };
 
+  // Handle student deletion with API request
+  const deleteStudent = async () => {
+    if (!selectedStudent) return;
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/deleteuser?id=${selectedStudent._id}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        setStudents(students.filter(student => student._id !== selectedStudent._id));
+        setIsDeleteStudentsModalOpen(false); // Close the modal after deletion
+      } else {
+        alert('Failed to delete student');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('An error occurred while deleting the student');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Format the createdAt date
   const formatDate = (dateString) => {
     const createdAt = new Date(dateString);
@@ -79,15 +101,15 @@ const StudentTable = () => {
             <th className="p-2">Last Name</th>
             <th className="p-2">Email</th>
             <th className="p-2">Faculty</th>
-            <th className="p-2">PhoneNumber</th>
+            <th className="p-2">Phone Number</th>
             <th className="p-2">Status</th>
             <th className="p-2">Date Registered</th>
             <th className="p-2">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {currentStudents.map((student, index) => (
-            <tr key={index} className="border-b border-gray-700">
+          {currentStudents.map((student) => (
+            <tr key={student._id} className="border-b border-gray-700">
               <td className="p-2">{student.firstName}</td>
               <td className="p-2">{student.lastName}</td>
               <td className="p-2">{student.email}</td>
@@ -96,7 +118,7 @@ const StudentTable = () => {
               <td className="p-2">{student.status}</td>
               <td className="p-2">{formatDate(student.createdAt)}</td>
               <td className="flex p-2 space-x-2">
-                <button
+                <button 
                   onClick={() => handleDelete(student)}
                   className="text-red-500 hover:text-red-700"
                 >
@@ -141,6 +163,7 @@ const StudentTable = () => {
         isOpen={isDeleteStudentsModalOpen}
         student={selectedStudent}
         onClose={() => setIsDeleteStudentsModalOpen(false)}
+        onDelete={deleteStudent} // Pass the delete function to the modal
       />
     </div>
   );

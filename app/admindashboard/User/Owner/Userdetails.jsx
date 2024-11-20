@@ -4,7 +4,6 @@ import UpdateStatusModal from "./Modal";
 import Deleteowners from './Deleteowners';
 import Link from "next/link";
 
-// Define pagination constants
 const ITEMS_PER_PAGE = 4;
 
 const OwnerTable = () => {
@@ -14,6 +13,8 @@ const OwnerTable = () => {
   const [owners, setOwners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedOwnerId, setSelectedOwnerId] = useState(null);
+  const [selectedOwner, setSelectedOwner] = useState(null); // Store selected owner
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentOwners = owners.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -27,6 +28,27 @@ const OwnerTable = () => {
   const handlePrev = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!selectedOwnerId) return;
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/deleteowner?id=${selectedOwnerId}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        setOwners(owners.filter(owner => owner._id !== selectedOwnerId));
+        setIsDeleteOwnerModalOpen(false); // Close the modal
+      } else {
+        alert('Failed to delete owner');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('An error occurred while deleting the owner');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,8 +102,8 @@ const OwnerTable = () => {
           </tr>
         </thead>
         <tbody>
-          {currentOwners.map((owner, index) => (
-            <tr key={owner.nicNumber} className="border-b border-gray-700">
+          {currentOwners.map((owner) => (
+            <tr key={owner._id} className="border-b border-gray-700">
               <td className="p-2">{owner.firstName}</td>
               <td className="p-2">{owner.lastName}</td>
               <td className="p-2">{owner.phoneNumber}</td>
@@ -92,13 +114,20 @@ const OwnerTable = () => {
               <td className="p-2">{formatDate(owner.createdAt)}</td>
               <td className="flex p-2 space-x-2">
                 <button
-                  onClick={() => setIsDeleteOwnerModalOpen(true)}
                   className="text-red-500 hover:text-red-700"
+                  onClick={() => {
+                    setSelectedOwnerId(owner._id);
+                    setSelectedOwner(owner); // Store selected owner
+                    setIsDeleteOwnerModalOpen(true);
+                  }}
                 >
                   <FaRegTrashAlt />
                 </button>
                 <button 
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => {
+                    setSelectedOwner(owner); // Store selected owner for editing
+                    setIsModalOpen(true);
+                  }}
                   className="text-red-500 hover:text-red-700"
                 >
                   <FaEdit />
@@ -129,10 +158,13 @@ const OwnerTable = () => {
       <UpdateStatusModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        owner={selectedOwner} // Pass selected owner to modal
       />
       <Deleteowners
         isOpen={isDeleteOwnerModalOpen}
         onClose={() => setIsDeleteOwnerModalOpen(false)}
+        onDelete={handleDelete} // Pass delete function to Deleteowners
+        owner={selectedOwner} // Pass selected owner to modal
       />
     </div>
   );
