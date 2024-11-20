@@ -5,6 +5,7 @@ import Sidebar from '../../Sidebar/page';
 import Topbar from '../../Topbar/page';
 import Header from '../../Header/page';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link'; // Added this import
 import Cart from '../Cart/Cart';
 import FoodDisplay from '../Food/FoodDisplay';
 
@@ -30,16 +31,16 @@ const Page = () => {
         {/* Tabs for meal categories */}
         <div className="flex flex-wrap"></div>
         <div className="flex px-3 m-2 space-x-4 font-semibold">
-  <Link href={`/UserView/Canteens/${currentPath}/breakfast`}>
-    <button className="hover:underline">Breakfast</button>
-  </Link>
-  <Link href={`/UserView/Canteens/${currentPath}/lunch`}>
-    <button className="hover:underline">Lunch</button>
-  </Link>
-  <Link href={`/UserView/Canteens/${currentPath}/dinner`}>
-    <button className="hover:underline">Dinner</button>
-  </Link>
-</div>
+          <Link href={`/UserView/Canteens/${currentPath}/breakfast`}>
+            <button className="hover:underline">Breakfast</button>
+          </Link>
+          <Link href={`/UserView/Canteens/${currentPath}/lunch`}>
+            <button className="hover:underline">Lunch</button>
+          </Link>
+          <Link href={`/UserView/Canteens/${currentPath}/dinner`}>
+            <button className="hover:underline">Dinner</button>
+          </Link>
+        </div>
 
         {/* Note */}
         <div className="flex p-4 space-x-8">
