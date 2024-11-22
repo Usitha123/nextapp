@@ -155,11 +155,11 @@ export default function AddCanteens() {
   }
 
   return (
-    <div className="w-full max-w-lg p-6 mx-auto text-white bg-gray-900 rounded-md">
-      <h2 className="mb-4 text-xl font-bold">Add Canteens</h2>
+    <div className="w-full md:w-[90%] p-6 mx-auto text-white bg-gray-900 rounded-md">
+      {/* <h2 className="mb-4 text-xl font-bold">Add Canteens</h2> */}
       <form onSubmit={handleSubmit}>
         <div className="space-y-4">
-          <div className="flex items-center justify-center">
+          <div className="flex m-5 items-center justify-center">
             <div className="flex items-center justify-center w-20 h-20 bg-gray-700 rounded-md">
               <img
                 src={canteenDetails.image ? URL.createObjectURL(canteenDetails.image) : "/placeholder.png"}
@@ -168,60 +168,81 @@ export default function AddCanteens() {
               />
             </div>
           </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div><label htmlFor="canteenName" className=" p-1 text-orange-500"> Canteen Name </label>
           <input
             type="text"
             name="canteenName"
-            placeholder="Canteen Name"
+            // placeholder="Canteen Name"
             value={canteenDetails.canteenName}
             onChange={handleInputChange}
             className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
             required
-          />
-          <input
+          /></div>
+          <div>
+            <label htmlFor="businessEmail" className=" p-1 text-orange-500">Business Email</label>
+            <input
             type="email"
             name="businessEmail"
-            placeholder="Business Email"
+            // placeholder="Business Email"
             value={canteenDetails.businessEmail}
             onChange={handleInputChange}
             className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
             required
           />
-          <input
-            type="file"
+          </div>
+          
+          <div>
+          <label htmlFor="image" className=" p-1 text-orange-500">Image</label>
+
+          <input type="file"
             onChange={handleFileChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+            className="w-full h-11 p-2 text-white bg-gray-800 border border-gray-600 rounded-md  file:cursor-pointer file:p-0.5 file:px-2   file:rounded-md file:border-0 file:text-white file:bg-gray-500 hover:file:bg-gray-600 "
             required
           />
           {canteenProgress > 0 && <p>{canteenProgress}% Uploaded</p>}
-          <input
+          
+          </div>
+          <div>
+            <label htmlFor="openHour" className=" p-1 text-orange-500">Open Hour</label>
+            <input
             type="text"
             name="openHour"
-            placeholder="Open Hour (HH:MM)"
+            placeholder="HH:MM"
             value={canteenDetails.openHour}
             onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+            className="w-full h-11 p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
             required
-          />
+          /></div>
+         <div>
+          <label htmlFor="closedHour" className=" p-1 text-orange-500">Closed Hour</label>
           <input
             type="text"
             name="closedHour"
-            placeholder="Closed Hour (HH:MM)"
+            placeholder="HH:MM"
             value={canteenDetails.closedHour}
             onChange={handleInputChange}
             className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
             required
           />
-          <input
+         </div>
+          <div>
+            <label htmlFor="phoneNumber" className=" p-1 text-orange-500">Phone Number</label>
+            <input
             type="text"
             name="phoneNumber"
-            placeholder="Phone Number (10 digits)"
+            placeholder=" 10 digits"
             value={canteenDetails.phoneNumber}
             onChange={handleInputChange}
             className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
             required
             pattern="^[0-9]{10}$"
           />
-          <input
+          </div>
+          <div>
+            <label htmlFor="openingDate" className=" p-1 text-orange-500">Opening Date</label>
+            <input
             type="date"
             name="openingDate"
             value={canteenDetails.openingDate}
@@ -229,6 +250,9 @@ export default function AddCanteens() {
             className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
             required
           />
+          </div>
+          <div>
+            <label htmlFor="status" className=" p-1 text-orange-500">Status</label>
           <select
             name="status"
             value={canteenDetails.status}
@@ -239,10 +263,14 @@ export default function AddCanteens() {
             <option value="Inactive">Inactive</option>
             
           </select>
+          </div>
+          
         </div>
+          </div>
+          
 
         <div className="flex justify-between mt-4">
-          <button type="submit" className="px-4 py-2 text-white bg-green-600 rounded-md">
+          <button type="submit" className="px-4 py-2 my-3 text-white bg-orange-500 hover:bg-orange-600 rounded-md">
             Submit
           </button>
         </div>

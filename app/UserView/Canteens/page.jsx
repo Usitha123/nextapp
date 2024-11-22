@@ -37,7 +37,18 @@ const Page = () => {
     fetchCanteens();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return(
+
+    <div className="flex justify-center items-center h-screen">
+      <div className="flex space-x-2">
+        <span className="w-2.5 h-2.5 bg-[#f76002] rounded-full animate-up-down-1"></span>
+        <span className="w-2.5 h-2.5 bg-[#e85b04c4] rounded-full animate-up-down-2"></span>
+        <span className="w-2.5 h-2.5 bg-[#e85b0491] rounded-full animate-up-down-3"></span>
+        <span className="w-2.5 h-2.5 bg-[#e85b0456] rounded-full animate-up-down-4"></span>
+      </div>
+    </div>
+        );
+
   if (error) return <div>{error}</div>;
 
   return (
