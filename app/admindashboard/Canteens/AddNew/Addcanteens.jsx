@@ -155,7 +155,7 @@ export default function AddCanteens() {
   }
 
   return (
-    <div className="w-full md:w-[90%] p-6 mx-auto text-white bg-gray-900 rounded-md">
+    <div className="w-full md:w-[90%] p-6 mx-auto text-white bg-gray-700 rounded-md">
       {/* <h2 className="mb-4 text-xl font-bold">Add Canteens</h2> */}
       <form onSubmit={handleSubmit}>
         <div className="space-y-4">
