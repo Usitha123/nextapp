@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import backgroundImage from "../../../src/loginbackground.jpeg";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -24,19 +26,22 @@ export default function RegisterForm() {
 
     // Validation for required fields
     if (!firstName || !lastName || !email || !password || !confirmPassword || !faculty || !phoneNumber) {
-      setError("All fields are required.");
+      //setError("All fields are required.");
+      toast.error("All fields are required.");
       return;
     }
 
     // Validate that phone number is 10 digits
     if (!/^\d{10}$/.test(phoneNumber)) {
-      setError("Phone number must be 10 digits.");
+      //setError("Phone number must be 10 digits.");
+      toast.error("Phone number must be 10 digits.");
       return;
     }
 
     // Validate password match
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      //setError("Passwords do not match.");
+      toast.error("Passwords do not match.");
       return;
     }
 
@@ -49,7 +54,8 @@ export default function RegisterForm() {
 
       const { user } = await resUserExists.json();
       if (user) {
-        setError("User already exists.");
+        //setError("User already exists.");
+        toast.error("User already exists.");
         return;
       }
 
@@ -60,14 +66,19 @@ export default function RegisterForm() {
       });
 
       if (res.ok) {
-        e.target.reset();
-        router.push("/");
+        toast.success("Registration successful!");
+        setTimeout(() => {
+          e.target.reset();
+          router.push("/");
+        }, 1000);
       } else {
-        setError("User registration failed.");
+        //setError("User registration failed.");
+        toast.error("User registration failed.");
       }
     } catch (error) {
       console.error("Error during registration:", error);
-      setError("An error occurred. Please try again.");
+      //setError("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
     }
   };
 
@@ -76,6 +87,18 @@ export default function RegisterForm() {
       className="flex items-center justify-center h-screen bg-center bg-cover"
       style={{ backgroundImage: `url(${backgroundImage.src})` }}
     >
+    <ToastContainer
+        position="bottom-right" 
+        theme="dark"             
+        autoClose={1000}         
+        hideProgressBar={false}  
+        newestOnTop={false}      
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="w-full max-w-sm p-8 bg-white rounded-lg shadow-lg bg-opacity-90">
         <h2 className="mb-6 text-2xl font-bold text-center text-orange-500">Jpura CMS</h2>
 
@@ -207,7 +230,7 @@ export default function RegisterForm() {
             </button>
           </div>
 
-          {error && <p className="mt-4 text-center text-red-500">{error}</p>}
+          {/*{error && <p className="mt-4 text-center text-red-500">{error}</p>}*/}
 
           <div className="mt-4 text-sm text-center text-gray-600">
             Already have an account?{" "}

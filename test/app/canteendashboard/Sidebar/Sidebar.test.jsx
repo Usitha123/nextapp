@@ -1,12 +1,12 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, test, expect } from 'vitest';
-import userEvent from '@testing-library/user-event';
 import Sidebar from '../../../../app/Canteendashboard/Sidebar/page'
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 
 vi.mock('next/navigation', () => ({
     useRouter: vi.fn(),
+    usePathname: vi.fn(),
 }));
 vi.mock('next-auth/react', () => ({
     signOut: vi.fn(),
@@ -14,16 +14,14 @@ vi.mock('next-auth/react', () => ({
 
 describe('Canteendashboard Sidebar', () => {
     beforeEach(() => {
-        useRouter.mockReturnValue({
-            push: vi.fn(),
-        });
-    })
+        vi.resetAllMocks();
+    });
     test('renders the sidebar components correctly', () => {
+        usePathname.mockReturnValue("/Canteendashboard");
         render(<Sidebar />);
 
         expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('LOGO');
 
-        expect(screen.getByText('LOGO')).toBeInTheDocument();
         expect(screen.getByText('Canteen Dashboard')).toBeInTheDocument();
         expect(screen.getByText('Meals')).toBeInTheDocument();
         expect(screen.getByText('Orders')).toBeInTheDocument();
@@ -34,10 +32,9 @@ describe('Canteendashboard Sidebar', () => {
     });
 
     test('calls signOut when the logout button is clicked', async () => {
+        usePathname.mockReturnValue("/Canteendashboard");
         render(<Sidebar />);
-        const user = userEvent.setup();
-        await user.click(screen.getByRole('button', { name: /Logout/i }));
-
+        fireEvent.click(screen.getByRole('button', { name: /Logout/i }));
         expect(signOut).toHaveBeenCalledWith({ callbackUrl: '/' });
     });
 });

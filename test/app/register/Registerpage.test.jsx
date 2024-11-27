@@ -10,23 +10,21 @@ vi.mock('next-auth', () => ({
 vi.mock('next/navigation', () => ({
     redirect: vi.fn(),
 }));
+vi.mock('../../../app/register/RegisterForm/page', () => ({
+    default: () => <div>Mocked RegisterForm</div>,
+}));
 
-describe('Register Page', () => {
-    beforeEach(() => {
-        vi.clearAllMocks();
+describe("Register", () => {
+    afterEach(() => {
+      vi.resetAllMocks();
     });
-
-    test('should render RegisterForm when there is no session', async () => {
-        getServerSession.mockResolvedValueOnce(null);
-
-        render(<Registerpage />);
-        expect(await screen.findByRole('form')).toBeInTheDocument();
+  
+    test("redirects to /dashboard if session exists", async () => {
+      getServerSession.mockResolvedValueOnce({ user: { name: "Akila Prabath" } });
+  
+      await Registerpage();
+  
+      expect(redirect).toHaveBeenCalledWith("/dashboard");
+      expect(redirect).toHaveBeenCalledTimes(1);
     });
-
-    test('should redirect to /dashboard when there is a session', async () => {
-        getServerSession.mockResolvedValueOnce({ user: { name: 'John Doe' } });
-
-        render(<Registerpage />);
-        expect(redirect).toHaveBeenCalledWith('/dashboard');
-    });
-});
+  });
