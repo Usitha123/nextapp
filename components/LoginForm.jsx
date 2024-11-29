@@ -4,8 +4,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import backgroundImage from "../src/loginbackground.jpeg";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -28,14 +26,11 @@ export default function LoginForm() {
       });
 
       if (res.error) {
-        //setError("Invalid Credentials");
-        toast.error("Invalid Credentials");
+        setError("Invalid Credentials");
         return;
       }
-      toast.success("Login successful!");
-      setTimeout(() => {
-        router.replace("UserView");
-      }, 1000);
+
+      router.replace("UserView");
     } catch (error) {
       console.error("Login error:", error);
     }
@@ -46,18 +41,6 @@ export default function LoginForm() {
       className="flex items-center justify-center h-screen bg-center bg-cover"
       style={{ backgroundImage: `url(${backgroundImage.src})` }}
     >
-      <ToastContainer
-        position="bottom-right" 
-        theme="dark"             
-        autoClose={1000}         
-        hideProgressBar={false}  
-        newestOnTop={false}      
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
       <div className="w-full max-w-sm p-8 bg-white rounded-lg shadow-lg bg-opacity-90">
         <h2 className="mb-6 text-2xl font-bold text-center text-orange-500">Jpura CMS</h2>
 
@@ -109,7 +92,7 @@ export default function LoginForm() {
             </button>
           </div>
 
-          {/*{error && <p className="mt-4 text-center text-red-500">{error}</p>}*/}
+          {error && <p className="mt-4 text-center text-red-500">{error}</p>}
 
           <div className="mt-4 text-sm text-center text-gray-600">
             Don’t have an account?{" "}
