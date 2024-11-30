@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import backgroundImage from "../src/loginbackground.jpeg";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -19,25 +19,40 @@ export default function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
     try {
-      const res = await signIn("credentials", {
+      const result = await signIn("credentials", {
         email,
         password,
         redirect: false,
       });
 
-      if (res.error) {
-        //setError("Invalid Credentials");
-        toast.error("Invalid Credentials");
+      if (result?.error) {
+        setError(result.error);
         return;
       }
-      toast.success("Login successful!");
-      setTimeout(() => {
-        router.replace("UserView");
-      }, 1000);
-    } catch (error) {
-      console.error("Login error:", error);
+
+      // Get the updated session and redirect based on role
+      const response = await fetch("/api/auth/session");
+      const session = await response.json();
+
+      switch (session?.user?.role) {
+        case "admin":
+          router.push("/admindashboard");
+          break;
+        case "canteenOwner":
+          router.push("/Canteendashboard");
+          break;
+        case "user":
+          router.push("/UserView");
+          break;
+        default:
+          setError("Unknown user role");
+      }
+    } catch (err) {
+      setError("An error occurred during login");
+      console.error(err);
     }
   };
 
@@ -47,17 +62,14 @@ export default function LoginForm() {
       style={{ backgroundImage: `url(${backgroundImage.src})` }}
     >
       <ToastContainer
-        position="bottom-right" 
-        theme="dark"             
-        autoClose={1000}         
-        hideProgressBar={false}  
-        newestOnTop={false}      
+        position="bottom-right"
+        theme="dark"
+        autoClose={1000}
+        hideProgressBar={false}
         closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
         draggable
         pauseOnHover
-      /> 
+      />
       <div className="w-full max-w-sm p-8 bg-white rounded-lg shadow-lg bg-opacity-90">
         <h2 className="mb-6 text-2xl font-bold text-center text-orange-500">Jpura CMS</h2>
 
@@ -95,12 +107,12 @@ export default function LoginForm() {
                 className="absolute inset-y-0 flex items-center text-gray-600 cursor-pointer right-3"
                 onClick={() => setShowPassword((prev) => !prev)}
               >
-                {showPassword ? <FaEye /> :  <FaEyeSlash />}
+                {showPassword ? <FaEye /> : <FaEyeSlash />}
               </span>
             </div>
           </div>
 
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center mb-4">
             <button
               className="px-4 py-2 font-bold text-white bg-orange-500 rounded hover:bg-orange-600 focus:outline-none focus:shadow-outline"
               type="submit"
@@ -109,7 +121,7 @@ export default function LoginForm() {
             </button>
           </div>
 
-          {/*{error && <p className="mt-4 text-center text-red-500">{error}</p>}*/}
+          {error && <p className="mt-4 text-center text-red-500">{error}</p>}
 
           <div className="mt-4 text-sm text-center text-gray-600">
             Don’t have an account?{" "}
@@ -129,11 +141,11 @@ export default function LoginForm() {
               UserView
             </Link>
             <Link href="/Canteendashboard" className="text-gray-600 underline hover:text-orange-500">
-              Canteendashboard
+              Canteen dashboard
             </Link>
-            <br></br>
+            <br />
             <Link href="/Cashierdashboard" className="text-gray-600 underline hover:text-orange-500">
-            Cashierdashboard
+              Cashier dashboard
             </Link>
           </div>
         </form>
