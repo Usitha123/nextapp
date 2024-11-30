@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt'; // Keep only bcrypt
+import bcrypt from 'bcryptjs'; // Keep only bcrypt
 import { connectMongoDB } from '@/lib/mongodb'; // Adjust the path as needed
 import Admin from '@/models/Admin'; // Adjust the path as needed
 
