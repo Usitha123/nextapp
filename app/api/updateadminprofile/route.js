@@ -1,15 +1,28 @@
-// app/api/updateAdminDetails/route.js
 import { connectMongoDB } from '@/lib/mongodb';
 import Admin from '@/models/Admin';
+import bcrypt from 'bcryptjs'; // Import bcrypt for password hashing
 
 export async function PUT(req) {
   try {
     await connectMongoDB();
 
     const updatedData = await req.json();
+    
+    // Extract the password from the update data if present
+    if (updatedData.password) {
+      // Hash the new password before saving
+      const hashedPassword = await bcrypt.hash(updatedData.password, 10);
+      updatedData.password = hashedPassword; // Replace plain password with hashed one
+    }
 
-    // Update the single admin document
-    const admin = await Admin.findOneAndUpdate({}, updatedData, { new: true });
+    // Assuming you're updating the admin by email or another identifier
+    const { email } = updatedData;
+    if (!email) {
+      return new Response('Email is required to identify the admin.', { status: 400 });
+    }
+
+    // Update the admin document by email or another identifier
+    const admin = await Admin.findOneAndUpdate({ email }, updatedData, { new: true });
     if (!admin) {
       return new Response('No admin details found to update', { status: 404 });
     }

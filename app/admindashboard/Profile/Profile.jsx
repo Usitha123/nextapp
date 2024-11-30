@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import bcrypt from 'bcryptjs'; // Import bcryptjs for password hashing
 
 const UpdateAdminProfile = () => {
   const router = useRouter();
@@ -55,11 +54,8 @@ const UpdateAdminProfile = () => {
     setLoading(true);
 
     try {
-      // Hash the password before sending to the server
-      const hashedPassword = await bcrypt.hash(admin.password, 10);
-
-      // Update admin data with hashed password
-      const updatedAdmin = { ...admin, password: hashedPassword };
+      // Send plain password to the server (hashing will be done on the server)
+      const updatedAdmin = { ...admin, password: admin.password };
 
       // Send updated admin profile data to the server
       const response = await fetch('/api/updateadminprofile', {
