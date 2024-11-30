@@ -1,10 +1,12 @@
 "use client";
-import { Trash2 } from 'lucide-react';
-import React, { useState } from 'react';
-import Image from 'next/image';
-import milkrice from '@/src/loginbackground.jpeg';
 
-const Cart = ({ cartItems, onRemove }) => {
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { Trash2 } from "lucide-react";
+import milkrice from "@/src/loginbackground.jpeg";
+
+// Cart Component
+const Cart = ({ cartItems, onRemove, onPlaceOrder }) => {
   const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
@@ -40,7 +42,10 @@ const Cart = ({ cartItems, onRemove }) => {
           <button className="flex-1 py-2 text-gray-700 bg-gray-300 rounded hover:bg-gray-400">
             Cancel
           </button>
-          <button className="flex-1 py-2 text-white bg-orange-500 rounded hover:bg-orange-600">
+          <button
+            onClick={onPlaceOrder}
+            className="flex-1 py-2 text-white bg-orange-500 rounded hover:bg-orange-600"
+          >
             Place Order
           </button>
         </div>
@@ -49,30 +54,47 @@ const Cart = ({ cartItems, onRemove }) => {
   );
 };
 
+// FoodDisplay Component
 const FoodDisplay = ({ onAddToCart }) => {
-  const food_list = [
-    { id: '1', name: 'Fried Rice', image: milkrice, price: 250 },
-    { id: '2', name: 'Rice', image: milkrice, price: 200 },
-    { id: '3', name: 'Kottu', image: milkrice, price: 300 },
-    { id: '4', name: 'Milk Rice', image: milkrice, price: 150 },
-    { id: '5', name: 'Fried Rice', image: milkrice, price: 250 },
-    { id: '6', name: 'Rice', image: milkrice, price: 200 },
-    { id: '7', name: 'Kottu', image: milkrice, price: 300 },
-    { id: '8', name: 'Milk Rice', image: milkrice, price: 150 },
+  const [isBreakfastTime, setIsBreakfastTime] = useState(false);
+
+  useEffect(() => {
+    const checkTime = () => {
+      const now = new Date();
+      const currentHour = now.getHours();
+      const currentMinute = now.getMinutes();
+      // Breakfast time range: 7:00 AM to 11:00 AM
+      setIsBreakfastTime(
+        (currentHour > 7 || (currentHour === 7 && currentMinute >= 0)) &&
+        (currentHour < 11 || (currentHour === 11 && currentMinute === 0))
+      );
+    };
+
+    checkTime();
+    const timer = setInterval(checkTime, 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const foodList = [
+    { id: "1", name: "Fried Rice", image: milkrice, price: 250 },
+    { id: "2", name: "Rice", image: milkrice, price: 200 },
+    { id: "3", name: "Kottu", image: milkrice, price: 300 },
+    { id: "4", name: "Milk Rice", image: milkrice, price: 150 },
   ];
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      {food_list.map((food) => (
+      {foodList.map((food) => (
         <div key={food.id} className="w-full m-auto bg-white border rounded-3xl">
           <Image
             src={food.image}
             alt={food.name}
             width={800}
             height={800}
-            className="object-cover w-full rounded-3xl"
+            className={`object-cover w-full rounded-3xl ${
+              !isBreakfastTime ? "opacity-50 blur-sm pointer-events-none" : ""
+            }`}
             quality={100}
-            layout="responsive"
           />
           <div className="p-4 grid grid-cols-[auto_40px]">
             <div className="flex-col">
@@ -83,6 +105,7 @@ const FoodDisplay = ({ onAddToCart }) => {
               <button
                 onClick={() => onAddToCart(food)}
                 className="px-4 py-1 mt-2 text-white bg-orange-500 rounded hover:bg-orange-600"
+                disabled={!isBreakfastTime}
               >
                 +
               </button>
@@ -94,6 +117,7 @@ const FoodDisplay = ({ onAddToCart }) => {
   );
 };
 
+// Combined Component (Main Component)
 const CombinedComponent = () => {
   const [cartItems, setCartItems] = useState([]);
 
@@ -117,10 +141,14 @@ const CombinedComponent = () => {
     );
   };
 
+  const handlePlaceOrder = () => {
+    console.log("Order placed with the following items:", JSON.stringify(cartItems, null, 2));
+  };
+
   return (
     <div className="grid gap-8 p-4 md:grid-cols-2">
       <FoodDisplay onAddToCart={handleAddToCart} />
-      <Cart cartItems={cartItems} onRemove={handleRemoveFromCart} />
+      <Cart cartItems={cartItems} onRemove={handleRemoveFromCart} onPlaceOrder={handlePlaceOrder} />
     </div>
   );
 };

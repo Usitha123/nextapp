@@ -92,13 +92,7 @@ const Page = () => {
                 <div className="rounded-b-xl py-2 bg-orange-500 min-h-[40px]">
                   {canteen.canteenName}
                 </div>
-                {/* Add to Cart Button */}
-                <button
-                  onClick={() => handleAddToCart(canteen)}
-                  className="px-4 py-2 mt-2 text-white bg-blue-600 rounded hover:bg-blue-700"
-                >
-                  Add to Cart
-                </button>
+                
               </div>
             ))}
           </div>

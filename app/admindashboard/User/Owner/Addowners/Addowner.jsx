@@ -6,46 +6,62 @@ export default function AddOwners() {
   const [ownerImageSrc, setOwnerImageSrc] = useState(null);
   const [ownerImageURL, setOwnerImageURL] = useState("");
   const [isMounted, setIsMounted] = useState(false);
-
-  // State for owner details
+  const [canteens, setCanteens] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  
   const [ownerDetails, setOwnerDetails] = useState({
     firstName: "",
     lastName: "",
     ownerEmail: "",
-    image: "", // Initially empty
+    image: "",
     phoneNumber: "",
     nicNumber: "",
-    status: "Active", // Default status
+    status: "Active",
     createDate: "",
     selectcanteen: "",
     password: "",
     confirmPassword: "",
   });
 
-  const [error, setError] = useState("");
-
+  // Fetch inactive canteens on mount
   useEffect(() => {
-    setIsMounted(true);
+    const fetchCanteens = async () => {
+      try {
+        const res = await fetch("/api/allcanteenslist", { headers: { "Content-Type": "application/json" } });
+        if (!res.ok) throw new Error("Failed to fetch data");
+
+        const data = await res.json();
+        const inactiveCanteens = data.filter(canteen => canteen.ownerstatus === "Inactive");
+        setCanteens(inactiveCanteens);
+      } catch (err) {
+        console.error("Error fetching canteens:", err);
+        setError("Failed to load canteens.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCanteens();
   }, []);
 
-  // Handle input changes
+  // Set the mounted state once the component is mounted
+  useEffect(() => setIsMounted(true), []);
+
+  // Handle input changes for form fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setOwnerDetails((prev) => ({ ...prev, [name]: value }));
+    setOwnerDetails(prev => ({ ...prev, [name]: value }));
   };
 
-  // Handle file change (image upload)
+  // Handle file change for image upload
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setOwnerDetails((prev) => ({
-      ...prev,
-      image: file,
-    }));
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "my-uploads"); // Replace with your Cloudinary preset
+    formData.append("upload_preset", "my-uploads");
 
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "https://api.cloudinary.com/v1_1/dtvsl05hw/image/upload");
@@ -63,9 +79,7 @@ export default function AddOwners() {
       setOwnerImageURL(response.secure_url);
     };
 
-    xhr.onerror = () => {
-      alert("Failed to upload the image. Please try again.");
-    };
+    xhr.onerror = () => alert("Failed to upload the image. Please try again.");
 
     xhr.send(formData);
   };
@@ -74,13 +88,11 @@ export default function AddOwners() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate password match
     if (ownerDetails.password !== ownerDetails.confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
 
-    // Validate form
     if (!validateOwnerForm()) {
       alert("Please fill out all required details correctly.");
       return;
@@ -88,43 +100,44 @@ export default function AddOwners() {
 
     const fullData = {
       ...ownerDetails,
-      image: ownerImageURL, // Use the uploaded image URL from Cloudinary
+      image: ownerImageURL, // Use the uploaded image URL
     };
 
     try {
-      const response = await fetch("/api/ownerDetails", { // API endpoint updated
+      const response = await fetch("/api/ownerDetails", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(fullData),
       });
 
       const result = await response.json();
-
       if (!response.ok) throw new Error(result.message || "Failed to add owner.");
 
       alert(result.message || "Owner added successfully!");
-
-      // Clear form fields after successful submission
-      setOwnerDetails({
-        firstName: "",
-        lastName: "",
-        ownerEmail: "",
-        image: "",
-        phoneNumber: "",
-        nicNumber: "",
-        status: "Active",
-        createDate: "",
-        selectcanteen: "",
-        password: "",
-        confirmPassword: "", // Reset the confirm password
-      });
-
-      setOwnerImageSrc(null);
-      setOwnerImageURL("");
-      setOwnerProgress(0);
-    } catch (error) {
+      resetForm();
+    } catch (err) {
       alert("There was an error submitting the form.");
     }
+  };
+
+  // Reset the form fields after successful submission
+  const resetForm = () => {
+    setOwnerDetails({
+      firstName: "",
+      lastName: "",
+      ownerEmail: "",
+      image: "",
+      phoneNumber: "",
+      nicNumber: "",
+      status: "Active",
+      createDate: "",
+      selectcanteen: "",
+      password: "",
+      confirmPassword: "",
+    });
+    setOwnerImageSrc(null);
+    setOwnerImageURL("");
+    setOwnerProgress(0);
   };
 
   // Validate owner form
@@ -132,7 +145,6 @@ export default function AddOwners() {
     const phoneRegex = /^[0-9]{10}$/;
     const nicRegex = /^[0-9]{12}$/;
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-
     const { firstName, lastName, phoneNumber, nicNumber, createDate, ownerEmail, selectcanteen, password, confirmPassword } = ownerDetails;
 
     return (
@@ -145,14 +157,12 @@ export default function AddOwners() {
       phoneRegex.test(phoneNumber) &&
       nicRegex.test(nicNumber) &&
       dateRegex.test(createDate) &&
-      password &&
-      confirmPassword &&
-      password === confirmPassword && // Ensure passwords match
+      password === confirmPassword &&
       selectcanteen
     );
   };
 
-  if (!isMounted) return null;
+  if (!isMounted || loading) return <p>Loading...</p>;
 
   return (
     <div className="w-full max-w-lg p-6 mx-auto text-white bg-gray-900 rounded-md">
@@ -230,7 +240,6 @@ export default function AddOwners() {
             className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
             required
           />
-          {/* Password and Confirm Password Fields */}
           <input
             type="password"
             name="password"
@@ -260,22 +269,29 @@ export default function AddOwners() {
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
           </select>
-          <label className="block text-sm text-gray-400">Canteen Status</label>
+
+          <label className="block text-sm text-gray-400">Canteen</label>
           <select
             name="selectcanteen"
             value={ownerDetails.selectcanteen}
             onChange={handleInputChange}
             className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+            required
           >
-            <option value="open">Open</option>
-            <option value="rahula">Rahula</option>
-            <option value="gym">Gym</option>
+            <option value="">--Select a Canteen--</option>
+            {canteens.length ? (
+              canteens.map((canteen) => (
+                <option key={canteen.id} value={canteen.id}>
+                  {canteen.canteenName}
+                </option>
+              ))
+            ) : (
+              <option value="">No Inactive Canteens Available</option>
+            )}
           </select>
-        </div>
 
-        <div className="flex justify-between mt-4">
-          <button type="submit" className="px-4 py-2 text-white bg-green-600 rounded-md">
-            Submit
+          <button type="submit" className="w-full p-3 mt-4 text-white bg-blue-600 rounded-md">
+            Add Owner
           </button>
         </div>
       </form>

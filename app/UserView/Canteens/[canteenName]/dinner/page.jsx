@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import Sidebar from "../../../Sidebar/page";
 import Topbar from "../../../Topbar/page";
 import Header from "../../../Header/page";
-import Foods from "../lunch/Foods/page";
+import Foods from "./Foods/page";
 import Link from "next/link";
 
 const Page = () => {
