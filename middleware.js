@@ -1,34 +1,37 @@
-import { getToken } from "next-auth/jwt";
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
 export async function middleware(req) {
-  // Get the token of the session
-  const token = await getToken({ req });
-  const { pathname } = req.nextUrl;
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-  // If no token is found and trying to access protected pages, redirect to login
-  if (!token && (pathname.startsWith('/dashboard') || pathname.startsWith('/opencanteen') || pathname.startsWith('/opencanteendashboard'))) {
+  if (!token) {
+    // If no token is found, redirect to root page
     return NextResponse.redirect(new URL('/', req.url));
   }
 
-  // Role-based access control for admindashboard
- if (pathname.startsWith('/admindashboard')) {
-    if (!token || token.role !== 'admin') {
-      return NextResponse.redirect(new URL('/dashboard', req.url));
-    }
-  } 
+  const { pathname } = req.nextUrl;
 
-  // Role-based access control for opencanteendashboard
-  if (pathname.startsWith('/opencanteendashboard')) {
-    if (!token || token.role !== 'canteen_owner') { // Adjust 'canteen_owner' to the specific role you want to check
-      return NextResponse.redirect(new URL('/dashboard', req.url));
-    }
+  // Protect specific pages based on user roles
+  if (pathname.startsWith('/admindashboard') && token.role !== 'admin') {
+    return NextResponse.redirect(new URL('/', req.url));
   }
 
+  if (pathname.startsWith('/Canteendashboard') && token.role !== 'canteenOwner') {
+    return NextResponse.redirect(new URL('/', req.url));
+  }
+
+  if (pathname.startsWith('/UserView') && token.role !== 'user') {
+    return NextResponse.redirect(new URL('/', req.url));
+  }
+
+  // Allow users to continue to the requested page if role matches
   return NextResponse.next();
 }
 
-// Apply middleware to the desired routes
 export const config = {
-  matcher: ['/dashboard/:path*', '/opencanteen/:path*',  '/opencanteendashboard/:path*'],
+  matcher: [
+    '/admindashboard/:path*',  // Match /admindashboard and all sub-paths
+    '/Canteendashboard/:path*', // Match /Canteendashboard and all sub-paths
+    '/UserView/:path*',  // Match /UserView and all sub-paths
+  ],
 };

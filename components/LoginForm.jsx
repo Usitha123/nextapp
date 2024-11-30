@@ -130,24 +130,7 @@ export default function LoginForm() {
             </Link>
           </div>
 
-          <div className="mt-3 space-y-2 text-sm text-center">
-            <Link href="/adminlogin" className="text-gray-600 underline hover:text-orange-500">
-              Admin login
-            </Link>
-            <Link href="/admindashboard" className="text-gray-600 underline hover:text-orange-500">
-              Admin dashboard
-            </Link>
-            <Link href="/UserView" className="text-gray-600 underline hover:text-orange-500">
-              UserView
-            </Link>
-            <Link href="/Canteendashboard" className="text-gray-600 underline hover:text-orange-500">
-              Canteen dashboard
-            </Link>
-            <br />
-            <Link href="/Cashierdashboard" className="text-gray-600 underline hover:text-orange-500">
-              Cashier dashboard
-            </Link>
-          </div>
+          
         </form>
       </div>
     </div>

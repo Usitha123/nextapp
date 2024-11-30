@@ -1,11 +1,16 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
-
-module.exports = nextConfig
-
-module.exports = {
-    images: {
-      domains: ['res.cloudinary.com'],  // Add Cloudinary domain
+const nextConfig = {
+  images: {
+    domains: ['res.cloudinary.com'],  // Add Cloudinary domain
+  },
+  reactStrictMode: true,
+  redirects: async () => [
+    {
+      source: '/login',
+      destination: '/auth/signin',
+      permanent: true,
     },
-  };
-  
+  ],
+};
+
+module.exports = nextConfig;
