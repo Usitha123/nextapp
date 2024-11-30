@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt'; // Import bcrypt for hashing
+import bcrypt from 'bcryptjs';
 import { connectMongoDB } from '@/lib/mongodb'; // Adjust the path as needed
 import Admin from '@/models/Admin'; // Adjust the path as needed
 
