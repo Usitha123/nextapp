@@ -5,7 +5,7 @@ const ownerDetailsSchema = new mongoose.Schema(
   {
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    ownerEmail: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
     image: { type: String, required: true },
     phoneNumber: { type: String, required: true },
     nicNumber: { type: String, required: true },

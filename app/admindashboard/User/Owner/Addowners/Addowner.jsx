@@ -13,7 +13,7 @@ export default function AddOwners() {
   const [ownerDetails, setOwnerDetails] = useState({
     firstName: "",
     lastName: "",
-    ownerEmail: "",
+    email: "",
     image: "",
     phoneNumber: "",
     nicNumber: "",
@@ -125,7 +125,7 @@ export default function AddOwners() {
     setOwnerDetails({
       firstName: "",
       lastName: "",
-      ownerEmail: "",
+      email: "",
       image: "",
       phoneNumber: "",
       nicNumber: "",
@@ -145,12 +145,12 @@ export default function AddOwners() {
     const phoneRegex = /^[0-9]{10}$/;
     const nicRegex = /^[0-9]{12}$/;
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-    const { firstName, lastName, phoneNumber, nicNumber, createDate, ownerEmail, selectcanteen, password, confirmPassword } = ownerDetails;
+    const { firstName, lastName, phoneNumber, nicNumber, createDate, email, selectcanteen, password, confirmPassword } = ownerDetails;
 
     return (
       firstName &&
       lastName &&
-      ownerEmail &&
+      email &&
       phoneNumber &&
       nicNumber &&
       createDate &&
@@ -200,9 +200,9 @@ export default function AddOwners() {
           />
           <input
             type="email"
-            name="ownerEmail"
+            name="email"
             placeholder="Owner Email"
-            value={ownerDetails.ownerEmail}
+            value={ownerDetails.email}
             onChange={handleInputChange}
             className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
             required

@@ -4,7 +4,7 @@ import OwnerDetails from '@/models/OwnerDetails'; // The OwnerDetails model
 
 export async function POST(req) {
   try {
-    const { firstName, lastName, ownerEmail, image, phoneNumber, nicNumber, password, confirmPassword, status, selectcanteen } = await req.json();
+    const { firstName, lastName, email, image, phoneNumber, nicNumber, password, confirmPassword, status, selectcanteen } = await req.json();
 
     // Check if the passwords match
     if (password !== confirmPassword) {
@@ -18,7 +18,7 @@ export async function POST(req) {
     const newOwner = new OwnerDetails({
       firstName,
       lastName,
-      ownerEmail,
+      email,
       image,
       phoneNumber,
       nicNumber,
