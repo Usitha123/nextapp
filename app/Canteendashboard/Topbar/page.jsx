@@ -1,3 +1,4 @@
+"use client"
 import React from 'react';
 import { IoMdSettings } from "react-icons/io";
 import { FaUserAlt } from "react-icons/fa";
