@@ -131,6 +131,10 @@ export default function LoginForm() {
             <Link href="/Canteendashboard" className="text-gray-600 underline hover:text-orange-500">
               Canteendashboard
             </Link>
+            <br></br>
+            <Link href="/Cashierdashboard" className="text-gray-600 underline hover:text-orange-500">
+            Cashierdashboard
+            </Link>
           </div>
         </form>
       </div>

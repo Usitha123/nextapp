@@ -1,7 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const UpdateStatusModal = ({ isOpen, onClose }) => {
-  const [status, setStatus] = useState("active");
+const UpdateStatusModal = ({ isOpen, onClose, owner }) => {
+  const [status, setStatus] = useState(owner?.status || "active");
+
+  useEffect(() => {
+    if (owner) {
+      setStatus(owner.status);
+    }
+  }, [owner]);
+
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`/api/updateownerstatus?id=${owner._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status }), // Ensure status is being sent correctly
+      });
+  
+      if (!response.ok) {
+        const errorDetails = await response.text();
+        console.error("Error updating status:", errorDetails);
+        alert('Failed to update status');
+      } else {
+        alert('Status updated successfully');
+        onClose();
+      }
+    } catch (error) {
+      console.error("Error occurred while sending request:", error);
+      alert('An error occurred while updating status');
+    }
+  };
+  
 
   if (!isOpen) return null;
 
@@ -18,7 +49,7 @@ const UpdateStatusModal = ({ isOpen, onClose }) => {
                 value="active"
                 checked={status === "active"}
                 onChange={() => setStatus("active")}
-                className="mr-2 text-orange-500 focus:ring-orange-500"
+                className="mr-2"
               />
               Active
             </label>
@@ -26,21 +57,17 @@ const UpdateStatusModal = ({ isOpen, onClose }) => {
               <input
                 type="radio"
                 name="status"
-                value="block"
-                checked={status === "block"}
-                onChange={() => setStatus("block")}
-                className="mr-2 text-orange-500 focus:ring-orange-500"
+                value="inactive"
+                checked={status === "inactive"}
+                onChange={() => setStatus("inactive")}
+                className="mr-2"
               />
-              Block
+              Inactive
             </label>
           </div>
-          <div className="flex justify-end mt-6 space-x-4">
+          <div className="flex justify-between mt-4">
             <button
-              onClick={() => {
-                console.log(`Status updated to: ${status}`);
-                onClose();
-              }}
-              type="button"
+              onClick={handleSave}
               className="px-4 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-400 focus:outline-none"
             >
               Save
