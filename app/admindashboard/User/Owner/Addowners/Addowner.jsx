@@ -9,7 +9,7 @@ export default function AddOwners() {
   const [canteens, setCanteens] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  
+
   const [ownerDetails, setOwnerDetails] = useState({
     firstName: "",
     lastName: "",
@@ -21,10 +21,9 @@ export default function AddOwners() {
     createDate: "",
     selectcanteen: "",
     password: "",
-    confirmPassword: "",
+    confirmPassword: "", // Added confirmPassword
   });
 
-  // Fetch inactive canteens on mount
   useEffect(() => {
     const fetchCanteens = async () => {
       try {
@@ -45,16 +44,13 @@ export default function AddOwners() {
     fetchCanteens();
   }, []);
 
-  // Set the mounted state once the component is mounted
   useEffect(() => setIsMounted(true), []);
 
-  // Handle input changes for form fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setOwnerDetails(prev => ({ ...prev, [name]: value }));
   };
 
-  // Handle file change for image upload
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -84,43 +80,48 @@ export default function AddOwners() {
     xhr.send(formData);
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Frontend password confirmation check
     if (ownerDetails.password !== ownerDetails.confirmPassword) {
-      setError("Passwords do not match.");
+      alert("Passwords do not match.");
       return;
     }
-
-    if (!validateOwnerForm()) {
-      alert("Please fill out all required details correctly.");
-      return;
-    }
-
+  
     const fullData = {
       ...ownerDetails,
-      image: ownerImageURL, // Use the uploaded image URL
+      image: ownerImageURL, // Including the image URL
     };
-
+  
+    // Remove confirmPassword before sending to the backend
+    delete fullData.confirmPassword;
+  
     try {
       const response = await fetch("/api/ownerDetails", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(fullData),
       });
-
+  
       const result = await response.json();
-      if (!response.ok) throw new Error(result.message || "Failed to add owner.");
-
+  
+      if (!response.ok) {
+        // Log the detailed error message for better debugging
+        console.error("API error:", result);
+        throw new Error(result.message || "Failed to add owner.");
+      }
+  
       alert(result.message || "Owner added successfully!");
       resetForm();
     } catch (err) {
-      alert("There was an error submitting the form.");
+      // Show the error details for debugging
+      console.error("Submission error:", err);
+      alert("There was an error submitting the form. See console for details.");
     }
   };
+  
 
-  // Reset the form fields after successful submission
   const resetForm = () => {
     setOwnerDetails({
       firstName: "",
@@ -133,19 +134,18 @@ export default function AddOwners() {
       createDate: "",
       selectcanteen: "",
       password: "",
-      confirmPassword: "",
+      confirmPassword: "", // Reset confirmPassword
     });
     setOwnerImageSrc(null);
     setOwnerImageURL("");
     setOwnerProgress(0);
   };
 
-  // Validate owner form
   const validateOwnerForm = () => {
     const phoneRegex = /^[0-9]{10}$/;
     const nicRegex = /^[0-9]{12}$/;
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-    const { firstName, lastName, phoneNumber, nicNumber, createDate, email, selectcanteen, password, confirmPassword } = ownerDetails;
+    const { firstName, lastName, phoneNumber, nicNumber, createDate, email, selectcanteen, password } = ownerDetails;
 
     return (
       firstName &&
@@ -157,7 +157,7 @@ export default function AddOwners() {
       phoneRegex.test(phoneNumber) &&
       nicRegex.test(nicNumber) &&
       dateRegex.test(createDate) &&
-      password === confirmPassword &&
+      password &&
       selectcanteen
     );
   };
@@ -232,14 +232,20 @@ export default function AddOwners() {
             className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
             required
           />
-          <input
-            type="date"
-            name="createDate"
-            value={ownerDetails.createDate}
+          <select
+            name="selectcanteen"
+            value={ownerDetails.selectcanteen}
             onChange={handleInputChange}
             className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
             required
-          />
+          >
+            <option value="">Select Canteen</option>
+            {canteens.map(canteen => (
+              <option key={canteen._id} value={canteen._id}>
+                {canteen.canteenName}
+              </option>
+            ))}
+          </select>
           <input
             type="password"
             name="password"
@@ -258,42 +264,14 @@ export default function AddOwners() {
             className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
             required
           />
-          {error && <p className="text-sm text-red-500">{error}</p>}
-          <label className="block text-sm text-gray-400">Owner Status</label>
-          <select
-            name="status"
-            value={ownerDetails.status}
-            onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
-          >
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-          </select>
-
-          <label className="block text-sm text-gray-400">Canteen</label>
-          <select
-            name="selectcanteen"
-            value={ownerDetails.selectcanteen}
-            onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
-            required
-          >
-            <option value="">--Select a Canteen--</option>
-            {canteens.length ? (
-              canteens.map((canteen) => (
-                <option key={canteen.id} value={canteen.id}>
-                  {canteen.canteenName}
-                </option>
-              ))
-            ) : (
-              <option value="">No Inactive Canteens Available</option>
-            )}
-          </select>
-
-          <button type="submit" className="w-full p-3 mt-4 text-white bg-blue-600 rounded-md">
-            Add Owner
-          </button>
         </div>
+        <button
+          type="submit"
+          disabled={!validateOwnerForm()}
+          className="w-full py-2 mt-4 font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-blue-400"
+        >
+          Add Owner
+        </button>
       </form>
     </div>
   );

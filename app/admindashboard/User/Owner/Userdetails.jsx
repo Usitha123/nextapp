@@ -107,7 +107,7 @@ const OwnerTable = () => {
               <td className="p-2">{owner.firstName}</td>
               <td className="p-2">{owner.lastName}</td>
               <td className="p-2">{owner.phoneNumber}</td>
-              <td className="p-2">{owner.ownerEmail}</td>
+              <td className="p-2">{owner.email}</td>
               <td className="p-2">{owner.nicNumber}</td>
               <td className="p-2">{owner.status}</td>
               <td className="p-2">{owner.selectcanteen}</td>

@@ -9,7 +9,7 @@ import Link from 'next/link';
 const Topbar = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
-
+/*
   // Redirect users based on session state or role
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -22,7 +22,7 @@ const Topbar = () => {
   // Show loading state while session is loading
   if (status === 'loading') {
     return <div>Loading...</div>;
-  }
+  }*/
 
   return (
     <div className="flex items-center justify-between p-4 text-white bg-gray-700">

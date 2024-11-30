@@ -11,7 +11,7 @@ const Topbar = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/');
     } else if (session?.user?.role !== 'user') {
@@ -22,7 +22,7 @@ const Topbar = () => {
   if (status === 'loading') {
     return <div>Loading...</div>;
   }
-
+*/
   return (
     <div className="flex items-center justify-between p-4 bg-white">
       <span className='text-lg'>Hi <strong>{session?.user?.name}</strong> Welcome Back</span>

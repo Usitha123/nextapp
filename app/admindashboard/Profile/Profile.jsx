@@ -11,7 +11,7 @@ const UpdateAdminProfile = () => {
     lastName: '',
     phone: '',
     email: '',
-    nic: '', // Ensure this field matches the state
+    nic: '',
     password: '',
     confirmPassword: '',
   });
@@ -26,7 +26,7 @@ const UpdateAdminProfile = () => {
         const response = await fetch('/api/viewadminprofile');
         if (!response.ok) throw new Error('Failed to fetch admin data');
         const data = await response.json();
-        setAdmin({ ...data, password: '', confirmPassword: '' }); // Avoid populating password fields
+        setAdmin({ ...data, password: '', confirmPassword: '' });
       } catch (err) {
         setError(err.message || 'Error fetching admin details.');
       } finally {
@@ -45,7 +45,6 @@ const UpdateAdminProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if passwords match
     if (admin.password !== admin.confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -54,10 +53,7 @@ const UpdateAdminProfile = () => {
     setLoading(true);
 
     try {
-      // Send plain password to the server (hashing will be done on the server)
       const updatedAdmin = { ...admin, password: admin.password };
-
-      // Send updated admin profile data to the server
       const response = await fetch('/api/updateadminprofile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -133,8 +129,8 @@ const UpdateAdminProfile = () => {
           <label className="block text-sm text-gray-400">NIC Number</label>
           <input
             type="text"
-            name="nic" // Ensure this matches the state field name
-            value={admin.nic} // Bind to the correct state property
+            name="nic"
+            value={admin.nic}
             onChange={handleChange}
             className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
@@ -151,13 +147,16 @@ const UpdateAdminProfile = () => {
               onChange={handleChange}
               className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="Password"
+              aria-label="Password"
             />
-            <span
-              className="absolute inset-y-0 flex items-center text-gray-600 cursor-pointer right-3"
+            <button
+              type="button"
+              className="absolute inset-y-0 flex items-center text-gray-600 right-3 hover:text-orange-500 focus:outline-none"
               onClick={() => setShowPassword((prev) => !prev)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <FaEye /> : <FaEyeSlash />}
-            </span>
+            </button>
           </div>
         </div>
 

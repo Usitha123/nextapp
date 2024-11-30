@@ -1,15 +1,19 @@
-// app/api/ownerDetails/route.js
-import { connectMongoDB } from "@/lib/mongodb";  // Utility to connect to MongoDB
-import OwnerDetails from '@/models/OwnerDetails'; // The OwnerDetails model
+import { connectMongoDB } from "@/lib/mongodb";
+import OwnerDetails from '@/models/OwnerDetails';
+import bcrypt from 'bcryptjs';
 
 export async function POST(req) {
   try {
-    const { firstName, lastName, email, image, phoneNumber, nicNumber, password, confirmPassword, status, selectcanteen } = await req.json();
+    // Parse the incoming JSON body from the request
+    const { firstName, lastName, email, image, phoneNumber, nicNumber, password, status, selectcanteen } = await req.json();
 
-    // Check if the passwords match
-    if (password !== confirmPassword) {
-      return new Response(JSON.stringify({ message: 'Passwords do not match' }), { status: 400 });
+    // Validate email field
+    if (!email || !email.trim()) {
+      return new Response(JSON.stringify({ message: 'Email is required' }), { status: 400 });
     }
+
+    // Hash the password before saving to the database
+    const hashedPassword = await bcrypt.hash(password, 10); // Salt rounds set to 10
 
     // Connect to the database
     await connectMongoDB();
@@ -18,12 +22,11 @@ export async function POST(req) {
     const newOwner = new OwnerDetails({
       firstName,
       lastName,
-      email,
+      email, // Make sure email is being sent correctly
       image,
       phoneNumber,
       nicNumber,
-      password,
-      confirmPassword, // Store confirmPassword, but in a real app, you should not store it in the DB
+      password: hashedPassword, // Save the hashed password
       status,
       selectcanteen
     });
@@ -31,6 +34,7 @@ export async function POST(req) {
     // Save the new owner to the database
     await newOwner.save();
 
+    // Return success response
     return new Response(JSON.stringify({ message: 'Owner details saved successfully', data: newOwner }), { status: 201 });
   } catch (error) {
     console.error('Error creating owner details:', error);

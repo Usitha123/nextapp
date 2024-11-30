@@ -1,12 +1,16 @@
 import React from 'react';
 import { IoMdSettings } from "react-icons/io";
 import { FaUserAlt } from "react-icons/fa";
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 const Topbar = () => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   return (
     <div className="flex items-center justify-between p-4 text-white bg-gray-700">
-      <span>Hi Dunith, Welcome Back</span>
+      <span>Hi {session?.user?.name}, Welcome Back</span>
       <div className="flex space-x-4">
       <Link href="/Canteendashboard/Profile">
       <IoMdSettings />
