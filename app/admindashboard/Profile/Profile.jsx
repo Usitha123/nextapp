@@ -1,12 +1,21 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import bcrypt from 'bcryptjs'; // Import bcryptjs for password hashing
 
 const UpdateAdminProfile = () => {
   const router = useRouter();
-  const [admin, setAdmin] = useState(null);
+  const [admin, setAdmin] = useState({
+    firstName: '',
+    lastName: '',
+    phone: '',
+    email: '',
+    nic: '', // Ensure this field matches the state
+    password: '',
+    confirmPassword: '',
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -18,46 +27,48 @@ const UpdateAdminProfile = () => {
         const response = await fetch('/api/viewadminprofile');
         if (!response.ok) throw new Error('Failed to fetch admin data');
         const data = await response.json();
-        setAdmin({
-          ...data,
-          password: '', // Reset the password field to prevent auto-fill
-          confirmPassword: '', // Reset confirm password to prevent auto-fill
-        });
+        setAdmin({ ...data, password: '', confirmPassword: '' }); // Avoid populating password fields
       } catch (err) {
         setError(err.message || 'Error fetching admin details.');
       } finally {
         setLoading(false);
       }
     };
+
     fetchAdminData();
   }, []);
 
-  // Handle changes in input fields
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setAdmin((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setAdmin({ ...admin, [name]: value });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check if passwords match
+    if (admin.password !== admin.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
     setLoading(true);
-    setError(null);
 
     try {
+      // Hash the password before sending to the server
+      const hashedPassword = await bcrypt.hash(admin.password, 10);
+
+      // Update admin data with hashed password
+      const updatedAdmin = { ...admin, password: hashedPassword };
+
+      // Send updated admin profile data to the server
       const response = await fetch('/api/updateadminprofile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(admin),
+        body: JSON.stringify(updatedAdmin),
       });
 
       if (!response.ok) throw new Error(await response.text());
-      const updatedAdmin = await response.json();
-      console.log('Admin updated:', updatedAdmin);
-
       router.push('/admindashboard');
     } catch (err) {
       setError(err.message || 'Failed to update admin.');
@@ -66,51 +77,84 @@ const UpdateAdminProfile = () => {
     }
   };
 
-  // Render loading, error, or form
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
-  if (!admin) return <div>No admin data available.</div>;
-
-  const renderInputField = (name, type = 'text', placeholder) => (
-    <div>
-      <label className="block text-sm text-gray-400">{placeholder}</label>
-      <input
-        type={type}
-        name={name}
-        value={admin[name] || ''}
-        onChange={handleChange}
-        className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-        placeholder={placeholder}
-        autoComplete="off" // Disable browser autofill
-      />
-    </div>
-  );
 
   return (
     <div className="bg-[#1b1b1b] p-6 rounded-md shadow-lg w-full max-w-xl mx-auto">
       <h2 className="mb-6 text-2xl font-semibold text-white">Profile</h2>
-      <form className="flex-1 space-y-4" onSubmit={handleSubmit}>
-        <div className="grid grid-cols-2 gap-4">
-          {['firstName', 'lastName', 'phone', 'email'].map((field) => (
-            <div key={field}>
-              {renderInputField(field, field === 'email' ? 'email' : 'text', field.replace(/([A-Z])/g, ' $1'))}
-            </div>
-          ))}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* First Name */}
+        <div>
+          <label className="block text-sm text-gray-400">First Name</label>
+          <input
+            type="text"
+            name="firstName"
+            value={admin.firstName}
+            onChange={handleChange}
+            className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+          />
         </div>
 
-        {renderInputField('nicNumber', 'text', 'NIC Number')}
+        {/* Last Name */}
+        <div>
+          <label className="block text-sm text-gray-400">Last Name</label>
+          <input
+            type="text"
+            name="lastName"
+            value={admin.lastName}
+            onChange={handleChange}
+            className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+          />
+        </div>
 
+        {/* Phone */}
+        <div>
+          <label className="block text-sm text-gray-400">Phone</label>
+          <input
+            type="text"
+            name="phone"
+            value={admin.phone}
+            onChange={handleChange}
+            className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+          />
+        </div>
+
+        {/* Email */}
+        <div>
+          <label className="block text-sm text-gray-400">Email</label>
+          <input
+            type="email"
+            name="email"
+            value={admin.email}
+            onChange={handleChange}
+            className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+          />
+        </div>
+
+        {/* NIC Number */}
+        <div>
+          <label className="block text-sm text-gray-400">NIC Number</label>
+          <input
+            type="text"
+            name="nic" // Ensure this matches the state field name
+            value={admin.nic} // Bind to the correct state property
+            onChange={handleChange}
+            className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+          />
+        </div>
+
+        {/* Password */}
         <div>
           <label className="block text-sm text-gray-400">Password</label>
           <div className="relative">
             <input
               type={showPassword ? 'text' : 'password'}
               name="password"
-              value={admin.password || ''}
+              value={admin.password}
               onChange={handleChange}
               className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="Password"
-              autoComplete="off" // Disable browser autofill
             />
             <span
               className="absolute inset-y-0 flex items-center text-gray-600 cursor-pointer right-3"
@@ -121,24 +165,20 @@ const UpdateAdminProfile = () => {
           </div>
         </div>
 
+        {/* Confirm Password */}
         <div>
           <label className="block text-sm text-gray-400">Confirm Password</label>
-          <div className="relative">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              name="confirmPassword"
-              value={admin.confirmPassword || ''}
-              onChange={handleChange}
-              className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-              placeholder="Confirm Password"
-              autoComplete="off" // Disable browser autofill
-            />
-            <span
-              className="absolute inset-y-0 flex items-center text-gray-600 cursor-pointer right-3"
-            ></span>
-          </div>
+          <input
+            type={showPassword ? 'text' : 'password'}
+            name="confirmPassword"
+            value={admin.confirmPassword}
+            onChange={handleChange}
+            className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            placeholder="Confirm Password"
+          />
         </div>
 
+        {/* Submit Buttons */}
         <div className="flex justify-end mt-6 space-x-4">
           <button
             type="submit"
@@ -159,10 +199,4 @@ const UpdateAdminProfile = () => {
   );
 };
 
-const SuspendedUpdateAdminProfile = () => (
-  <Suspense fallback={<div>Loading...</div>}>
-    <UpdateAdminProfile />
-  </Suspense>
-);
-
-export default SuspendedUpdateAdminProfile;
+export default UpdateAdminProfile;
