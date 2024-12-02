@@ -24,6 +24,10 @@ export async function middleware(req) {
     return NextResponse.redirect(new URL('/', req.url));
   }
 
+  if (pathname.startsWith('/Cashierdashboard') && token.role !== 'cashier') {
+    return NextResponse.redirect(new URL('/', req.url));
+  }
+
   // Allow users to continue to the requested page if role matches
   return NextResponse.next();
 }
@@ -32,6 +36,7 @@ export const config = {
   matcher: [
     '/admindashboard/:path*',  // Match /admindashboard and all sub-paths
     '/Canteendashboard/:path*', // Match /Canteendashboard and all sub-paths
-    '/UserView/:path*',  // Match /UserView and all sub-paths
+    '/UserView/:path*', // Match /UserView and all sub-paths
+    '/Cashierdashboard/:path*',  // Match /UserView and all sub-paths
   ],
 };

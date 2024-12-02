@@ -47,6 +47,9 @@ export default function LoginForm() {
         case "user":
           router.push("/UserView");
           break;
+        case "cashier":
+          router.push("/Cashierdashboard");
+          break;
         default:
           setError("Unknown user role");
       }
