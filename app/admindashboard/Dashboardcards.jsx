@@ -3,7 +3,7 @@ import { FaUser } from 'react-icons/fa';
 
 // Reusable DashboardCard component
 const DashboardCard = ({ count, label }) => (
-  <div className="flex flex-col items-center justify-center p-4 text-orange-500 bg-gray-900 rounded-lg w-36">
+  <div className="flex flex-col items-center justify-center p-4 text-orange-500 bg-gray-900 rounded-lg">
     <div className="flex items-center gap-2 text-3xl font-bold">
       <span>{count}</span>
       <FaUser size={20} className="text-orange-500" />

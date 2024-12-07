@@ -9,7 +9,7 @@ import Dashboardcards from './Dashboardcards';
 
 const CanteenDashboard = () => {
   return (
-    <div className="flex">
+    <div className="flex bg-black">
       <Sidebar />
       <div className="flex-1">
         <Topbar />

@@ -25,7 +25,7 @@ const Topbar = () => {
   }*/
 
   return (
-    <div className="flex items-center justify-between p-4 text-white bg-gray-700">
+    <div className="flex items-center justify-between p-4 text-white bg-[#2B2623]">
       <span>Hi {session?.user?.name}, Welcome Back</span>
       <div className="flex space-x-4">
         {/* Settings Icon */}

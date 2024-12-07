@@ -29,9 +29,9 @@ const Sidebar = () => {
   const isActive = (path) => pathname === path;
 
   return (
-    <div className="w-64 h-screen p-4 text-white bg-gray-800">
+    <div className="w-64 h-screen p-4 text-white bg-[#2B2623]">
       {/* Logo */}
-      <h1 className="mb-6 text-2xl font-bold text-orange-500">LOGO</h1>
+      <h1 className="mb-6 text-2xl text-center font-bold text-orange-500">LOGO</h1>
 
       {/* Navigation Links */}
       <ul className="space-y-4">
@@ -48,19 +48,19 @@ const Sidebar = () => {
 
         {/* Canteens Dropdown Menu */}
         <li>
-          <div className="space-y-1">
+          <div className="space-y-4">
             <button
               onClick={() => setOpenCanteensMenu(!openCanteensMenu)}
-              className="flex items-center justify-between w-full px-4 py-2 rounded hover:bg-gray-700"
+              className="flex items-center justify-between w-full  rounded hover:bg-gray-700"
             >
-              Canteens
+            Canteens
               <span>{openCanteensMenu ? "-" : "+"}</span>
             </button>
             {openCanteensMenu && (
               <div className="ml-4 space-y-2">
                 <Link
                   href="/admindashboard/Canteens/AllCanteens"
-                  className={`block p-2 rounded ${
+                  className={`block rounded ${
                     isActive("/admindashboard/Canteens/AllCanteens") ? "bg-gray-700 text-white" : "hover:bg-gray-700"
                   }`}
                 >
