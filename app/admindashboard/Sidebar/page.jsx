@@ -31,15 +31,15 @@ const Sidebar = () => {
   return (
     <div className="w-64 h-screen p-4 text-white bg-[#2B2623]">
       {/* Logo */}
-      <h1 className="mb-6 text-2xl text-center font-bold text-orange-500">LOGO</h1>
+      <h1 className="mb-10 mt-2 text-3xl text-center font-bold text-orange-500">LOGO</h1>
 
       {/* Navigation Links */}
-      <ul className="space-y-4">
+      <ul className="space-y-4 text-lg font-normal text-gray-300">
         <li>
           <Link
             href="/admindashboard"
             className={`block p-2 rounded ${
-              isActive("/admindashboard") ? "bg-gray-700 text-white" : "hover:bg-gray-700"
+              isActive("/admindashboard") ? "font-semibold bg-[#3d3632] text-white" : "hover:bg-[#3d3632] "
             }`}
           >
             Dashboard
@@ -48,20 +48,20 @@ const Sidebar = () => {
 
         {/* Canteens Dropdown Menu */}
         <li>
-          <div className="space-y-4">
+          <div className="space-y-1">
             <button
               onClick={() => setOpenCanteensMenu(!openCanteensMenu)}
-              className="flex items-center justify-between w-full  rounded hover:bg-gray-700"
+              className="p-2 flex items-center justify-between w-full  rounded hover:bg-[#3d3632]"
             >
             Canteens
               <span>{openCanteensMenu ? "-" : "+"}</span>
             </button>
             {openCanteensMenu && (
-              <div className="ml-4 space-y-2">
+              <div className="ml-4 space-y-1">
                 <Link
                   href="/admindashboard/Canteens/AllCanteens"
-                  className={`block rounded ${
-                    isActive("/admindashboard/Canteens/AllCanteens") ? "bg-gray-700 text-white" : "hover:bg-gray-700"
+                  className={`block p-2 rounded ${
+                    isActive("/admindashboard/Canteens/AllCanteens") ?  "font-semibold bg-[#3d3632] text-white" : "hover:bg-[#3d3632] "
                   }`}
                 >
                   All Canteens
@@ -69,7 +69,7 @@ const Sidebar = () => {
                 <Link
                   href="/admindashboard/Canteens/AddNew"
                   className={`block p-2 rounded ${
-                    isActive("/admindashboard/Canteens/AddNew") ? "bg-gray-700 text-white" : "hover:bg-gray-700"
+                    isActive("/admindashboard/Canteens/AddNew") ?  "font-semibold bg-[#3d3632] text-white" : "hover:bg-[#3d3632] "
                   }`}
                 >
                   Add New
@@ -84,17 +84,17 @@ const Sidebar = () => {
           <div className="space-y-1">
             <button
               onClick={() => setOpenUserMenu(!openUserMenu)}
-              className="flex items-center justify-between w-full px-4 py-2 rounded hover:bg-gray-700"
+              className="flex items-center justify-between w-full p-2 rounded hover:bg-[#3d3632]"
             >
               User
               <span>{openUserMenu ? "-" : "+"}</span>
             </button>
             {openUserMenu && (
-              <div className="ml-4 space-y-2">
+              <div className="ml-4 space-y-1">
                 <Link
                   href="/admindashboard/User/Owner"
                   className={`block p-2 rounded ${
-                    isActive("/admindashboard/User/Owner") ? "bg-gray-700 text-white" : "hover:bg-gray-700"
+                    isActive("/admindashboard/User/Owner") ?  "font-semibold bg-[#3d3632] text-white" : "hover:bg-[#3d3632] "
                   }`}
                 >
                   Owner
@@ -102,7 +102,7 @@ const Sidebar = () => {
                 <Link
                   href="/admindashboard/User/Student"
                   className={`block p-2 rounded ${
-                    isActive("/admindashboard/User/Student") ? "bg-gray-700 text-white" : "hover:bg-gray-700"
+                    isActive("/admindashboard/User/Student") ?  "font-semibold bg-[#3d3632] text-white" : "hover:bg-[#3d3632] "
                   }`}
                 >
                   Student
@@ -110,7 +110,7 @@ const Sidebar = () => {
                 <Link
                   href="/admindashboard/User/Cashier"
                   className={`block p-2 rounded ${
-                    isActive("/admindashboard/User/Cashier") ? "bg-gray-700 text-white" : "hover:bg-gray-700"
+                    isActive("/admindashboard/User/Cashier") ?  "font-semibold bg-[#3d3632] text-white" : "hover:bg-[#3d3632] "
                   }`}
                 >
                   Cashier
@@ -124,7 +124,7 @@ const Sidebar = () => {
           <Link
             href="/admindashboard/Reports_"
             className={`block p-2 rounded ${
-              isActive("/admindashboard/Reports_") ? "bg-gray-700 text-white" : "hover:bg-gray-700"
+              isActive("/admindashboard/Reports_") ?  "font-semibold bg-[#3d3632] text-white" : "hover:bg-[#3d3632] "
             }`}
           >
             Reports
@@ -134,7 +134,7 @@ const Sidebar = () => {
           <Link
             href="/admindashboard/Profile"
             className={`block p-2 rounded ${
-              isActive("/admindashboard/Profile") ? "bg-gray-700 text-white" : "hover:bg-gray-700"
+              isActive("/admindashboard/Profile") ?  "font-semibold bg-[#3d3632] text-white" : "hover:bg-[#3d3632] "
             }`}
           >
             Profile
@@ -143,7 +143,7 @@ const Sidebar = () => {
         <li>
           <button
             onClick={handleSignOut}
-            className="block p-2 rounded hover:bg-gray-700"
+            className="block text-left p-2 w-full rounded hover:bg-orange-600 hover:text-white"
           >
             Logout
           </button>
