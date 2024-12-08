@@ -31,16 +31,33 @@ console.log(currentPath);
         {/* Meal category tabs */}
         <div className="flex px-3 m-2 space-x-4 font-semibold">
   <Link href={`/UserView/Canteens/${currentPath}/breakfast`}>
-    <button className="hover:underline">Breakfast</button>
+    <button
+      className={`hover:underline ${
+        fullPath?.endsWith("breakfast") ? "underline font-bold" : ""
+      }`}
+    >
+      Breakfast
+    </button>
   </Link>
   <Link href={`/UserView/Canteens/${currentPath}/lunch`}>
-    <button className="hover:underline">Lunch</button>
+    <button
+      className={`hover:underline ${
+        fullPath?.endsWith("lunch") ? "text-orange-500 font-bold" : ""
+      }`}
+    >
+      Lunch
+    </button>
   </Link>
   <Link href={`/UserView/Canteens/${currentPath}/dinner`}>
-    <button className="hover:underline">Dinner</button>
+    <button
+      className={`hover:underline ${
+        fullPath?.endsWith("dinner") ? "text-orange-500" : ""
+      }`}
+    >
+      Dinner
+    </button>
   </Link>
 </div>
-
 
 
         {/* Content Area */}
