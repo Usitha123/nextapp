@@ -46,17 +46,12 @@ console.log(currentPath);
         {/* Content Area */}
         <div className="flex p-4 space-x-8">
           {/* Food Display Section */}
-          <div className="w-2/3">
+          <div>
             <Foods />
           </div>
 
           {/* Cart Section */}
-          <div className="w-1/3">
-            <div className="p-4 mb-4 text-sm bg-white border border-orange-500 rounded-md shadow-sm shadow-orange-200">
-              <strong>Note:</strong> You are responsible for paying the full amount of your order and collecting it.
-            </div>
-            
-          </div>
+          
         </div>
       </div>
     </div>

@@ -70,7 +70,7 @@ const Page = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar activePath={currentPath} />
-      <div className="flex-1 ml-20 md:ml-60">
+      <div className="flex-1">
         <Topbar />
         <Header title="Canteens" />
         <div className="max-h-[70%] m-5">

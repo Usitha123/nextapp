@@ -83,7 +83,7 @@ const FoodDisplay = ({ onAddToCart }) => {
   ];
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
       {foodList.map((food) => (
         <div key={food.id} className="w-full m-auto bg-white border rounded-3xl">
           <Image
@@ -101,10 +101,10 @@ const FoodDisplay = ({ onAddToCart }) => {
               <h3 className="mt-2 text-lg font-semibold">{food.name}</h3>
               <p className="text-gray-500">Rs {food.price}.00</p>
             </div>
-            <div>
+            <div className="relative">
               <button
                 onClick={() => onAddToCart(food)}
-                className="px-4 py-1 mt-2 text-white bg-orange-500 rounded hover:bg-orange-600"
+                className= "absolute bottom-2 right-2 w-8 h-8 text-xl text-white bg-orange-500 rounded-[50%] hover:bg-orange-600"
                 disabled={!isBreakfastTime}
               >
                 +
@@ -146,10 +146,14 @@ const CombinedComponent = () => {
   };
 
   return (
-    <div className="grid gap-8 p-4 md:grid-cols-2">
-      <FoodDisplay onAddToCart={handleAddToCart} />
+    <div className="grid gap-8 p-4 md:grid-cols-[2fr_1fr]">
+      <div><FoodDisplay onAddToCart={handleAddToCart} /></div>
+      <div><div className="p-4 mb-4 text-sm bg-white border border-orange-500 rounded-md shadow-sm shadow-orange-200">
+              <strong>Note:</strong> You are responsible for paying the full amount of your order and collecting it.
+      </div>
       <Cart cartItems={cartItems} onRemove={handleRemoveFromCart} onPlaceOrder={handlePlaceOrder} />
     </div>
+      </div>
   );
 };
 
