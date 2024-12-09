@@ -1,12 +1,13 @@
+import { ServerOff, Store, UserRoundX, UsersRound } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { FaUser } from 'react-icons/fa';
 
 // Reusable DashboardCard component
-const DashboardCard = ({ count, label }) => (
-  <div className="flex flex-col items-center justify-center p-4 text-orange-500 bg-gray-900 rounded-lg">
-    <div className="flex items-center gap-2 text-3xl font-bold">
+const DashboardCard = ({ count, label, Icon }) => (
+  <div className="relative flex flex-col items-center justify-center p-4 text-orange-500 bg-gray-900 rounded-lg">
+    <div className=" flex items-center gap-2 text-5xl font-thin">
       <span>{count}</span>
-      <FaUser size={20} className="text-orange-500" />
+      <Icon className=" absolute top-4 w-[18px] h-[20px] right-4 text-[2px]" /> {/* Render the icon as a React component */}
     </div>
     <div className="mt-2 text-sm text-gray-300">{label}</div>
   </div>
@@ -62,7 +63,6 @@ const DashboardCards = () => {
         setBlockedStudents(blockedStudents);
         setActiveStudentCount(activeStudents.length);
         setBlockedStudentCount(blockedStudents.length);
-
       } catch (error) {
         console.error('Error fetching data:', error);
         setError('Failed to load data.');
@@ -79,10 +79,10 @@ const DashboardCards = () => {
 
   return (
     <div className="flex gap-4 p-4 mt-4 bg-gray-800 rounded-lg">
-      <DashboardCard count={activeCanteenCount} label="Active Canteens" />
-      <DashboardCard count={blockedCanteenCount} label="Blocked Canteens" />
-      <DashboardCard count={activeStudentCount} label="Active Students" /> {/* Display active students count */}
-      <DashboardCard count={blockedStudentCount} label="Blocked Students" /> {/* Display blocked students count */}
+      <DashboardCard count={activeCanteenCount} label="Active Canteens" Icon={Store} />
+      <DashboardCard count={blockedCanteenCount} label="Blocked Canteens" Icon={ServerOff} />
+      <DashboardCard count={activeStudentCount} label="Active Students" Icon={UsersRound} />
+      <DashboardCard count={blockedStudentCount} label="Blocked Students" Icon={UserRoundX} />
     </div>
   );
 };
