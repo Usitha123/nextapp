@@ -34,7 +34,7 @@ const Sidebar = () => {
       <h1 className="mb-10 mt-2 text-3xl text-center font-bold text-orange-500">LOGO</h1>
 
       {/* Navigation Links */}
-      <ul className="space-y-4 text-lg font-normal text-gray-300">
+      <ul className="space-y-4 text-md font-normal text-gray-300">
         <li>
           <Link
             href="/admindashboard"

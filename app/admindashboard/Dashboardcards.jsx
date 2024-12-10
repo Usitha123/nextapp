@@ -4,12 +4,12 @@ import { FaUser } from 'react-icons/fa';
 
 // Reusable DashboardCard component
 const DashboardCard = ({ count, label, Icon }) => (
-  <div className="relative flex flex-col items-center justify-center p-4 text-orange-500 bg-gray-900 rounded-lg">
-    <div className=" flex items-center gap-2 text-5xl font-thin">
+  <div className="relative flex flex-col h-32 w-60 items-center justify-center p-2 text-orange-500 bg-[#2B2623] rounded-lg">
+    <div className=" flex items-center gap-2 text-5xl bg-[#4D423E] px-8 py-4 rounded-lg font-thin">
       <span>{count}</span>
       <Icon className=" absolute top-4 w-[18px] h-[20px] right-4 text-[2px]" /> {/* Render the icon as a React component */}
     </div>
-    <div className="mt-2 text-sm text-gray-300">{label}</div>
+    <div className="mt-2 text-md text-gray-300">{label}</div>
   </div>
 );
 
@@ -78,7 +78,7 @@ const DashboardCards = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="flex gap-4 p-4 mt-4 bg-gray-800 rounded-lg">
+    <div className="flex flex-wrap justify-center xl:gap-16 gap-6 p-2 mt-2 rounded-lg">
       <DashboardCard count={activeCanteenCount} label="Active Canteens" Icon={Store} />
       <DashboardCard count={blockedCanteenCount} label="Blocked Canteens" Icon={ServerOff} />
       <DashboardCard count={activeStudentCount} label="Active Students" Icon={UsersRound} />
