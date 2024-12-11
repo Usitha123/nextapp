@@ -10,7 +10,7 @@ function page() {
       <Sidebar/>
       <div className="flex-1">
         <Topbar />
-        <Header title="Add New" />
+        <Header title="Canteens" />
         <div className="p-4">
              <AllCanteens />
         </div>
