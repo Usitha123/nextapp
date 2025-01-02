@@ -11,20 +11,27 @@ export default function Profile() {
         <User2Icon className="text-3xl font-bold" />
       </div>
 
-      {/* Example Labels */}
-      <label className="block text-sm text-black">Hello</label>
+   
 
       {/* Information Sections */}
       <div className="grid grid-cols-2 gap-4 mt-8">
-        <label className="block text-sm text-black">Hello</label>
+        <label className="block text-sm text-black">First Name :</label>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <label className="block text-sm text-black">Hello</label>
+        <label className="block text-sm text-black">Last Name :</label>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <label className="block text-sm text-black">Hello</label>
+        <label className="block text-sm text-black">Phone :</label>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <label className="block text-sm text-black">Email :</label>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <label className="block text-sm text-black">Faculty :</label>
       </div>
 
       {/* Edit Button */}
