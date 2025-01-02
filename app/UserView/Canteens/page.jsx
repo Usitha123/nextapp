@@ -83,8 +83,8 @@ const Page = () => {
                       src={canteen.image}
                       alt={`${canteen.canteenName} canteen`}
                       className="object-contain mx-auto"
-                      width={200} // Adjust as needed
-                      height={200} // Adjust as needed
+                      width={300} // Adjust as needed
+                      height={300} // Adjust as needed
                       loading="lazy"
                     />
                   </div>
