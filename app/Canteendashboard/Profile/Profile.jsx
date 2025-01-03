@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import ChangePassword from "./Edit/ChangePassword";
@@ -11,7 +11,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [targetStudent, setTargetStudent] = useState(null);
 
-  const fetchOwners = async () => {
+  const fetchOwners = useCallback(async () => {
     try {
       const res = await fetch("/api/viewownerDetails");
       if (!res.ok) {
@@ -27,11 +27,11 @@ export default function Profile() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [session?.user?.email]);
 
   useEffect(() => {
     fetchOwners();
-  }, [session?.user?.email]);
+  }, [fetchOwners]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -48,7 +48,10 @@ export default function Profile() {
         {/* Profile Picture */}
         <div className="relative flex items-center justify-center w-24 h-24 text-white bg-gray-700 rounded-full">
           <span className="text-3xl">👤</span>
-          <button className="absolute bottom-0 right-0 p-1 text-xs text-white bg-orange-500 rounded-full">
+          <button
+            className="absolute bottom-0 right-0 p-1 text-xs text-white bg-orange-500 rounded-full"
+            onClick={() => setIsModalOpen(true)}
+          >
             Edit
           </button>
         </div>
@@ -58,41 +61,39 @@ export default function Profile() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm text-gray-400">First Name</label>
-              <label
-                className="block text-sm text-gray-400"
-              >{targetStudent.firstName} </label>
+              <label className="block text-sm text-gray-400">
+                {targetStudent.firstName || "N/A"}
+              </label>
             </div>
             <div>
               <label className="block text-sm text-gray-400">Last Name</label>
-              <label
-                className="block text-sm text-gray-400"
-              >{targetStudent.lastName} </label>
+              <label className="block text-sm text-gray-400">
+                {targetStudent.lastName || "N/A"}
+              </label>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm text-gray-400">Phone</label>
-              <label
-                className="block text-sm text-gray-400"
-              >{targetStudent.phoneNumber} </label>
+              <label className="block text-sm text-gray-400">
+                {targetStudent.phoneNumber || "N/A"}
+              </label>
             </div>
             <div>
               <label className="block text-sm text-gray-400">Email</label>
-              <label
-                className="block text-sm text-gray-400"
-              >{targetStudent.email} </label>
+              <label className="block text-sm text-gray-400">
+                {targetStudent.email || "N/A"}
+              </label>
             </div>
           </div>
 
           <div>
             <label className="block text-sm text-gray-400">NIC Number</label>
-            <label
-                className="block text-sm text-gray-400"
-              >{targetStudent.nicNumber} </label>
+            <label className="block text-sm text-gray-400">
+              {targetStudent.nicNumber || "N/A"}
+            </label>
           </div>
-
-          
 
           {/* Action Buttons */}
           <div className="flex justify-end mt-6 space-x-4">
