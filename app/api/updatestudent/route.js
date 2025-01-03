@@ -1,4 +1,4 @@
-import Student from '@/models/Student'; // Ensure the correct path to your model
+import Student from '../../../models/user'; // Ensure the correct path to your model
 import { connectMongoDB } from '@/lib/mongodb';
 
 export async function PUT(req) {
