@@ -12,6 +12,7 @@ const OrderTable = () => {
   const [isDescriptionModelOpen, setIsDescriptionModelOpen] = useState(false);
   const [isDeleteOrderModalOpen, setIsDeleteOrderModalOpen] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState("");
+  const [selectedOrderId, setSelectedOrderId] = useState(null); // New state to hold the selected orderId
 
   // Fetch orders from the API
   useEffect(() => {
@@ -48,10 +49,11 @@ const OrderTable = () => {
     const selectedOrder = orders.find((order) => order._id === orderId);
     if (selectedOrder) {
       const mealDescriptions = selectedOrder.meals
-        .map((meal) => `${meal.mealName}: ${meal.mealQuantity} x ${meal.mealPrice}`)
-        .join(", ");
+        .map((meal) => `${meal.mealName}: ${meal.mealQuantity} x ${meal.mealPrice} `)
+        .join(", <br/> ");
       setSelectedDescription(mealDescriptions);
     }
+    setSelectedOrderId(orderId); // Store the selected orderId
     setIsDescriptionModelOpen(true);
   };
 
@@ -84,7 +86,7 @@ const OrderTable = () => {
                     {order.mealStatus}
                   </span>
                 </td>
-                <td className="px-4 py-2">{new Date(order.createdAt).toLocaleString()}</td> {/* Use createdAt for the order date */}
+                <td className="px-4 py-2">{new Date(order.createdAt).toLocaleString()}</td>
                 <td className="px-4 py-2">
                   <button
                     onClick={() => handleDescriptionClick(order._id)}
@@ -121,6 +123,7 @@ const OrderTable = () => {
         isOpen={isDescriptionModelOpen}
         onClose={() => setIsDescriptionModelOpen(false)}
         description={selectedDescription}
+        orderId={selectedOrderId} // Pass the selected orderId to the Description Model
       />
 
       {/* Delete Order Modal */}
