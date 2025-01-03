@@ -131,6 +131,22 @@ export default function LoginForm() {
             <Link href="/register" className="font-semibold text-orange-500 hover:text-orange-600">
               Register
             </Link>
+            <br/>
+            <Link href="/admindashboard" className="font-semibold text-orange-500 hover:text-orange-600">
+            admindashboard
+            </Link>
+            <br/>
+            <Link href="/Canteendashboard" className="font-semibold text-orange-500 hover:text-orange-600">
+            Canteendashboard
+            </Link>
+            <br/>
+            <Link href="/Cashierdashboard" className="font-semibold text-orange-500 hover:text-orange-600">
+            Cashierdashboard
+            </Link>
+            <br/>
+            <Link href="/UserView" className="font-semibold text-orange-500 hover:text-orange-600">
+            UserView
+            </Link>
           </div>
 
           

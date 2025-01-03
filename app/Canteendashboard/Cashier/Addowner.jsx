@@ -1,5 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useSession } from 'next-auth/react';
+
 
 export default function AddOwners() {
   const [ownerProgress, setOwnerProgress] = useState(0);
@@ -9,7 +11,8 @@ export default function AddOwners() {
   const [canteens, setCanteens] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  const { data: session, status } = useSession();
+  
   const [ownerDetails, setOwnerDetails] = useState({
     firstName: "",
     lastName: "",

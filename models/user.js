@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema(
     faculty: { type: String, required: true },  // New field for faculty
     phoneNumber: { type: String, required: true }, // New field for phone number
     status: { type: String, default: 'active' },  // Default status as active
+   
   },
   { timestamps: true } // This will add createdAt and updatedAt
 );

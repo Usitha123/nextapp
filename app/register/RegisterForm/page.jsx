@@ -229,6 +229,7 @@ export default function RegisterForm() {
               Register
             </button>
           </div>
+        
 
           {/*{error && <p className="mt-4 text-center text-red-500">{error}</p>}*/}
 
