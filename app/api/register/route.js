@@ -38,6 +38,7 @@ export async function POST(req) {
       faculty,
       phoneNumber,
       status: 'active', // Default status is active
+     
     });
 
     return NextResponse.json({ message: "User registered successfully.", user: newUser }, { status: 201 });

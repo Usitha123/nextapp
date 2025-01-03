@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { vi, describe, test, expect } from 'vitest';
-import Profile from '../../../../app/Canteendashboard/Profile/page'
+import Profile from '../../../../app/Canteendashboard/Profile/Edit/page'
 
 vi.mock('../../../../app/Canteendashboard/Sidebar/page', () => ({
     default: () => <div>Mocked Sidebar</div>,

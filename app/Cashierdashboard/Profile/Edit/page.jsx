@@ -1,8 +1,8 @@
 import React from 'react'
-import Sidebar from '../Sidebar/page';
-import Topbar from '../Topbar/page';
-import Header from '../Header/page';
-import Cashier from './Addowner';
+import Sidebar from '../../Sidebar/page';
+import Topbar from '../../Topbar/page';
+import Header from '../../Header/page';
+import Profile from './Profile';
 
 function page() {
   return (
@@ -10,9 +10,9 @@ function page() {
       <Sidebar/>
       <div className="flex-1">
         <Topbar />
-        <Header title="Cashier" />
+        <Header title="Profile" />
         <div className="p-4">
-            <Cashier/>
+            <Profile />
         </div>
       </div>
     </div>

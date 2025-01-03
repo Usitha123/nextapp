@@ -1,65 +1,90 @@
-"use client";  // Add this to make the component work with useState
+"use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
-import Cashierstatus from './Cashierstatus';
-import Deletecashier from './Deletecashier';
+import Cashierstatus from "./Cashierstatus";
+import Deletecashier from "./Deletecashier";
 
-// Sample data for demonstration
-const students = [
-  { id: 1, name: "Sarath", phone: "0112596347", email: "email123@gmail.com", faculty: "Computing", status: "Active", date: "20/03/2021" },
-  { id: 2, name: "Amal", phone: "0112596347", email: "email123@gmail.com", faculty: "Medical", status: "Active", date: "20/03/2021" },
-  { id: 3, name: "Kamal", phone: "0112596347", email: "email123@gmail.com", faculty: "Engineering", status: "Active", date: "20/03/2021" },
-  { id: 4, name: "Amal", phone: "0112596347", email: "email123@gmail.com", faculty: "Management", status: "Block", date: "20/03/2021" },
-];
-
-// Define pagination constants
 const ITEMS_PER_PAGE = 4;
 
 const StudentTable = () => {
+  const [cashiers, setCashiers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteCashierModalOpen, setIsDeleteCashierModalOpen] = useState(false);
 
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentStudents = students.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  useEffect(() => {
+    const fetchCashiers = async () => {
+      try {
+        const res = await fetch("/api/allcashierlist");
+        if (!res.ok) {
+          throw new Error("Failed to fetch cashiers");
+        }
+        const data = await res.json();
+        setCashiers(data);
+      } catch (error) {
+        console.error("Error fetching cashiers:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCashiers();
+  }, []);
 
   const handleNext = () => {
-    if (currentPage < Math.ceil(students.length / ITEMS_PER_PAGE)) {
-      setCurrentPage(currentPage + 1);
+    if (currentPage < Math.ceil(cashiers.length / ITEMS_PER_PAGE)) {
+      setCurrentPage((prev) => prev + 1);
     }
   };
 
   const handlePrev = () => {
     if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+      setCurrentPage((prev) => prev - 1);
     }
   };
 
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const currentCashiers = cashiers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
   return (
     <div className="p-4 text-white bg-gray-800 rounded-lg">
-      <h2 className="mb-4 text-xl font-semibold">Cashiers</h2>
+      <h2 className="mb-4 text-xl font-semibold">Cashier List</h2>
       <table className="w-full text-left text-gray-300">
         <thead>
           <tr className="text-white bg-orange-500">
-            <th className="p-2">Name</th>
-            <th className="p-2">Phone</th>
+            <th className="p-2">First Name</th>
+            <th className="p-2">Last Name</th>
             <th className="p-2">Email</th>
-            <th className="p-2">Faculty</th>
+            <th className="p-2">Phone Number</th>
+            <th className="p-2">Nic Number</th>
             <th className="p-2">Status</th>
+            <th className="p-2">Canteen</th>
             <th className="p-2">Date Registered</th>
             <th className="p-2">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {currentStudents.map((student) => (
-            <tr key={student.id} className="border-b border-gray-700">
-              <td className="p-2">{student.name}</td>
-              <td className="p-2">{student.phone}</td>
-              <td className="p-2">{student.email}</td>
-              <td className="p-2">{student.faculty}</td>
-              <td className="p-2">{student.status}</td>
-              <td className="p-2">{student.date}</td>
+          {currentCashiers.map((cashier) => (
+            <tr key={cashier._id} className="border-b border-gray-700">
+              <td className="p-2">{cashier.firstName}</td>
+              <td className="p-2">{cashier.lastName}</td>
+              <td className="p-2">{cashier.email}</td>
+              <td className="p-2">{cashier.phoneNumber}</td>
+              <td className="p-2">{cashier.nicNumber}</td>
+              <td className="p-2">{cashier.status}</td>
+              <td className="p-2">{cashier.selectCanteen}</td>
+              <td className="p-2">{formatDate(cashier.createdAt)}</td>
               <td className="flex p-2 space-x-2">
                 <button
                   onClick={() => setIsDeleteCashierModalOpen(true)}
@@ -67,9 +92,9 @@ const StudentTable = () => {
                 >
                   <FaRegTrashAlt />
                 </button>
-                <button 
+                <button
                   onClick={() => setIsModalOpen(true)}
-                  className="text-red-500 hover:text-red-700"
+                  className="text-blue-500 hover:text-blue-700"
                 >
                   <FaEdit />
                 </button>
@@ -90,17 +115,12 @@ const StudentTable = () => {
         <button
           onClick={handleNext}
           className="px-4 py-2 text-white bg-orange-500 rounded hover:bg-orange-600"
-          disabled={currentPage === Math.ceil(students.length / ITEMS_PER_PAGE)}
+          disabled={currentPage === Math.ceil(cashiers.length / ITEMS_PER_PAGE)}
         >
           Next
         </button>
       </div>
-      {/* Update Status Modal */}
-      <Cashierstatus
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
-      {/* Delete Cashier Modal */}
+      <Cashierstatus isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <Deletecashier
         isOpen={isDeleteCashierModalOpen}
         onClose={() => setIsDeleteCashierModalOpen(false)}

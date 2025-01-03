@@ -1,22 +1,35 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
 import UpdateStatusModal from "./Modal";
-import Deleteorder from "./Deleteorder";
-import Descriptionmodel from "./Descriptionmodel"; // Assuming this exists
+import DeleteOrder from "./Deleteorder";
+import DescriptionModel from "./Descriptionmodel"; // Assuming this exists
 
 const OrderTable = () => {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDescriptionModelOpen, setIsDescriptionModelOpen] = useState(false);
   const [isDeleteOrderModalOpen, setIsDeleteOrderModalOpen] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState("");
+  const [selectedOrderId, setSelectedOrderId] = useState(null); // New state to hold the selected orderId
 
-  const orders = [
-    { id: "#od1234", customer: "Usitha", status: "Accepted", date: "12/07/24", description: "Order details for Usitha" },
-    { id: "#od1235", customer: "Srimal", status: "Accepted", date: "12/07/24", description: "Order details for Srimal" },
-    { id: "#od1236", customer: "Akila", status: "Picked", date: "12/07/24", description: "Order details for Akila" },
-    { id: "#od1237", customer: "Akila", status: "Cancelled", date: "12/07/24", description: "Cancellation details for Akila" },
-  ];
+  // Fetch orders from the API
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const res = await fetch("/api/vieworders");
+        if (!res.ok) throw new Error("Failed to fetch orders");
+        const data = await res.json();
+        setOrders(data.orders); // Use the 'orders' key from the API response
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOrders();
+  }, []);
 
   const getStatusClasses = (status) => {
     switch (status) {
@@ -31,10 +44,22 @@ const OrderTable = () => {
     }
   };
 
-  const handleDescriptionClick = (description) => {
-    setSelectedDescription(description);
+  const handleDescriptionClick = (orderId) => {
+    // Find the order with the selected orderId
+    const selectedOrder = orders.find((order) => order._id === orderId);
+    if (selectedOrder) {
+      const mealDescriptions = selectedOrder.meals
+        .map((meal) => `${meal.mealName}: ${meal.mealQuantity} x ${meal.mealPrice} `)
+        .join(", <br/> ");
+      setSelectedDescription(mealDescriptions);
+    }
+    setSelectedOrderId(orderId); // Store the selected orderId
     setIsDescriptionModelOpen(true);
   };
+
+  if (loading) {
+    return <div>Loading...</div>; // Loading state
+  }
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg shadow-lg">
@@ -52,19 +77,19 @@ const OrderTable = () => {
             </tr>
           </thead>
           <tbody className="bg-gray-700">
-            {orders.map((order, index) => (
-              <tr key={index} className="border-b border-gray-600">
-                <td className="px-4 py-2">{order.id}</td>
-                <td className="px-4 py-2">{order.customer}</td>
+            {orders.map((order) => (
+              <tr key={order._id} className="border-b border-gray-600">
+                <td className="px-4 py-2">{order._id}</td> {/* Use _id for the Order ID */}
+                <td className="px-4 py-2">{order.userName}</td>
                 <td className="px-4 py-2">
-                  <span className={`px-2 py-1 rounded ${getStatusClasses(order.status)}`}>
-                    {order.status}
+                  <span className={`px-2 py-1 rounded ${getStatusClasses(order.mealStatus)}`}>
+                    {order.mealStatus}
                   </span>
                 </td>
-                <td className="px-4 py-2">{order.date}</td>
+                <td className="px-4 py-2">{new Date(order.createdAt).toLocaleString()}</td>
                 <td className="px-4 py-2">
                   <button
-                    onClick={() => handleDescriptionClick(order.description)}
+                    onClick={() => handleDescriptionClick(order._id)}
                     className="text-orange-400 hover:underline"
                   >
                     View
@@ -91,20 +116,18 @@ const OrderTable = () => {
       </div>
 
       {/* Update Status Modal */}
-      <UpdateStatusModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      <UpdateStatusModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
       {/* Description Modal */}
-      <Descriptionmodel
+      <DescriptionModel
         isOpen={isDescriptionModelOpen}
         onClose={() => setIsDescriptionModelOpen(false)}
         description={selectedDescription}
+        orderId={selectedOrderId} // Pass the selected orderId to the Description Model
       />
 
       {/* Delete Order Modal */}
-      <Deleteorder
+      <DeleteOrder
         isOpen={isDeleteOrderModalOpen}
         onClose={() => setIsDeleteOrderModalOpen(false)}
       />

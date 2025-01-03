@@ -4,31 +4,40 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Trash2 } from "lucide-react";
 import milkrice from "@/src/loginbackground.jpeg";
+import { useSession } from "next-auth/react";
+import { usePathname } from 'next/navigation';
 
-const Cart = ({ cartItems, onRemove }) => {
+// Cart Component
+const Cart = ({ cartItems, onRemove, canteenName, username, mealType }) => {
   const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  const handlePlaceOrder = () => {
+    const orderDetails = {
+      canteenName,
+      username,
+      mealType,
+      items: cartItems,
+      subtotal,
+    };
+    console.log(JSON.stringify(orderDetails, null, 2));  // Logs the order details
+  };
 
   return (
     <div className="p-4 bg-white border rounded-lg shadow-sm">
       <h3 className="mb-4 text-lg font-semibold">Your Cart</h3>
       {cartItems.length > 0 ? (
-        <div>
-          {cartItems.map((item) => (
-            <div key={item.id} className="flex items-center justify-between mb-2">
-              <div className="p-1">
-                <span>{item.name}</span>
-                <span className="mx-2">× {item.quantity}</span>
-                <span className="text-orange-500">Rs: {item.price}.00</span>
-              </div>
-              <button
-                onClick={() => onRemove(item.id)}
-                className="text-red-500 hover:text-red-700"
-              >
-                <Trash2 />
-              </button>
+        cartItems.map((item) => (
+          <div key={item.id} className="flex items-center justify-between mb-2">
+            <div className="p-1">
+              <span>{item.name}</span>
+              <span className="mx-2">× {item.quantity}</span>
+              <span className="text-orange-500">Rs: {item.price}.00</span>
             </div>
-          ))}
-        </div>
+            <button onClick={() => onRemove(item.id)} className="text-red-500 hover:text-red-700">
+              <Trash2 />
+            </button>
+          </div>
+        ))
       ) : (
         <p className="text-gray-500">Your cart is empty.</p>
       )}
@@ -38,10 +47,8 @@ const Cart = ({ cartItems, onRemove }) => {
           <span>Rs: {subtotal}.00</span>
         </div>
         <div className="flex mt-4 space-x-4">
-          <button className="flex-1 py-2 text-gray-700 bg-gray-300 rounded hover:bg-gray-400">
-            Cancel
-          </button>
-          <button className="flex-1 py-2 text-white bg-orange-500 rounded hover:bg-orange-600">
+          <button className="flex-1 py-2 text-gray-700 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+          <button onClick={handlePlaceOrder} className="flex-1 py-2 text-white bg-orange-500 rounded hover:bg-orange-600">
             Place Order
           </button>
         </div>
@@ -50,6 +57,7 @@ const Cart = ({ cartItems, onRemove }) => {
   );
 };
 
+// Food Display Component
 const FoodDisplay = ({ onAddToCart }) => {
   const [isDinnerfastTime, setIsDinnerfastTime] = useState(false);
 
@@ -58,7 +66,6 @@ const FoodDisplay = ({ onAddToCart }) => {
       const now = new Date();
       const currentHour = now.getHours();
       const currentMinute = now.getMinutes();
-      // Dinnerfast time range: 7:00 AM to 11:00 AM
       setIsDinnerfastTime(
         (currentHour > 16 || (currentHour === 16 && currentMinute >= 0)) &&
         (currentHour < 21 || (currentHour === 21 && currentMinute === 0))
@@ -86,9 +93,7 @@ const FoodDisplay = ({ onAddToCart }) => {
             alt={food.name}
             width={800}
             height={800}
-            className={`object-cover w-full rounded-3xl ${
-              !isDinnerfastTime ? "opacity-50 blur-sm pointer-events-none" : ""
-            }`}
+            className={`object-cover w-full rounded-3xl ${!isDinnerfastTime ? "opacity-50 blur-sm pointer-events-none" : ""}`}
             quality={100}
           />
           <div className="p-4 grid grid-cols-[auto_40px]">
@@ -112,8 +117,15 @@ const FoodDisplay = ({ onAddToCart }) => {
   );
 };
 
+// Combined Component
 const CombinedComponent = () => {
+  const pathname = usePathname(); 
+  const dynamicPart = pathname.split("/")[3];
+  const { data: session } = useSession();
   const [cartItems, setCartItems] = useState([]);
+  const [canteenName] = useState(dynamicPart);
+  const [username] = useState(session?.user?.email);
+  const [mealType] = useState("Dinner");
 
   const handleAddToCart = (food) => {
     setCartItems((prevItems) => {
@@ -138,11 +150,18 @@ const CombinedComponent = () => {
   return (
     <div className="grid gap-8 p-4 md:grid-cols-[2fr_1fr]">
       <div><FoodDisplay onAddToCart={handleAddToCart} /></div>
-      <div><div className="p-4 mb-4 text-sm bg-white border border-orange-500 rounded-md shadow-sm shadow-orange-200">
-              <strong>Note:</strong> You are responsible for paying the full amount of your order and collecting it.
+      <div>
+        <div className="p-4 mb-4 text-sm bg-white border border-orange-500 rounded-md shadow-sm shadow-orange-200">
+          <strong>Note:</strong> You are responsible for paying the full amount of your order and collecting it.
+        </div>
+        <Cart
+          cartItems={cartItems}
+          onRemove={handleRemoveFromCart}
+          canteenName={canteenName}
+          username={username}
+          mealType={mealType}
+        />
       </div>
-      <Cart cartItems={cartItems} onRemove={handleRemoveFromCart} />
-    </div>
     </div>
   );
 };
