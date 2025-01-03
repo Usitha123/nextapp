@@ -22,7 +22,7 @@ export default function Profile() {
         const data = await res.json();
         setStudents(data);
 
-        // Find the student with the current user's email
+        // Find the student with the current users email
         const student = data.find((s) => s.email === session?.user?.email);
         setTargetStudent(student || null);
       } catch (error) {

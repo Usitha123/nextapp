@@ -38,7 +38,7 @@ export default function Profile() {
   }
 
   if (!targetStudent) {
-    return <div>No student found with the current user's email.</div>;
+    return <div>No student found with the current users email.</div>;
   }
 
   return (
