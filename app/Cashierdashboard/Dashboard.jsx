@@ -1,11 +1,16 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
+import DescriptionModel from "./Descriptionmodel";
 
 const OrderTable = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isDescriptionModelOpen, setIsDescriptionModelOpen] = useState(false);
+  const [selectedDescription, setSelectedDescription] = useState("");
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+
   const ordersPerPage = 5;
 
   useEffect(() => {
@@ -26,16 +31,12 @@ const OrderTable = () => {
   }, []);
 
   const getStatusClasses = (status) => {
-    switch (status) {
-      case "Accepted":
-        return "bg-yellow-500 text-gray-900";
-      case "Picked":
-        return "bg-green-500 text-white";
-      case "Cancelled":
-        return "bg-red-500 text-white";
-      default:
-        return "bg-gray-500 text-white";
-    }
+    const statusClasses = {
+      Accepted: "bg-yellow-500 text-gray-900",
+      Picked: "bg-green-500 text-white",
+      Cancelled: "bg-red-500 text-white",
+    };
+    return statusClasses[status] || "bg-gray-500 text-white";
   };
 
   const handleDescriptionClick = (orderId) => {
@@ -60,14 +61,9 @@ const OrderTable = () => {
     return (
       <div className="grid grid-cols-3 gap-4">
         {cards.map((card, index) => (
-          <div
-            key={index}
-            className="p-4 text-center text-orange-400 bg-gray-700 rounded-lg"
-          >
+          <div key={index} className="p-4 text-center text-orange-400 bg-gray-700 rounded-lg">
             <div className="mb-2 text-4xl">{String(card.value).padStart(2, "0")}</div>
-            <div className="text-sm tracking-wide text-gray-400 uppercase">
-              {card.title}
-            </div>
+            <div className="text-sm tracking-wide text-gray-400 uppercase">{card.title}</div>
             <div className="text-2xl">{card.icon}</div>
           </div>
         ))}
@@ -79,16 +75,17 @@ const OrderTable = () => {
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
   const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
 
-  const handleNext = () => {
-    if (currentPage < Math.ceil(orders.length / ordersPerPage)) {
+  const handlePagination = (direction) => {
+    if (direction === "next" && currentPage < Math.ceil(orders.length / ordersPerPage)) {
       setCurrentPage(currentPage + 1);
+    } else if (direction === "prev" && currentPage > 1) {
+      setCurrentPage(currentPage - 1);
     }
   };
 
-  const handlePrev = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+  const formatDate = (dateString) => {
+    const createdAt = new Date(dateString);
+    return createdAt.toLocaleString();
   };
 
   return (
@@ -122,7 +119,7 @@ const OrderTable = () => {
                       {order.mealStatus}
                     </span>
                   </td>
-                  <td className="px-4 py-2">{new Date(order.createdAt).toLocaleString()}</td>
+                  <td className="px-4 py-2">{formatDate(order.meals[0].timestamp)}</td>
                   <td className="px-4 py-2">
                     <button
                       onClick={() => handleDescriptionClick(order._id)}
@@ -142,14 +139,14 @@ const OrderTable = () => {
         </div>
         <div className="flex justify-between mt-4">
           <button
-            onClick={handlePrev}
+            onClick={() => handlePagination("prev")}
             disabled={currentPage === 1}
             className="px-4 py-2 text-white bg-gray-700 rounded-lg hover:bg-gray-600"
           >
             Previous
           </button>
           <button
-            onClick={handleNext}
+            onClick={() => handlePagination("next")}
             disabled={currentPage === Math.ceil(orders.length / ordersPerPage)}
             className="px-4 py-2 text-white bg-gray-700 rounded-lg hover:bg-gray-600"
           >
@@ -157,6 +154,14 @@ const OrderTable = () => {
           </button>
         </div>
       </div>
+
+      {/* Description Modal */}
+      <DescriptionModel
+        isOpen={isDescriptionModelOpen}
+        onClose={() => setIsDescriptionModelOpen(false)}
+        description={selectedDescription}
+        orderId={selectedOrderId}
+      />
     </div>
   );
 };

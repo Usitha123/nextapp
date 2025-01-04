@@ -78,6 +78,11 @@ const OrderTable = () => {
     }
   };
 
+  const formatDate = (dateString) => {
+    const createdAt = new Date(dateString);
+    return createdAt.toLocaleString();
+  };
+
   return (
     <div className="p-6 bg-gray-800 rounded-lg shadow-lg">
       <h2 className="mb-6 text-2xl font-bold text-white">Orders</h2>
@@ -103,7 +108,7 @@ const OrderTable = () => {
                     {order.mealStatus}
                   </span>
                 </td>
-                <td className="px-4 py-2">{new Date(order.createdAt).toLocaleString()}</td>
+                <td className="px-4 py-2">{formatDate(order.meals[0].timestamp)}</td>
                 <td className="px-4 py-2">
                   <button
                     onClick={() => handleDescriptionClick(order._id)}

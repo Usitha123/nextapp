@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
-import { Info } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import UpdateStatusModal from "./Deleteorder";
-import UpdateDescriptionModal from "./Descriptionmodel";
+import DescriptionModel from "./DescriptionModel";
+import UpdateDescriptionModal from "./DescriptionModel";
 
 const OrdersTable = () => {
   const [orders, setOrders] = useState([]);
-  const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedDescription, setSelectedDescription] = useState("");
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
+
   const pathname = usePathname();
 
   const statusStyles = {
@@ -21,17 +24,12 @@ const OrdersTable = () => {
     Cancelled: "bg-red-500 text-white",
   };
 
-  const getStatusStyles = (mealStatus) => statusStyles[mealStatus] || "bg-gray-200 text-black";
-
   const fetchOrders = async () => {
     try {
       const res = await fetch("/api/vieworders");
       if (!res.ok) throw new Error("Failed to fetch orders");
-
       const data = await res.json();
-      console.log("Fetched orders:", data);
-
-      setOrders(data.orders || data); // Handle both object and array responses
+      setOrders(data.orders || data);
     } catch (error) {
       console.error("Error fetching orders:", error);
     } finally {
@@ -45,8 +43,20 @@ const OrdersTable = () => {
 
   const getTodayDate = () => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set today's time to midnight
+    today.setHours(0, 0, 0, 0);
     return today;
+  };
+
+  const handleDescriptionClick = (orderId) => {
+    const selectedOrder = orders.find((order) => order._id === orderId);
+    if (selectedOrder) {
+      const mealDescriptions = selectedOrder.meals
+        .map((meal) => `${meal.mealName}: ${meal.mealQuantity} x ${meal.mealPrice}`)
+        .join(", <br/> ");
+      setSelectedDescription(mealDescriptions);
+    }
+    setSelectedOrderId(orderId);
+    setIsDescriptionModalOpen(true);
   };
 
   const formatDate = (dateString) => {
@@ -54,10 +64,8 @@ const OrdersTable = () => {
     return createdAt.toLocaleString();
   };
 
-
   const renderTable = (orders) => {
     const today = getTodayDate();
-
     return (
       <table className="w-full p-3 bg-white rounded-2xl">
         <thead>
@@ -74,15 +82,17 @@ const OrdersTable = () => {
           {orders
             .filter((order) => {
               const orderDate = new Date(order.meals[0].timestamp);
-              orderDate.setHours(0, 0, 0, 0); // Remove the time part of the order's timestamp
-              return orderDate.getTime() === today.getTime(); // Compare only the date part
+              orderDate.setHours(0, 0, 0, 0);
+              return orderDate.getTime() === today.getTime();
             })
-            .filter((order) => ["Pending", "Ready"].includes(order.mealStatus)) // Filter by relevant statuses
+            .filter((order) => ["Pending", "Ready"].includes(order.mealStatus))
             .map((order) => (
               <tr key={order._id} className="text-center">
                 <td className="p-2">{order._id}</td>
                 <td className="p-2">
-                  <span className={`inline-block  w-full h-7/8 px-4 py-2 leading-none ${getStatusStyles(order.mealStatus)} rounded-lg`}>
+                  <span
+                    className={`inline-block w-full px-4 py-2 leading-none ${statusStyles[order.mealStatus] || "bg-gray-200 text-black"} rounded-lg`}
+                  >
                     {order.mealStatus}
                   </span>
                 </td>
@@ -90,27 +100,22 @@ const OrdersTable = () => {
                 <td className="p-2">{order.canteenName}</td>
                 <td className="p-2">
                   <button
-                    onClick={() => {
-                      setSelectedOrder(order);
-                      setIsDescriptionModalOpen(true);
-                    }}
-                    className="flex gap-2 mx-auto text-blue-500 hover:underline hover:font-bold"
+                    onClick={() => handleDescriptionClick(order._id)}
+                    className="text-orange-400 hover:underline"
                   >
-                    Click <Info className="text-sm" />
+                    View
                   </button>
                 </td>
                 <td className="p-2">
-                  <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
-                    <button
-                      onClick={() => {
-                        setSelectedOrder(order);
-                        setIsDeleteModalOpen(true);
-                      }}
-                      className="px-2 py-1 text-white bg-red-500 rounded-xl"
-                    >
-                      Cancel
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => {
+                      setSelectedOrder(order);
+                      setIsDeleteModalOpen(true);
+                    }}
+                    className="px-2 py-1 text-white bg-red-500 rounded-xl"
+                  >
+                    Cancel
+                  </button>
                 </td>
               </tr>
             ))}
@@ -150,6 +155,12 @@ const OrdersTable = () => {
         isOpen={isDescriptionModalOpen}
         onClose={() => setIsDescriptionModalOpen(false)}
         order={selectedOrder}
+      />
+      <DescriptionModel
+        isOpen={isDescriptionModalOpen}
+        onClose={() => setIsDescriptionModalOpen(false)}
+        description={selectedDescription}
+        orderId={selectedOrderId}
       />
       <UpdateStatusModal
         isOpen={isDeleteModalOpen}

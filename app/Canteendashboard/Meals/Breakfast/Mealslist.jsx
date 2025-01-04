@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
-import Deletemealmodel from "./Deletemealmodel";
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { FaRegTrashAlt, FaEdit } from 'react-icons/fa';
+import Deletemealmodel from './Deletemealmodel';
+import DescriptionModel from './Descriptionmodel';
 
 const MealsTable = () => {
   const pathname = usePathname();
@@ -12,18 +13,21 @@ const MealsTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDescriptionModelOpen, setIsDescriptionModelOpen] = useState(false);
+  const [selectedDescription, setSelectedDescription] = useState('');
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
 
   const tabs = [
-    { label: "Breakfast", href: "/Canteendashboard/Meals/Breakfast" },
-    { label: "Lunch", href: "/Canteendashboard/Meals/Lunch" },
-    { label: "Dinner", href: "/Canteendashboard/Meals/Dinner" },
+    { label: 'Breakfast', href: '/Canteendashboard/Meals/Breakfast' },
+    { label: 'Lunch', href: '/Canteendashboard/Meals/Lunch' },
+    { label: 'Dinner', href: '/Canteendashboard/Meals/Dinner' },
   ];
 
   useEffect(() => {
     const fetchMeals = async () => {
       try {
-        const res = await fetch("/api/viewmeal");
-        if (!res.ok) throw new Error("Failed to fetch meals");
+        const res = await fetch('/api/viewmeal');
+        if (!res.ok) throw new Error('Failed to fetch meals');
         const { meals } = await res.json();
         setMeals(meals);
       } catch (error) {
@@ -36,13 +40,17 @@ const MealsTable = () => {
     fetchMeals();
   }, []);
 
-  
-
   const handleDeleteClick = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
-  // Extract the current meal type from the pathname (to filter by selected tab)
-  const currentMealType = pathname.split("/").pop(); // Gets the last part of the URL (e.g., 'Dinner')
+  const handleDescriptionClick = (mealId) => {
+    const selectedMeal = meals.find((meal) => meal._id === mealId);
+    setSelectedDescription(selectedMeal?.mealDescription || '');
+    setSelectedOrderId(mealId);
+    setIsDescriptionModelOpen(true);
+  };
+
+  const currentMealType = pathname.split('/').pop();
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg shadow-lg">
@@ -53,10 +61,7 @@ const MealsTable = () => {
         <Link href="#" className="px-4 py-2 text-gray-900 bg-orange-500 rounded">
           Enable
         </Link>
-        <Link
-          href="/Canteendashboard/Meals/Addmeal"
-          className="px-4 py-2 text-gray-900 bg-orange-500 rounded"
-        >
+        <Link href="/Canteendashboard/Meals/Addmeal" className="px-4 py-2 text-gray-900 bg-orange-500 rounded">
           Add Meal
         </Link>
       </div>
@@ -67,9 +72,7 @@ const MealsTable = () => {
           <Link
             key={tab.label}
             href={tab.href}
-            className={`px-4 py-2 text-sm ${
-              pathname === tab.href ? "text-white bg-orange-500" : "text-gray-400 hover:text-white"
-            }`}
+            className={`px-4 py-2 text-sm ${pathname === tab.href ? 'text-white bg-orange-500' : 'text-gray-400 hover:text-white'}`}
           >
             {tab.label}
           </Link>
@@ -92,29 +95,26 @@ const MealsTable = () => {
           </thead>
           <tbody className="bg-gray-700">
             {meals
-              .filter((meal) => meal.mealType === currentMealType) // Filter meals based on the current tab (meal type)
+              .filter((meal) => meal.mealType === currentMealType)
               .map((meal) => (
                 <tr key={meal._id} className="border-b border-gray-600">
                   <td className="px-4 py-2">{meal.mealName}</td>
-                  <td className="px-4 py-2">{meal.mealDescription}</td>
+                  <td className="px-4 py-2">
+                    <button onClick={() => handleDescriptionClick(meal._id)} className="text-orange-400 hover:underline">
+                      View
+                    </button>
+                  </td>
                   <td className="px-4 py-2">Rs: {meal.mealPrice}</td>
                   <td className="px-4 py-2">{meal.mealQuantity}</td>
                   <td className="px-4 py-2">{meal.mealstatus}</td>
                   <td className="px-4 py-2">
-                    <img
-                      src={meal.image}
-                      alt={`Image of ${meal.mealName}`}
-                      className="w-16 h-16 rounded"
-                    />
+                    <img src={meal.image} alt={`Image of ${meal.mealName}`} className="w-16 h-16 rounded" />
                   </td>
                   <td className="flex items-center px-4 py-2 space-x-2">
                     <button onClick={handleDeleteClick} className="text-gray-400 hover:text-red-500">
                       <FaRegTrashAlt />
                     </button>
-                    <Link
-                      href={`/Canteendashboard/Meals/Updatemeal/${meal._id}`}
-                      className="text-gray-400 hover:text-orange-500"
-                    >
+                    <Link href={`/Canteendashboard/Meals/Updatemeal/${meal._id}`} className="text-gray-400 hover:text-orange-500">
                       <FaEdit />
                     </Link>
                   </td>
@@ -130,7 +130,13 @@ const MealsTable = () => {
         <button className="text-orange-400 hover:underline">Next</button>
       </div>
 
-      {/* Delete Meal Modal */}
+      {/* Modals */}
+      <DescriptionModel
+        isOpen={isDescriptionModelOpen}
+        onClose={() => setIsDescriptionModelOpen(false)}
+        description={selectedDescription}
+        orderId={selectedOrderId}
+      />
       <Deletemealmodel isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );

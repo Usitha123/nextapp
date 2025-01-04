@@ -9,7 +9,6 @@ const DescriptionModel = ({ isOpen, onClose, description, orderId }) => {
         <div className="text-center">
           <h3 className="mb-4 text-lg font-semibold">Order Description</h3>
           <p className="mb-4">Order ID: {orderId}</p>
-          <br/>
           <p className="mb-4">{description}</p>
 
           <div className="flex justify-end mt-6 space-x-4">
