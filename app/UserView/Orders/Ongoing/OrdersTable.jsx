@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import UpdateStatusModal from "./Deleteorder";
-import DescriptionModel from "./DescriptionModel";
-
+import DescriptionModel from "./Descriptionmodel";
 
 const OrdersTable = () => {
   const [orders, setOrders] = useState([]);
