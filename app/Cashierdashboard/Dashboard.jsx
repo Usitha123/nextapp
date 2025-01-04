@@ -110,7 +110,10 @@ const OrderTable = () => {
               </tr>
             </thead>
             <tbody className="bg-gray-700">
-              {currentOrders.map((order) => (
+
+            {currentOrders
+              .filter((order) => order.mealStatus === "Pending")
+              .map((order) => (
                 <tr key={order._id} className="border-b border-gray-600">
                   <td className="px-4 py-2">{order._id}</td>
                   <td className="px-4 py-2">{order.userName}</td>

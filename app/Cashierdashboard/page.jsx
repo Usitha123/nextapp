@@ -13,7 +13,7 @@ const CanteenDashboard = () => {
       <Sidebar />
       <div className="flex-1">
         <Topbar />
-        <Header title="Canteen Dashboard" /> {/* Pass route-specific title */}
+        <Header title="Cashier Dashboard" /> {/* Pass route-specific title */}
         <div className="p-4">
           <Dashboard/>
         </div>
