@@ -32,15 +32,32 @@ export default function Profile() {
       }
     };
 
-    fetchStudents();
+    if (session?.user?.email) {
+      fetchStudents();
+    }
   }, [session?.user?.email]);
 
-  // Handle input field changes (if needed)
+  // Handle input field changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setTargetStudent((prev) => ({ ...prev, [name]: value }));
   };
 
+  if (loading) {
+    return (
+      <div className="w-full max-w-3xl p-8 mx-auto bg-white rounded-xl">
+        <p className="text-center">Loading profile...</p>
+      </div>
+    );
+  }
+
+  if (!targetStudent) {
+    return (
+      <div className="w-full max-w-3xl p-8 mx-auto bg-white rounded-xl">
+        <p className="text-center">No student profile found</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-3xl p-8 mx-auto bg-white rounded-xl">
@@ -52,7 +69,10 @@ export default function Profile() {
       </div>
 
       {/* Profile Form */}
-      <form className="mt-8 space-y-4">
+      <form className="mt-8 space-y-4" onSubmit={(e) => {
+        e.preventDefault();
+        // Add your form submission logic here
+      }}>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm text-gray-600">First Name</label>
@@ -61,7 +81,7 @@ export default function Profile() {
               type="text"
               placeholder="First Name"
               name="firstName"
-              value={targetStudent.firstName || ""}
+              value={targetStudent?.firstName || ""}
               onChange={handleInputChange}
             />
           </div>
@@ -72,7 +92,7 @@ export default function Profile() {
               type="text"
               placeholder="Last Name"
               name="lastName"
-              value={targetStudent.lastName || ""}
+              value={targetStudent?.lastName || ""}
               onChange={handleInputChange}
             />
           </div>
@@ -86,7 +106,7 @@ export default function Profile() {
               type="text"
               placeholder="Phone"
               name="phone"
-              value={targetStudent.phoneNumber || ""}
+              value={targetStudent?.phoneNumber || ""}
               onChange={handleInputChange}
             />
           </div>
@@ -97,7 +117,7 @@ export default function Profile() {
               type="email"
               placeholder="Email"
               name="email"
-              value={targetStudent.email || ""}
+              value={targetStudent?.email || ""}
               onChange={handleInputChange}
             />
           </div>
@@ -110,7 +130,7 @@ export default function Profile() {
           <select
             id="faculty-select"
             name="faculty"
-            value={targetStudent.faculty || ""}
+            value={targetStudent?.faculty || ""}
             onChange={handleInputChange}
             required
             className="w-full p-2 mt-1 text-black bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
