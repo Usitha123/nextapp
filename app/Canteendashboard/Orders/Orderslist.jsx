@@ -29,6 +29,11 @@ const OrderTable = () => {
     };
     fetchOrders();
   }, []);
+  
+  const formatDate = (dateString) => {
+    const createdAt = new Date(dateString);
+    return createdAt.toLocaleString();
+  };
 
   const getStatusClasses = (status) => {
     switch (status) {
@@ -82,7 +87,7 @@ const OrderTable = () => {
                     {order.mealStatus}
                   </span>
                 </td>
-                <td className="px-4 py-2">{new Date(order.createdAt).toLocaleString()}</td> {/* Use createdAt for the order date */}
+                <td className="px-4 py-2">{formatDate(order.meals[0].timestamp)}</td> {/* Use createdAt for the order date */}
                 <td className="px-4 py-2">
                   <button
                     onClick={() => handleDescriptionClick(order._id)}

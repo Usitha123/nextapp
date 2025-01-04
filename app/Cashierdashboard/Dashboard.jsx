@@ -2,11 +2,11 @@
 import React, { useState, useEffect } from "react";
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
 
-
 const OrderTable = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
- 
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 5;
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -75,7 +75,21 @@ const OrderTable = () => {
     );
   };
 
- 
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+
+  const handleNext = () => {
+    if (currentPage < Math.ceil(orders.length / ordersPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -99,7 +113,7 @@ const OrderTable = () => {
               </tr>
             </thead>
             <tbody className="bg-gray-700">
-              {orders.map((order) => (
+              {currentOrders.map((order) => (
                 <tr key={order._id} className="border-b border-gray-600">
                   <td className="px-4 py-2">{order._id}</td>
                   <td className="px-4 py-2">{order.userName}</td>
@@ -118,24 +132,29 @@ const OrderTable = () => {
                     </button>
                   </td>
                   <td className="flex px-4 py-2 space-x-2">
-                   
-                  <button
-              
-                      className="text-green-400 hover:underline"
-                    >
-                      Accept
-                    </button><button
-                    
-                      className="text-red-400 hover:underline"
-                    >
-                      Cancel
-                    </button>
-                    
+                    <button className="text-green-400 hover:underline">Accept</button>
+                    <button className="text-red-400 hover:underline">Cancel</button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+        <div className="flex justify-between mt-4">
+          <button
+            onClick={handlePrev}
+            disabled={currentPage === 1}
+            className="px-4 py-2 text-white bg-gray-700 rounded-lg hover:bg-gray-600"
+          >
+            Previous
+          </button>
+          <button
+            onClick={handleNext}
+            disabled={currentPage === Math.ceil(orders.length / ordersPerPage)}
+            className="px-4 py-2 text-white bg-gray-700 rounded-lg hover:bg-gray-600"
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>

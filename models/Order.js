@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
+// Meal schema definition
 const mealSchema = new Schema({
   mealId: {
     type: String,
@@ -24,6 +25,7 @@ const mealSchema = new Schema({
   }
 });
 
+// Order schema definition
 const orderSchema = new Schema({
   userName: {
     type: String,
@@ -43,16 +45,17 @@ const orderSchema = new Schema({
   mealType: {
     type: String,
     required: true,
-    enum: ['Veg', 'Non-Veg', 'Vegan', 'Other'] // Optional, can be customized
+    enum: ['Breakfast', 'Lunch', 'Dinner'] // Optional, can be customized
   },
   meals: [mealSchema],  // Updated meal field to plural for clarity
   mealStatus: {
     type: String,
     default: 'Pending',
-    enum: ['Pending', 'Accepted', 'Cancelled', 'Picked'] // Ensure only valid statuses
+    enum: ['Pending', 'Accepted', 'Cancelled', 'Picked', 'Ready'] // Ensure only valid statuses
   }
 });
 
-const Order = mongoose.model('Order', orderSchema);
+// Check if the model already exists
+const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);
 
 export default Order;

@@ -13,6 +13,9 @@ const OrderTable = () => {
   const [isDeleteOrderModalOpen, setIsDeleteOrderModalOpen] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState("");
   const [selectedOrderId, setSelectedOrderId] = useState(null); // New state to hold the selected orderId
+  
+  const [currentPage, setCurrentPage] = useState(1); // State to track the current page
+  const rowsPerPage = 10; // Number of rows per page
 
   // Fetch orders from the API
   useEffect(() => {
@@ -57,6 +60,23 @@ const OrderTable = () => {
     setIsDescriptionModelOpen(true);
   };
 
+  // Calculate the orders to display based on the current page
+  const indexOfLastOrder = currentPage * rowsPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - rowsPerPage;
+  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+
+  // Handle page change
+  const handleNextPage = () => {
+    if (currentPage < Math.ceil(orders.length / rowsPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg shadow-lg">
@@ -74,9 +94,9 @@ const OrderTable = () => {
             </tr>
           </thead>
           <tbody className="bg-gray-700">
-            {orders.map((order) => (
+            {currentOrders.map((order) => (
               <tr key={order._id} className="border-b border-gray-600">
-                <td className="px-4 py-2">{order._id}</td> {/* Use _id for the Order ID */}
+                <td className="px-4 py-2">{order._id}</td>
                 <td className="px-4 py-2">{order.userName}</td>
                 <td className="px-4 py-2">
                   <span className={`px-2 py-1 rounded ${getStatusClasses(order.mealStatus)}`}>
@@ -112,6 +132,23 @@ const OrderTable = () => {
         </table>
       </div>
 
+      <div className="flex justify-between mt-4">
+        <button
+          onClick={handlePrevPage}
+          disabled={currentPage === 1}
+          className="px-4 py-2 text-white bg-orange-600 rounded disabled:bg-gray-400"
+        >
+          Prev
+        </button>
+        <button
+          onClick={handleNextPage}
+          disabled={currentPage === Math.ceil(orders.length / rowsPerPage)}
+          className="px-4 py-2 text-white bg-orange-600 rounded disabled:bg-gray-400"
+        >
+          Next
+        </button>
+      </div>
+
       {/* Update Status Modal */}
       <UpdateStatusModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
@@ -120,7 +157,7 @@ const OrderTable = () => {
         isOpen={isDescriptionModelOpen}
         onClose={() => setIsDescriptionModelOpen(false)}
         description={selectedDescription}
-        orderId={selectedOrderId} // Pass the selected orderId to the Description Model
+        orderId={selectedOrderId}
       />
 
       {/* Delete Order Modal */}

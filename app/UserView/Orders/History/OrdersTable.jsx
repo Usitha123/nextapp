@@ -21,7 +21,7 @@ const OrdersTable = () => {
     Cancelled: "bg-red-500 text-white",
   };
 
-  const getStatusStyles = (status) => statusStyles[status] || "bg-gray-200 text-black";
+  const getStatusStyles = (mealStatus) => statusStyles[mealStatus] || "bg-gray-200 text-black";
 
   const fetchOrders = async () => {
     try {
@@ -48,6 +48,10 @@ const OrdersTable = () => {
     today.setHours(0, 0, 0, 0); // Set today's time to midnight
     return today;
   };
+  const formatDate = (dateString) => {
+    const createdAt = new Date(dateString);
+    return createdAt.toLocaleString();
+  };
 
   const renderTable = (orders) => {
     const today = getTodayDate();
@@ -71,16 +75,16 @@ const OrdersTable = () => {
               orderDate.setHours(0, 0, 0, 0); // Remove the time part of the order's timestamp
               return orderDate.getTime() === today.getTime(); // Compare only the date part
             })
-            .filter((order) => ["Cancelled", "Accepted", "Picked"].includes(order.mealStatus)) // Filter by relevant statuses
+            .filter((order) => ["Accepted", "Picked", "Cancelled"].includes(order.mealStatus)) // Filter by relevant statuses
             .map((order) => (
               <tr key={order._id} className="text-center">
                 <td className="p-2">{order._id}</td>
                 <td className="p-2">
-                  <span className={`inline-block md:w-[50%] w-full h-7/8 px-3 py-2 leading-none ${getStatusStyles(order.status)} rounded-lg`}>
+                  <span className={`inline-block  w-full h-7/8 px-4 py-2 leading-none ${getStatusStyles(order.mealStatus)} rounded-lg`}>
                     {order.mealStatus}
                   </span>
                 </td>
-                <td className="p-2">{order.meals[0].timestamp}</td>
+                <td className="p-2">{ formatDate(order.meals[0].timestamp)}</td>
                 <td className="p-2">{order.canteenName}</td>
                 <td className="p-2">
                   <button
