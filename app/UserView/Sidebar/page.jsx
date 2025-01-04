@@ -11,7 +11,7 @@ const Sidebar = ({ activePath }) => {
   const links = [
     { href: "/UserView", label: "Dashboard", icon: <LayoutDashboardIcon /> },
     { href: "/UserView/Canteens", label: "Canteens", icon: <Utensils /> },
-    { href: "/UserView/Orders", label: "Orders", icon: <BoxIcon /> },
+    { href: "/UserView/Orders/Ongoing", label: "Orders", icon: <BoxIcon /> },
     { href: "/UserView/Profile", label: "Profile", icon: <UserRound /> },
   ];
 

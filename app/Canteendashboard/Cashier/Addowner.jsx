@@ -165,7 +165,7 @@ export default function AddOwners() {
     );
   };
 
-  if (!isMounted || loading) return <p>Loading...</p>;
+
 
   return (
     <div className="w-full max-w-lg p-6 mx-auto text-white bg-gray-900 rounded-md">

@@ -26,7 +26,7 @@ const Sidebar = () => {
           </Link>
         </li>
         <li>
-          <Link href="/Canteendashboard/Meals" className={`block p-2 rounded ${isActive("/Canteendashboard/Meals") ? "bg-gray-700 text-white" : "hover:bg-gray-700"}`}>
+          <Link href="/Canteendashboard/Meals/Breakfast" className={`block p-2 rounded ${isActive("/Canteendashboard/Meals") ? "bg-gray-700 text-white" : "hover:bg-gray-700"}`}>
             Meals
           </Link>
         </li>
