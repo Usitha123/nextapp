@@ -67,7 +67,7 @@ const OrdersTable = () => {
         <tbody>
           {orders
             .filter((order) => {
-              const orderDate = new Date(order.timestamp);
+              const orderDate = new Date(order.meals[0].timestamp);
               orderDate.setHours(0, 0, 0, 0); // Remove the time part of the order's timestamp
               return orderDate.getTime() === today.getTime(); // Compare only the date part
             })
