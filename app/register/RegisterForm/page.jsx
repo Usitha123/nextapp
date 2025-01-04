@@ -99,11 +99,12 @@ export default function RegisterForm() {
         draggable
         pauseOnHover
       />
-      <div className="w-full max-w-sm p-8 bg-white rounded-lg shadow-lg bg-opacity-90">
-        <h2 className="mb-6 text-2xl font-bold text-center text-orange-500">Jpura CMS</h2>
+      <div className="w-full max-w-lg p-8 bg-white rounded-lg shadow-lg bg-opacity-90">
+        <h2 className="mb-8 text-2xl font-bold text-center text-orange-500">Jpura CMS</h2>
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="mb-4">
             <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="firstName">
               First Name
             </label>
@@ -130,6 +131,7 @@ export default function RegisterForm() {
               required
             />
           </div>
+          </div>
 
           <div className="mb-4">
             <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
@@ -145,6 +147,26 @@ export default function RegisterForm() {
             />
           </div>
 
+          <div className="grid grid-cols-2 gap-2">
+          
+
+          {/* Phone Number */}
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="phoneNumber">
+              Phone Number
+            </label>
+            <input
+              className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
+              type="text"
+              placeholder="Phone Number"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              required
+              maxLength={10} // Limit input to 10 characters
+            />
+          </div>
+
+          
           {/* Faculty Dropdown */}
           <div className="mb-4">
             <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="faculty">
@@ -165,21 +187,9 @@ export default function RegisterForm() {
             </select>
           </div>
 
-          {/* Phone Number */}
-          <div className="mb-4">
-            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="phoneNumber">
-              Phone Number
-            </label>
-            <input
-              className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
-              type="text"
-              placeholder="Phone Number"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              required
-              maxLength={10} // Limit input to 10 characters
-            />
+
           </div>
+
 
           <div className="mb-4">
             <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">
