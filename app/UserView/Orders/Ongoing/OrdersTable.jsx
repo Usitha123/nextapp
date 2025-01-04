@@ -71,7 +71,7 @@ const OrdersTable = () => {
               orderDate.setHours(0, 0, 0, 0); // Remove the time part of the order's timestamp
               return orderDate.getTime() === today.getTime(); // Compare only the date part
             })
-            .filter((order) => ["Pending", "Accepted"].includes(order.mealStatus)) // Filter by relevant statuses
+            .filter((order) => ["Pending", "Ready"].includes(order.mealStatus)) // Filter by relevant statuses
             .map((order) => (
               <tr key={order._id} className="text-center">
                 <td className="p-2">{order._id}</td>
@@ -80,7 +80,7 @@ const OrdersTable = () => {
                     {order.mealStatus}
                   </span>
                 </td>
-                <td className="p-2">{order.timestamp}</td>
+                <td className="p-2">{order.meals[0].timestamp}</td>
                 <td className="p-2">{order.canteenName}</td>
                 <td className="p-2">
                   <button
