@@ -3,7 +3,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import UpdateStatusModal from "./Deleteorder";
 import DescriptionModel from "./DescriptionModel";
-import UpdateDescriptionModal from "./DescriptionModel";
+
 
 const OrdersTable = () => {
   const [orders, setOrders] = useState([]);
@@ -151,11 +151,7 @@ const OrdersTable = () => {
         <p>No orders available</p>
       )}
 
-      <UpdateDescriptionModal
-        isOpen={isDescriptionModalOpen}
-        onClose={() => setIsDescriptionModalOpen(false)}
-        order={selectedOrder}
-      />
+      
       <DescriptionModel
         isOpen={isDescriptionModalOpen}
         onClose={() => setIsDescriptionModalOpen(false)}
