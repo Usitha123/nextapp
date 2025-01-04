@@ -44,8 +44,7 @@ const Page = () => {
       <div className="flex-1 ml-20 md:ml-60">
         <Topbar />
         <Header title="Canteen" />
-        {/* Content will be redirected, so this won't be displayed */}
-        <div className="p-4">Redirecting...</div>
+        
       </div>
     </div>
   );

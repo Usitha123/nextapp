@@ -41,10 +41,6 @@ export default function Profile() {
     setTargetStudent((prev) => ({ ...prev, [name]: value }));
   };
 
-  if (loading) return <div>Loading...</div>;
-
-  if (!targetStudent)
-    return <div>No student found with the current users email.</div>;
 
   return (
     <div className="w-full max-w-3xl p-8 mx-auto bg-white rounded-xl">

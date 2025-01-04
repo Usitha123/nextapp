@@ -48,10 +48,10 @@ const Page = () => {
     });
   };
 
-  // Log cart changes (optional)
+  /*// Log cart changes (optional)
   useEffect(() => {
     console.log("Cart updated:", cart);
-  }, [cart]);
+  }, [cart]);*/
 
   if (loading)
     return (
@@ -65,7 +65,7 @@ const Page = () => {
       </div>
     );
 
-  if (error) return <div>{error}</div>;
+ 
 
   return (
     <div className="flex h-screen bg-gray-100">

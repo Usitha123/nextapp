@@ -33,9 +33,6 @@ export default function Profile() {
     fetchOwners();
   }, [fetchOwners]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   if (!targetStudent) {
     return <div>No student found with the current users email.</div>;

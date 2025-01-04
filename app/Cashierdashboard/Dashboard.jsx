@@ -75,9 +75,7 @@ const OrderTable = () => {
     );
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+ 
 
   return (
     <div className="space-y-6">
@@ -120,18 +118,19 @@ const OrderTable = () => {
                     </button>
                   </td>
                   <td className="flex px-4 py-2 space-x-2">
-                    <button
-                      onClick={() => setIsDeleteOrderModalOpen(true)}
-                      className="text-gray-400 hover:text-red-500"
+                   
+                  <button
+              
+                      className="text-green-400 hover:underline"
                     >
-                      <FaRegTrashAlt />
-                    </button>
-                    <button
-                      onClick={() => setIsModalOpen(true)}
-                      className="text-gray-400 hover:text-orange-500"
+                      Accept
+                    </button><button
+                    
+                      className="text-red-400 hover:underline"
                     >
-                      <FaEdit />
+                      Cancel
                     </button>
+                    
                   </td>
                 </tr>
               ))}

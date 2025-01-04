@@ -80,7 +80,7 @@ const OrdersTable = ({ ongoingOrders = [], historyOrders = [] }) => {
   // Sample data
   const sampleOrders = [
     { id: "001", status: "Pending", date: "2025-01-01", canteen: "North Canteen" },
-    { id: "002", status: "Accepted", date: "2025-01-02", canteen: "Soudgfgfth Canteen" },
+    { id: "002", status: "Accepted", date: "2025-01-02", canteen: "South Canteen" },
     { id: "003", status: "Ready", date: "2025-01-03", canteen: "East Canteen" },
     { id: "004", status: "Picked", date: "2025-01-04", canteen: "West Canteen" },
     { id: "005", status: "Cancelled", date: "2025-01-05", canteen: "Main Canteen" },

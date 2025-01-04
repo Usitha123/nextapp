@@ -34,9 +34,7 @@ export default function Profile() {
     fetchStudents();
   }, [session?.user?.email]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  
 
   if (!targetStudent) {
     return <div>No student found with the current users email.</div>;

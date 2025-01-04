@@ -37,9 +37,7 @@ const StudentTable = () => {
     fetchStudents();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>; // Loading state
-  }
+  
 
   const handleNext = () => {
     if (currentPage < Math.ceil(students.length / ITEMS_PER_PAGE)) {

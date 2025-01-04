@@ -5,7 +5,7 @@ import Sidebar from '../../Sidebar/page';
 import Topbar from '../../Topbar/page';
 import Header from '../../Header/page';
 import { usePathname } from 'next/navigation';
-import OrdersTable from '../Ongoing/OrdersTable';
+import OrdersTable from '../History/OrdersTable';
 
 
 const Page = () => {

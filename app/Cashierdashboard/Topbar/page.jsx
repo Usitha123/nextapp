@@ -13,7 +13,7 @@ const Topbar = () => {
     <div className="flex items-center justify-between p-4 text-white bg-gray-700">
       <span>Hi <strong>{session?.user?.name}</strong> Welcome Back</span>
       <div className="flex space-x-4">
-      <Link href="/Canteendashboard/Profile">
+      <Link href="/Cashierdashboard/Profile">
       <IoMdSettings />
           </Link>
        {/* Settings Icon Placeholder */}
