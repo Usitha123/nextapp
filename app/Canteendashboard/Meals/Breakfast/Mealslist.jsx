@@ -16,6 +16,7 @@ const MealsTable = () => {
   const [isDescriptionModelOpen, setIsDescriptionModelOpen] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState('');
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [selectedMealId, setSelectedMealId] = useState(null);
 
   const tabs = [
     { label: 'Breakfast', href: '/Canteendashboard/Meals/Breakfast' },
@@ -40,7 +41,31 @@ const MealsTable = () => {
     fetchMeals();
   }, []);
 
-  const handleDeleteClick = () => setIsModalOpen(true);
+  const handleDeleteOrder = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/deletemeal?id=${selectedMealId}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        setMeals(meals.filter((meal) => meal._id !== selectedMealId));
+      } else {
+        alert("Failed to delete order");
+      }
+    } catch (error) {
+      console.error("Error deleting order:", error);
+      alert("An error occurred while deleting the order");
+    } finally {
+      setLoading(false);
+      setIsModalOpen(false);
+    }
+  };
+
+  const handleDeleteClick = (mealId) => {
+    setSelectedMealId(mealId);
+    setIsModalOpen(true);
+  };
+
   const handleCloseModal = () => setIsModalOpen(false);
 
   const handleDescriptionClick = (mealId) => {
@@ -111,7 +136,7 @@ const MealsTable = () => {
                     <img src={meal.image} alt={`Image of ${meal.mealName}`} className="w-16 h-16 rounded" />
                   </td>
                   <td className="flex items-center px-4 py-2 space-x-2">
-                    <button onClick={handleDeleteClick} className="text-gray-400 hover:text-red-500">
+                    <button onClick={() => handleDeleteClick(meal._id)} className="text-gray-400 hover:text-red-500">
                       <FaRegTrashAlt />
                     </button>
                     <Link href={`/Canteendashboard/Meals/Updatemeal/${meal._id}`} className="text-gray-400 hover:text-orange-500">
@@ -137,7 +162,33 @@ const MealsTable = () => {
         description={selectedDescription}
         orderId={selectedOrderId}
       />
-      <Deletemealmodel isOpen={isModalOpen} onClose={handleCloseModal} />
+      
+      {/* Confirmation Modal for Deletion */}
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="p-6 text-white bg-gray-800 rounded-lg w-80">
+            <div className="text-center">
+              <h3 className="mb-4 text-lg font-semibold">Are you sure you want to delete?</h3>
+            </div>
+            <div className="flex justify-end mt-6 space-x-4">
+              <button
+                onClick={handleDeleteOrder}
+                type="button"
+                className="px-4 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-400 focus:outline-none"
+              >
+                Yes
+              </button>
+              <button
+                onClick={handleCloseModal}
+                type="button"
+                className="px-4 py-2 text-white bg-gray-600 rounded-md hover:bg-gray-500 focus:outline-none"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

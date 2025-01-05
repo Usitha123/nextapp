@@ -9,9 +9,16 @@ const DescriptionModel = ({ isOpen, onClose, description, orderId }) => {
         <div className="text-center">
           <h3 className="mb-4 text-lg font-semibold">Order Description</h3>
           <p className="mb-4">Order ID: {orderId}</p>
-          <br/>
-          <p className="mb-4">{description}</p>
-
+          <div className="mb-4 text-left">
+            <h4 className="mb-2 font-medium">Meals:</h4>
+            <ul className="space-y-2">
+              {description.map((meal, index) => (
+                <li key={index} className="text-sm">
+                  <span className="font-semibold">{meal.mealName}</span>: {meal.mealQuantity} x ${meal.mealPrice}
+                </li>
+              ))}
+            </ul>
+          </div>
           <div className="flex justify-end mt-6 space-x-4">
             <button
               onClick={onClose}

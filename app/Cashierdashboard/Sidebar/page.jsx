@@ -21,19 +21,19 @@ const Sidebar = () => {
       <h1 className="mb-6 text-2xl font-bold text-orange-500">LOGO</h1>
       <ul className="space-y-4">
         <li>
-          <Link href="/Cashierdashboard" className={`block p-2 rounded ${isActive("/Canteendashboard") ? "bg-gray-700 text-white" : "hover:bg-gray-700"}`}>
+          <Link href="/Cashierdashboard" className={`block p-2 rounded ${isActive("/Cashierdashboard") ? "bg-gray-700 text-white" : "hover:bg-gray-700"}`}>
              Dashboard
           </Link>
         </li>
         
         <li>
-          <Link href="/Cashierdashboard/Orders" className={`block p-2 rounded ${isActive("/Canteendashboard/Orders") ? "bg-gray-700 text-white" : "hover:bg-gray-700"}`}>
+          <Link href="/Cashierdashboard/Orders" className={`block p-2 rounded ${isActive("/Cashierdashboard/Orders") ? "bg-gray-700 text-white" : "hover:bg-gray-700"}`}>
             Orders
           </Link>
         </li>
         
         <li>
-          <Link href="/Cashierdashboard/Profile" className={`block p-2 rounded ${isActive("/Canteendashboard/Profile") ? "bg-gray-700 text-white" : "hover:bg-gray-700"}`}>
+          <Link href="/Cashierdashboard/Profile" className={`block p-2 rounded ${isActive("/Cashierdashboard/Profile") ? "bg-gray-700 text-white" : "hover:bg-gray-700"}`}>
             Profile
           </Link>
         </li>

@@ -1,20 +1,21 @@
 import React from "react";
 
-
-const UpdateStatusModal = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
+const Deletecashier = ({ isOpen, onClose, cashier, onDelete }) => {
+  if (!isOpen || !cashier) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="p-6 text-white bg-gray-800 rounded-lg w-80">
         <div className="text-center">
-          <h3 className="mb-4 text-lg font-semibold">Are you sure you want to delete?</h3>
+          <h3 className="mb-4 text-lg font-semibold">
+            Are you sure you want to delete this cashier?
+          </h3>
+          <p>{cashier?.firstName} {cashier?.lastName}</p>
         </div>
         <div className="flex justify-end mt-6 space-x-4">
           <button
             onClick={() => {
-              // Handle the delete action here
-              alert("Item deleted");
+              onDelete();
               onClose();
             }}
             type="button"
@@ -35,4 +36,4 @@ const UpdateStatusModal = ({ isOpen, onClose }) => {
   );
 };
 
-export default UpdateStatusModal;
+export default Deletecashier;

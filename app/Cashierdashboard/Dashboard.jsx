@@ -96,7 +96,7 @@ const OrderTable = () => {
       </div>
 
       <div className="p-6 bg-gray-800 rounded-lg shadow-lg">
-        <h2 className="mb-6 text-2xl font-bold text-white">Orders</h2>
+        <h2 className="mb-6 text-2xl font-bold text-white">Pending Orders</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left text-gray-400">
             <thead className="text-gray-900 bg-orange-600">

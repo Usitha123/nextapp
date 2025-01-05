@@ -71,8 +71,7 @@ const OwnerTable = () => {
     fetchOwnerDetails();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+ 
 
   const formatDate = (dateString) => {
     const createdAt = new Date(dateString);

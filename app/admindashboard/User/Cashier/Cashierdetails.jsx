@@ -13,6 +13,7 @@ const StudentTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteCashierModalOpen, setIsDeleteCashierModalOpen] = useState(false);
+  const [selectedCashier, setSelectedCashier] = useState(null);
 
   useEffect(() => {
     const fetchCashiers = async () => {
@@ -45,14 +46,38 @@ const StudentTable = () => {
     }
   };
 
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+  const handleDelete = (cashier) => {
+    setSelectedCashier(cashier);
+    setIsDeleteCashierModalOpen(true);
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const deleteCashier = async () => {
+    if (!selectedCashier) return;
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/deletecashier?id=${selectedCashier._id}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        setCashiers(cashiers.filter((cashier) => cashier._id !== selectedCashier._id));
+        setIsDeleteCashierModalOpen(false); // Close the modal after deletion
+      } else {
+        alert('Failed to delete cashier');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('An error occurred while deleting the cashier');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    const createdAt = new Date(dateString);
+    return createdAt.toLocaleString();
+  };
+
+ 
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentCashiers = cashiers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -87,7 +112,7 @@ const StudentTable = () => {
               <td className="p-2">{formatDate(cashier.createdAt)}</td>
               <td className="flex p-2 space-x-2">
                 <button
-                  onClick={() => setIsDeleteCashierModalOpen(true)}
+                  onClick={() => handleDelete(cashier)}
                   className="text-red-500 hover:text-red-700"
                 >
                   <FaRegTrashAlt />
@@ -124,6 +149,8 @@ const StudentTable = () => {
       <Deletecashier
         isOpen={isDeleteCashierModalOpen}
         onClose={() => setIsDeleteCashierModalOpen(false)}
+        cashier={selectedCashier}
+        onDelete={deleteCashier}
       />
     </div>
   );

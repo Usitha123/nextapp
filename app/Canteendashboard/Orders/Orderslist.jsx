@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
 import UpdateStatusModal from "./Modal";
 import DeleteOrder from "./Deleteorder";
-import DescriptionModel from "./Descriptionmodel"; // Assuming this exists
+import DescriptionModel from "./Descriptionmodel";
 
 const OrderTable = () => {
   const [orders, setOrders] = useState([]);
@@ -11,20 +11,19 @@ const OrderTable = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDescriptionModelOpen, setIsDescriptionModelOpen] = useState(false);
   const [isDeleteOrderModalOpen, setIsDeleteOrderModalOpen] = useState(false);
-  const [selectedDescription, setSelectedDescription] = useState("");
-  const [selectedOrderId, setSelectedOrderId] = useState(null); // New state to hold the selected orderId
-  
-  const [currentPage, setCurrentPage] = useState(1); // State to track the current page
-  const rowsPerPage = 10; // Number of rows per page
+  const [selectedDescription, setSelectedDescription] = useState([]);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
 
-  // Fetch orders from the API
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const res = await fetch("/api/vieworders");
         if (!res.ok) throw new Error("Failed to fetch orders");
         const data = await res.json();
-        setOrders(data.orders); // Use the 'orders' key from the API response
+        setOrders(data.orders);
       } catch (error) {
         console.error("Error fetching orders:", error);
       } finally {
@@ -48,35 +47,37 @@ const OrderTable = () => {
   };
 
   const handleDescriptionClick = (orderId) => {
-    // Find the order with the selected orderId
     const selectedOrder = orders.find((order) => order._id === orderId);
     if (selectedOrder) {
-      const mealDescriptions = selectedOrder.meals
-        .map((meal) => `${meal.mealName}: ${meal.mealQuantity} x ${meal.mealPrice} `)
-        .join(", <br/> ");
-      setSelectedDescription(mealDescriptions);
+      setSelectedDescription(selectedOrder.meals);
     }
-    setSelectedOrderId(orderId); // Store the selected orderId
+    setSelectedOrderId(orderId);
     setIsDescriptionModelOpen(true);
   };
 
-  // Calculate the orders to display based on the current page
+  const handleDeleteOrder = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/deleteorder?id=${selectedOrderId}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        setOrders(orders.filter((order) => order._id !== selectedOrderId));
+      } else {
+        alert("Failed to delete order");
+      }
+    } catch (error) {
+      console.error("Error deleting order:", error);
+      alert("An error occurred while deleting the order");
+    } finally {
+      setLoading(false);
+      setIsDeleteOrderModalOpen(false);
+    }
+  };
+
   const indexOfLastOrder = currentPage * rowsPerPage;
   const indexOfFirstOrder = indexOfLastOrder - rowsPerPage;
   const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
-
-  // Handle page change
-  const handleNextPage = () => {
-    if (currentPage < Math.ceil(orders.length / rowsPerPage)) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
 
   const formatDate = (dateString) => {
     const createdAt = new Date(dateString);
@@ -86,73 +87,82 @@ const OrderTable = () => {
   return (
     <div className="p-6 bg-gray-800 rounded-lg shadow-lg">
       <h2 className="mb-6 text-2xl font-bold text-white">Orders</h2>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left text-gray-400">
-          <thead className="text-gray-900 bg-orange-600">
-            <tr>
-              <th className="px-4 py-2">Order ID</th>
-              <th className="px-4 py-2">Customer</th>
-              <th className="px-4 py-2">Status</th>
-              <th className="px-4 py-2">Date</th>
-              <th className="px-4 py-2">Description</th>
-              <th className="px-4 py-2">Action</th>
-            </tr>
-          </thead>
-          <tbody className="bg-gray-700">
-            {currentOrders.map((order) => (
-              <tr key={order._id} className="border-b border-gray-600">
-                <td className="px-4 py-2">{order._id}</td>
-                <td className="px-4 py-2">{order.userName}</td>
-                <td className="px-4 py-2">
-                  <span className={`px-2 py-1 rounded ${getStatusClasses(order.mealStatus)}`}>
-                    {order.mealStatus}
-                  </span>
-                </td>
-                <td className="px-4 py-2">{formatDate(order.meals[0].timestamp)}</td>
-                <td className="px-4 py-2">
-                  <button
-                    onClick={() => handleDescriptionClick(order._id)}
-                    className="text-orange-400 hover:underline"
-                  >
-                    View
-                  </button>
-                </td>
-                <td className="flex px-4 py-2 space-x-2">
-                  <button
-                    onClick={() => setIsDeleteOrderModalOpen(true)}
-                    className="text-gray-400 hover:text-red-500"
-                  >
-                    <FaRegTrashAlt />
-                  </button>
-                  <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="text-gray-400 hover:text-orange-500"
-                  >
-                    <FaEdit />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {loading ? (
+        <div className="text-white">Loading...</div>
+      ) : (
+        <>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left text-gray-400">
+              <thead className="text-gray-900 bg-orange-600">
+                <tr>
+                  <th className="px-4 py-2">Order ID</th>
+                  <th className="px-4 py-2">Customer</th>
+                  <th className="px-4 py-2">Status</th>
+                  <th className="px-4 py-2">Date</th>
+                  <th className="px-4 py-2">Description</th>
+                  <th className="px-4 py-2">Action</th>
+                </tr>
+              </thead>
+              <tbody className="bg-gray-700">
+                {currentOrders.map((order) => (
+                  <tr key={order._id} className="border-b border-gray-600">
+                    <td className="px-4 py-2">{order._id}</td>
+                    <td className="px-4 py-2">{order.userName}</td>
+                    <td className="px-4 py-2">
+                      <span className={`px-2 py-1 rounded ${getStatusClasses(order.mealStatus)}`}>
+                        {order.mealStatus}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2">{formatDate(order.meals[0].timestamp)}</td>
+                    <td className="px-4 py-2">
+                      <button
+                        onClick={() => handleDescriptionClick(order._id)}
+                        className="text-orange-400 hover:underline"
+                      >
+                        View
+                      </button>
+                    </td>
+                    <td className="flex px-4 py-2 space-x-2">
+                      <button
+                        onClick={() => {
+                          setSelectedOrderId(order._id);
+                          setIsDeleteOrderModalOpen(true);
+                        }}
+                        className="text-gray-400 hover:text-red-500"
+                      >
+                        <FaRegTrashAlt />
+                      </button>
+                      <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="text-gray-400 hover:text-orange-500"
+                      >
+                        <FaEdit />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-      <div className="flex justify-between mt-4">
-        <button
-          onClick={handlePrevPage}
-          disabled={currentPage === 1}
-          className="px-4 py-2 text-white bg-orange-600 rounded disabled:bg-gray-400"
-        >
-          Prev
-        </button>
-        <button
-          onClick={handleNextPage}
-          disabled={currentPage === Math.ceil(orders.length / rowsPerPage)}
-          className="px-4 py-2 text-white bg-orange-600 rounded disabled:bg-gray-400"
-        >
-          Next
-        </button>
-      </div>
+          <div className="flex justify-between mt-4">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 text-white bg-orange-600 rounded disabled:bg-gray-400"
+            >
+              Prev
+            </button>
+            <button
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(orders.length / rowsPerPage)))}
+              disabled={currentPage === Math.ceil(orders.length / rowsPerPage)}
+              className="px-4 py-2 text-white bg-orange-600 rounded disabled:bg-gray-400"
+            >
+              Next
+            </button>
+          </div>
+        </>
+      )}
 
       {/* Update Status Modal */}
       <UpdateStatusModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
@@ -162,13 +172,13 @@ const OrderTable = () => {
         isOpen={isDescriptionModelOpen}
         onClose={() => setIsDescriptionModelOpen(false)}
         description={selectedDescription}
-        orderId={selectedOrderId}
       />
 
       {/* Delete Order Modal */}
       <DeleteOrder
         isOpen={isDeleteOrderModalOpen}
         onClose={() => setIsDeleteOrderModalOpen(false)}
+        onDelete={handleDeleteOrder}
       />
     </div>
   );
