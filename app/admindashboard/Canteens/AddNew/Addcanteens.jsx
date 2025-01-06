@@ -89,7 +89,7 @@ export default function AddCanteens() {
     console.log("Submitted Data:", fullData); // Debugging log
 
     try {
-      const response = await fetch("/api/Canteens", {
+      const response = await fetch("/api/addmeal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(fullData),
@@ -159,7 +159,7 @@ export default function AddCanteens() {
       {/* <h2 className="mb-4 text-xl font-bold">Add Canteens</h2> */}
       <form onSubmit={handleSubmit}>
         <div className="space-y-4">
-          <div className="flex m-5 items-center justify-center">
+          <div className="flex items-center justify-center m-5">
             <div className="flex items-center justify-center w-20 h-20 bg-gray-700 rounded-md">
               <img
                 src={canteenDetails.image ? URL.createObjectURL(canteenDetails.image) : "/placeholder.png"}
@@ -169,8 +169,8 @@ export default function AddCanteens() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div><label htmlFor="canteenName" className=" p-1 text-orange-500"> Canteen Name </label>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div><label htmlFor="canteenName" className="p-1 text-orange-500 "> Canteen Name </label>
           <input
             type="text"
             name="canteenName"
@@ -181,7 +181,7 @@ export default function AddCanteens() {
             required
           /></div>
           <div>
-            <label htmlFor="businessEmail" className=" p-1 text-orange-500">Business Email</label>
+            <label htmlFor="businessEmail" className="p-1 text-orange-500 ">Business Email</label>
             <input
             type="email"
             name="businessEmail"
@@ -194,7 +194,7 @@ export default function AddCanteens() {
           </div>
           
           <div>
-          <label htmlFor="image" className=" p-1 text-orange-500">Image</label>
+          <label htmlFor="image" className="p-1 text-orange-500 ">Image</label>
 
           <input type="file"
             onChange={handleFileChange}
@@ -205,18 +205,18 @@ export default function AddCanteens() {
           
           </div>
           <div>
-            <label htmlFor="openHour" className=" p-1 text-orange-500">Open Hour</label>
+            <label htmlFor="openHour" className="p-1 text-orange-500 ">Open Hour</label>
             <input
             type="text"
             name="openHour"
             placeholder="HH:MM"
             value={canteenDetails.openHour}
             onChange={handleInputChange}
-            className="w-full h-11 p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md h-11"
             required
           /></div>
          <div>
-          <label htmlFor="closedHour" className=" p-1 text-orange-500">Closed Hour</label>
+          <label htmlFor="closedHour" className="p-1 text-orange-500 ">Closed Hour</label>
           <input
             type="text"
             name="closedHour"
@@ -228,7 +228,7 @@ export default function AddCanteens() {
           />
          </div>
           <div>
-            <label htmlFor="phoneNumber" className=" p-1 text-orange-500">Phone Number</label>
+            <label htmlFor="phoneNumber" className="p-1 text-orange-500 ">Phone Number</label>
             <input
             type="text"
             name="phoneNumber"
@@ -241,7 +241,7 @@ export default function AddCanteens() {
           />
           </div>
           <div>
-            <label htmlFor="openingDate" className=" p-1 text-orange-500">Opening Date</label>
+            <label htmlFor="openingDate" className="p-1 text-orange-500 ">Opening Date</label>
             <input
             type="date"
             name="openingDate"
@@ -252,7 +252,7 @@ export default function AddCanteens() {
           />
           </div>
           <div>
-            <label htmlFor="status" className=" p-1 text-orange-500">Status</label>
+            <label htmlFor="status" className="p-1 text-orange-500 ">Status</label>
           <select
             name="status"
             value={canteenDetails.status}
@@ -270,7 +270,7 @@ export default function AddCanteens() {
           
 
         <div className="flex justify-between mt-4">
-          <button type="submit" className="px-4 py-2 my-3 text-white bg-orange-500 hover:bg-orange-600 rounded-md">
+          <button type="submit" className="px-4 py-2 my-3 text-white bg-orange-500 rounded-md hover:bg-orange-600">
             Submit
           </button>
         </div>

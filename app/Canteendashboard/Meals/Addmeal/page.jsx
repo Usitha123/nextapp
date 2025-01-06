@@ -17,7 +17,7 @@ const Meals = () => {
         <Header title="Add Meals" /> {/* Pass another route-specific title */}
         <div className="p-4">
           <Addmeals/>
-          <ImageUpload />
+          
           {/* Meals content */}
         </div>
       </div>
