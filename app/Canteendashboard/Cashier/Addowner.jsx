@@ -1,281 +1,186 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useSession } from 'next-auth/react';
+import React, { useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-
-export default function AddOwners() {
-  const [ownerProgress, setOwnerProgress] = useState(0);
-  const [ownerImageSrc, setOwnerImageSrc] = useState(null);
-  const [ownerImageURL, setOwnerImageURL] = useState("");
-  const [isMounted, setIsMounted] = useState(false);
-  const [canteens, setCanteens] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const { data: session, status } = useSession();
-  
-  const [ownerDetails, setOwnerDetails] = useState({
+const AddCashierForm = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [cashier, setCashier] = useState({
     firstName: "",
     lastName: "",
     email: "",
-    image: "",
     phoneNumber: "",
     nicNumber: "",
-    status: "Active",
-    createDate: "",
-    selectcanteen: "",
     password: "",
-    confirmPassword: "", // Added confirmPassword
+    confirmPassword: "",
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [localPreview, setLocalPreview] = useState(null);
 
-  useEffect(() => {
-    const fetchCanteens = async () => {
-      try {
-        const res = await fetch("/api/allcanteenslist", { headers: { "Content-Type": "application/json" } });
-        if (!res.ok) throw new Error("Failed to fetch data");
-
-        const data = await res.json();
-        const inactiveCanteens = data.filter(canteen => canteen.ownerstatus === "Inactive");
-        setCanteens(inactiveCanteens);
-      } catch (err) {
-        console.error("Error fetching canteens:", err);
-        setError("Failed to load canteens.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCanteens();
-  }, []);
-
-  useEffect(() => setIsMounted(true), []);
-
+  // Update cashier input field
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setOwnerDetails(prev => ({ ...prev, [name]: value }));
+    setCashier((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle file input for image upload
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (!file) return;
+    if (file) {
+      setImageFile(file);
+      setLocalPreview(URL.createObjectURL(file));
+    }
+  };
 
+  // Validate form fields
+  const isFormValid = () => {
+    const { firstName, lastName, email, password, confirmPassword } = cashier;
+    return (
+      firstName && lastName && email && password && confirmPassword &&
+      password === confirmPassword && imageFile
+    );
+  };
+
+  // Upload image to Cloudinary
+  const uploadImage = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", "my-uploads");
 
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "https://api.cloudinary.com/v1_1/dtvsl05hw/image/upload");
+    const response = await fetch("https://api.cloudinary.com/v1_1/dtvsl05hw/image/upload", {
+      method: "POST",
+      body: formData,
+    });
 
-    xhr.upload.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const percent = Math.round((event.loaded / event.total) * 100);
-        setOwnerProgress(percent);
-      }
-    };
+    if (!response.ok) throw new Error("Image upload failed.");
 
-    xhr.onload = () => {
-      const response = JSON.parse(xhr.responseText);
-      setOwnerImageSrc(response.secure_url);
-      setOwnerImageURL(response.secure_url);
-    };
-
-    xhr.onerror = () => alert("Failed to upload the image. Please try again.");
-
-    xhr.send(formData);
+    const { secure_url } = await response.json();
+    return secure_url;
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Frontend password confirmation check
-    if (ownerDetails.password !== ownerDetails.confirmPassword) {
-      alert("Passwords do not match.");
+
+    if (!isFormValid()) {
+      alert("Please fill out all fields correctly.");
       return;
     }
-  
-    const fullData = {
-      ...ownerDetails,
-      image: ownerImageURL, // Including the image URL
-    };
-  
-    // Remove confirmPassword before sending to the backend
-    delete fullData.confirmPassword;
-  
+
     try {
-      const response = await fetch("/api/ownerDetails", {
+      const uploadedImageURL = await uploadImage(imageFile);
+      const cashierData = { ...cashier, image: uploadedImageURL };
+
+      const response = await fetch("/api/addcashier", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(fullData),
+        body: JSON.stringify(cashierData),
       });
-  
-      const result = await response.json();
-  
+
       if (!response.ok) {
-        // Log the detailed error message for better debugging
-        console.error("API error:", result);
-        throw new Error(result.message || "Failed to add owner.");
+        const result = await response.json();
+        throw new Error(result.error || "Failed to add cashier.");
       }
-  
-      alert(result.message || "Owner added successfully!");
+
+      alert("Cashier added successfully!");
       resetForm();
-    } catch (err) {
-      // Show the error details for debugging
-      console.error("Submission error:", err);
-      alert("There was an error submitting the form. See console for details.");
+    } catch (error) {
+      console.error("Form submission error:", error);
+      alert("An error occurred while submitting the form.");
     }
   };
-  
 
+  // Reset the form
   const resetForm = () => {
-    setOwnerDetails({
+    setCashier({
       firstName: "",
       lastName: "",
       email: "",
-      image: "",
       phoneNumber: "",
       nicNumber: "",
-      status: "Active",
-      createDate: "",
-      selectcanteen: "",
       password: "",
-      confirmPassword: "", // Reset confirmPassword
+      confirmPassword: "",
     });
-    setOwnerImageSrc(null);
-    setOwnerImageURL("");
-    setOwnerProgress(0);
+    setImageFile(null);
+    setLocalPreview(null);
   };
-
-  const validateOwnerForm = () => {
-    const phoneRegex = /^[0-9]{10}$/;
-    const nicRegex = /^[0-9]{12}$/;
-    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-    const { firstName, lastName, phoneNumber, nicNumber, createDate, email, selectcanteen, password } = ownerDetails;
-
-    return (
-      firstName &&
-      lastName &&
-      email &&
-      phoneNumber &&
-      nicNumber &&
-      createDate &&
-      phoneRegex.test(phoneNumber) &&
-      nicRegex.test(nicNumber) &&
-      dateRegex.test(createDate) &&
-      password &&
-      selectcanteen
-    );
-  };
-
-
 
   return (
-    <div className="w-full max-w-lg p-6 mx-auto text-white bg-gray-900 rounded-md">
-      <h2 className="mb-4 text-xl font-bold">Add Owners</h2>
-
-      {ownerImageSrc && (
-        <div className="flex justify-center mb-4">
-          <img
-            src={ownerImageSrc}
-            alt="Uploaded Preview"
-            className="object-cover w-32 h-32 border-2 border-gray-600 rounded-full"
-          />
-        </div>
-      )}
-
+    <div className="bg-gray-800 text-white p-8 rounded-lg shadow-lg w-[400px] mx-auto">
+      <h2 className="mb-6 text-2xl font-bold">Add Cashier</h2>
       <form onSubmit={handleSubmit}>
-        <div className="space-y-4">
-          <input
-            type="text"
-            name="firstName"
-            placeholder="First Name"
-            value={ownerDetails.firstName}
-            onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
-            required
-          />
-          <input
-            type="text"
-            name="lastName"
-            placeholder="Last Name"
-            value={ownerDetails.lastName}
-            onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={ownerDetails.email}
-            onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
-            required
-          />
+        {/* Input Fields */}
+        {["firstName", "lastName", "email", "phoneNumber", "nicNumber"].map((field) => (
+          <div key={field} className="mb-4">
+            <label className="block mb-1 text-sm font-medium">
+              {field.replace(/([A-Z])/g, " $1").toUpperCase()}
+            </label>
+            <input
+              type={field === "email" ? "email" : "text"}
+              name={field}
+              value={cashier[field]}
+              onChange={handleInputChange}
+              className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+            />
+          </div>
+        ))}
+
+        {/* Password Fields */}
+        {["password", "confirmPassword"].map((field) => (
+          <div key={field} className="relative mb-4">
+            <label className="block mb-1 text-sm font-medium">
+              {field === "password" ? "Password" : "Confirm Password"}
+            </label>
+            <input
+              type={showPassword ? "text" : "password"}
+              name={field}
+              value={cashier[field]}
+              onChange={handleInputChange}
+              className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+            />
+            <span
+              className="absolute inset-y-0 flex items-center text-gray-400 cursor-pointer right-3"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? <FaEye /> : <FaEyeSlash />}
+            </span>
+          </div>
+        ))}
+
+        {/* Image Upload */}
+        <div className="mb-4">
+          <label className="block mb-1 text-sm font-medium">Image</label>
           <input
             type="file"
             onChange={handleFileChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
-            required
+            className="w-full text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:bg-gray-700 file:text-white hover:file:bg-orange-500"
           />
-          {ownerProgress > 0 && <p>{ownerProgress}% Uploaded</p>}
-          <input
-            type="text"
-            name="phoneNumber"
-            placeholder="Phone Number (10 digits)"
-            value={ownerDetails.phoneNumber}
-            onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
-            required
-          />
-          <input
-            type="text"
-            name="nicNumber"
-            placeholder="NIC Number (12 digits)"
-            value={ownerDetails.nicNumber}
-            onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
-            required
-          />
-          <select
-            name="selectcanteen"
-            value={ownerDetails.selectcanteen}
-            onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
-            required
-          >
-            <option value="">Select Canteen</option>
-            {canteens.map(canteen => (
-              <option key={canteen._id} value={canteen._id}>
-                {canteen.canteenName}
-              </option>
-            ))}
-          </select>
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={ownerDetails.password}
-            onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
-            required
-          />
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={ownerDetails.confirmPassword}
-            onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
-            required
-          />
+          {localPreview && (
+            <div className="mt-4">
+              <p className="mb-2 text-sm text-gray-400">Preview:</p>
+              <img src={localPreview} alt="Preview" className="w-full rounded-lg shadow" />
+            </div>
+          )}
         </div>
-        <button
-          type="submit"
-          disabled={!validateOwnerForm()}
-          className="w-full py-2 mt-4 font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-blue-400"
-        >
-          Add Cashier
-        </button>
+
+        {/* Buttons */}
+        <div className="flex justify-between">
+          <button
+            type="button"
+            className="px-4 py-2 text-white bg-gray-600 rounded hover:bg-gray-700"
+            onClick={resetForm}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 text-white bg-orange-500 rounded hover:bg-orange-600"
+          >
+            Add
+          </button>
+        </div>
       </form>
     </div>
   );
-}
+};
+
+export default AddCashierForm;

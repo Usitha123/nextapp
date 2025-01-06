@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Trash2 } from "lucide-react";
-import milkrice from "@/src/loginbackground.jpeg";
 import { useSession } from "next-auth/react";
 import { usePathname } from 'next/navigation';
 
@@ -60,6 +59,9 @@ const Cart = ({ cartItems, onRemove, canteenName, username, mealType }) => {
 // Food Display Component
 const FoodDisplay = ({ onAddToCart }) => {
   const [isDinnerfastTime, setIsDinnerfastTime] = useState(false);
+  const [meals, setMeals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const checkTime = () => {
@@ -77,20 +79,38 @@ const FoodDisplay = ({ onAddToCart }) => {
     return () => clearInterval(timer);
   }, []);
 
-  const foodList = [
-    { id: "1", name: "Fried Rice", image: milkrice, price: 250 },
-    { id: "2", name: "Rice", image: milkrice, price: 200 },
-    { id: "3", name: "Kottu", image: milkrice, price: 300 },
-    { id: "4", name: "Milk Rice", image: milkrice, price: 150 },
-  ];
+  useEffect(() => {
+    const fetchMeals = async () => {
+      try {
+        const res = await fetch('/api/viewmeal');
+        if (!res.ok) throw new Error('Failed to fetch meals');
+        const data = await res.json();
+        setMeals(data.meals);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMeals();
+  }, []);
+
+  const pathname = usePathname();
+  const pathSegments = pathname?.split('/');
+  const currentCanteen = pathSegments[3];  // The 4th segment is 'Skycafe'
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-4">
-      {foodList.map((food) => (
-        <div key={food.id} className="w-full m-auto bg-white border rounded-3xl">
+      {meals.filter((meal) =>
+        meal.mealType === "Dinner" &&
+        meal.mealstatus === "Active" &&
+        meal.selectCanteen === currentCanteen
+      ).map((meal) => (
+        <div key={meal.id} className="w-full m-auto bg-white border rounded-3xl">
           <Image
-            src={food.image}
-            alt={food.name}
+            src={meal.image}
+            alt={meal.name}
             width={800}
             height={800}
             className={`object-cover w-full rounded-3xl ${!isDinnerfastTime ? "opacity-50 blur-sm pointer-events-none" : ""}`}
@@ -98,12 +118,12 @@ const FoodDisplay = ({ onAddToCart }) => {
           />
           <div className="p-4 grid grid-cols-[auto_40px]">
             <div className="flex-col">
-              <h3 className="mt-2 text-lg font-semibold">{food.name}</h3>
-              <p className="text-gray-500">Rs {food.price}.00</p>
+              <h3 className="mt-2 text-lg font-semibold">{meal.name}</h3>
+              <p className="text-gray-500">Rs {meal.price}.00</p>
             </div>
             <div className="relative">
               <button
-                onClick={() => onAddToCart(food)}
+                onClick={() => onAddToCart(meal)}
                 className="absolute bottom-2 right-2 w-8 h-8 text-xl text-white bg-orange-500 rounded-[50%] hover:bg-orange-600"
                 disabled={!isDinnerfastTime}
               >
