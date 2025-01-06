@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
+// Form Component
 const AddMealForm = () => {
   const [meal, setMeal] = useState({
     mealName: "",
@@ -7,10 +8,9 @@ const AddMealForm = () => {
     mealPrice: "",
     mealType: "Breakfast",
     mealQuantity: "",
-    Canteenselect: "open",  // Default value set to "open"
+    selectCanteen: "open",  // Default value set to "open"
   });
   const [imageFile, setImageFile] = useState(null);
-  const [imageURL, setImageURL] = useState(null);
   const [localPreview, setLocalPreview] = useState(null);
 
   const handleInputChange = (e) => {
@@ -29,46 +29,16 @@ const AddMealForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) {
+    if (!isFormValid()) {
       alert("Please fill out all fields correctly.");
       return;
     }
 
     try {
-      // Upload image if a file is provided
-      let uploadedImageURL = imageURL;
-      if (imageFile) {
-        const formData = new FormData();
-        formData.append("file", imageFile);
-        formData.append("upload_preset", "my-uploads");
+      const uploadedImageURL = await uploadImage(imageFile);
 
-        const uploadResponse = await fetch("https://api.cloudinary.com/v1_1/dtvsl05hw/image/upload", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!uploadResponse.ok) throw new Error("Failed to upload image.");
-
-        const uploadResult = await uploadResponse.json();
-        uploadedImageURL = uploadResult.secure_url;
-      }
-
-      const mealData = {
-        ...meal,
-        image: uploadedImageURL,
-      };
-
-      const response = await fetch("/api/addmeal", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(mealData),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || "Failed to add meal.");
-      }
+      const mealData = { ...meal, image: uploadedImageURL };
+      await submitMealData(mealData);
 
       alert("Meal added successfully!");
       resetForm();
@@ -78,9 +48,40 @@ const AddMealForm = () => {
     }
   };
 
-  const validateForm = () => {
+  const isFormValid = () => {
     const { mealName, mealDescription, mealPrice, mealType, mealQuantity, selectCanteen } = meal;
-    return mealName && mealDescription && mealPrice && mealType && mealQuantity && selectCanteen && (imageFile || imageURL);
+    return mealName && mealDescription && mealPrice && mealType && mealQuantity && selectCanteen && (imageFile || localPreview);
+  };
+
+  const uploadImage = async (file) => {
+    if (!file) return null;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "my-uploads");
+
+    const response = await fetch("https://api.cloudinary.com/v1_1/dtvsl05hw/image/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) throw new Error("Failed to upload image.");
+
+    const { secure_url } = await response.json();
+    return secure_url;
+  };
+
+  const submitMealData = async (mealData) => {
+    const response = await fetch("/api/addmeal", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(mealData),
+    });
+
+    if (!response.ok) {
+      const result = await response.json();
+      throw new Error(result.error || "Failed to add meal.");
+    }
   };
 
   const resetForm = () => {
@@ -93,7 +94,6 @@ const AddMealForm = () => {
       selectCanteen: "open",  // Reset to default value
     });
     setImageFile(null);
-    setImageURL(null);
     setLocalPreview(null);
   };
 
@@ -101,44 +101,12 @@ const AddMealForm = () => {
     <div className="bg-gray-800 text-white p-8 rounded-lg shadow-lg w-[400px] mx-auto">
       <h2 className="mb-6 text-2xl font-bold">Add Meal</h2>
       <form onSubmit={handleSubmit}>
-        <InputField
-          label="Meal Name"
-          name="mealName"
-          value={meal.mealName}
-          onChange={handleInputChange}
-        />
-        <TextareaField
-          label="Description"
-          name="mealDescription"
-          value={meal.mealDescription}
-          onChange={handleInputChange}
-        />
-        <InputField
-          label="Price"
-          name="mealPrice"
-          type="text"
-          value={meal.mealPrice}
-          onChange={handleInputChange}
-        />
-        <SelectField
-          label="Category"
-          name="mealType"
-          options={["Breakfast", "Lunch", "Dinner"]}
-          value={meal.mealType}
-          onChange={handleInputChange}
-        />
-        <InputField
-          label="Quantity"
-          name="mealQuantity"
-          type="number"
-          value={meal.mealQuantity}
-          onChange={handleInputChange}
-        />
-        <FileInputField
-          label="Image"
-          onChange={handleFileChange}
-          previewURL={localPreview}
-        />
+        <InputField label="Meal Name" name="mealName" value={meal.mealName} onChange={handleInputChange} />
+        <TextareaField label="Description" name="mealDescription" value={meal.mealDescription} onChange={handleInputChange} />
+        <InputField label="Price" name="mealPrice" type="text" value={meal.mealPrice} onChange={handleInputChange} />
+        <SelectField label="Category" name="mealType" options={["Breakfast", "Lunch", "Dinner"]} value={meal.mealType} onChange={handleInputChange} />
+        <InputField label="Quantity" name="mealQuantity" type="number" value={meal.mealQuantity} onChange={handleInputChange} />
+        <FileInputField label="Image" onChange={handleFileChange} previewURL={localPreview} />
         <div className="flex justify-between">
           <button type="button" className="px-4 py-2 text-white bg-gray-600 rounded hover:bg-gray-700">
             Cancel
@@ -152,7 +120,7 @@ const AddMealForm = () => {
   );
 };
 
-// Input Components for Reusability
+// Reusable Input Components
 const InputField = ({ label, name, type = "text", value, onChange }) => (
   <div className="mb-4">
     <label className="block mb-1 text-sm font-medium">{label}</label>
