@@ -105,11 +105,35 @@ const AddCashierForm = () => {
   };
 
   return (
-    <div className="bg-gray-800 text-white p-8 rounded-lg shadow-lg w-[400px] mx-auto">
+    <div className="bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-lg mx-auto">
       <h2 className="mb-6 text-2xl font-bold">Add Cashier</h2>
       <form onSubmit={handleSubmit}>
         {/* Input Fields */}
-        {["firstName", "lastName", "email", "phoneNumber", "nicNumber"].map((field) => (
+{/* Name Fields in the Same Row */}
+<div className="mb-4 flex space-x-4">
+  <div className="flex-1">
+    <label className="block mb-1 text-sm font-medium">First Name</label>
+    <input
+      type="text"
+      name="firstName"
+      value={cashier.firstName}
+      onChange={handleInputChange}
+      className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+    />
+  </div>
+  <div className="flex-1">
+    <label className="block mb-1 text-sm font-medium">Last Name</label>
+    <input
+      type="text"
+      name="lastName"
+      value={cashier.lastName}
+      onChange={handleInputChange}
+      className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+    />
+  </div>
+</div>
+
+        {[ "email"].map((field) => (
           <div key={field} className="mb-4">
             <label className="block mb-1 text-sm font-medium">
               {field.replace(/([A-Z])/g, " $1").toUpperCase()}
@@ -123,6 +147,29 @@ const AddCashierForm = () => {
             />
           </div>
         ))}
+        <div className="mb-4 flex space-x-4">
+  <div className="flex-1">
+    <label className="block mb-1 text-sm font-medium">Phone Number</label>
+    <input
+      type="text"
+      name="phoneNumber"
+      value={cashier.phoneNumber}
+      onChange={handleInputChange}
+      className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+    />
+  </div>
+  <div className="flex-1">
+    <label className="block mb-1 text-sm font-medium">NIC Number</label>
+    <input
+      type="text"
+      name="nicNumber"
+      value={cashier.nicNumber}
+      onChange={handleInputChange}
+      className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+    />
+  </div>
+</div>
+
 
         {/* Password Fields */}
         {["password", "confirmPassword"].map((field) => (
