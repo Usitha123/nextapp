@@ -103,9 +103,11 @@ const AddMealForm = () => {
       <form onSubmit={handleSubmit}>
         <InputField label="Meal Name" name="mealName" value={meal.mealName} onChange={handleInputChange} />
         <TextareaField label="Description" name="mealDescription" value={meal.mealDescription} onChange={handleInputChange} />
-        <InputField label="Price" name="mealPrice" type="text" value={meal.mealPrice} onChange={handleInputChange} />
         <SelectField label="Category" name="mealType" options={["Breakfast", "Lunch", "Dinner"]} value={meal.mealType} onChange={handleInputChange} />
-        <InputField label="Quantity" name="mealQuantity" type="number" value={meal.mealQuantity} onChange={handleInputChange} />
+        <div className="grid grid-cols-[2fr_1fr] gap-2">        
+          <InputField label="Price" name="mealPrice" type="text" value={meal.mealPrice} onChange={handleInputChange} />
+          <InputField label="Quantity" name="mealQuantity" type="number" value={meal.mealQuantity} onChange={handleInputChange} />
+        </div>
         <FileInputField label="Image" onChange={handleFileChange} previewURL={localPreview} />
         <div className="flex justify-between">
           <button type="button" className="px-4 py-2 text-white bg-gray-600 rounded hover:bg-gray-700">
