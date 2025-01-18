@@ -99,7 +99,7 @@ const AddMealForm = () => {
 
   return (
     <div className="bg-gray-800 text-white p-8 rounded-lg shadow-lg w-[400px] mx-auto">
-      <h2 className="mb-6 text-2xl font-bold">Add Meal</h2>
+      {/* <h2 className="mb-6 text-2xl font-bold">Add Meal</h2> */}
       <form onSubmit={handleSubmit}>
         <InputField label="Meal Name" name="mealName" value={meal.mealName} onChange={handleInputChange} />
         <TextareaField label="Description" name="mealDescription" value={meal.mealDescription} onChange={handleInputChange} />
