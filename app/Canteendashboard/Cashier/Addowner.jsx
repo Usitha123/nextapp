@@ -106,7 +106,7 @@ const AddCashierForm = () => {
 
   return (
     <div className="bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-lg mx-auto">
-      <h2 className="mb-6 text-2xl font-bold">Add Cashier</h2>
+      {/* <h2 className="mb-6 text-2xl font-bold">Add Cashier</h2> */}
       <form onSubmit={handleSubmit}>
         {/* Input Fields */}
 {/* Name Fields in the Same Row */}

@@ -10,7 +10,7 @@ function page() {
       <Sidebar/>
       <div className="flex-1">
         <Topbar />
-        <Header title="Cashier" />
+        <Header title="Add Cashier" />
         <div className="p-4">
             <Cashier/>
         </div>
