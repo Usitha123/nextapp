@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
+
 const AddCashierForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [cashier, setCashier] = useState({
