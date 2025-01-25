@@ -12,7 +12,7 @@ const OrderTable = () => {
   const [selectedDescription, setSelectedDescription] = useState("");
   const [selectedOrderId, setSelectedOrderId] = useState(null);
 
-  const ordersPerPage = 5;
+  const ordersPerPage = 8;
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -104,11 +104,7 @@ const OrderTable = () => {
         const updatedOrder = await response.json(); // Get the updated order from response
         alert(`Status updated to ${status}`);
         
-        setOrders((prevOrders) =>
-          prevOrders.map((order) =>
-            order._id === orderId ? { ...order, orderStatus: updatedOrder.orderStatus } : order
-          )
-        );
+      
       }
     } catch (error) {
       console.error("Error updating status:", error);
