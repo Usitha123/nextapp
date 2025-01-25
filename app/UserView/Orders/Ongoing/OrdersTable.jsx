@@ -84,15 +84,15 @@ const OrdersTable = () => {
               orderDate.setHours(0, 0, 0, 0);
               return orderDate.getTime() === today.getTime();
             })
-            .filter((order) => ["Pending", "Ready"].includes(order.mealStatus))
+            .filter((order) => ["Pending", "Ready"].includes(order.orderStatus))
             .map((order) => (
               <tr key={order._id} className="text-center">
                 <td className="p-2">{order._id}</td>
                 <td className="p-2">
                   <span
-                    className={`inline-block w-full px-4 py-2 leading-none ${statusStyles[order.mealStatus] || "bg-gray-200 text-black"} rounded-lg`}
+                    className={`inline-block w-full px-4 py-2 leading-none ${statusStyles[order.orderStatus] || "bg-gray-200 text-black"} rounded-lg`}
                   >
-                    {order.mealStatus}
+                    {order.orderStatus}
                   </span>
                 </td>
                 <td className="p-2">{formatDate(order.meals[0].timestamp)}</td>

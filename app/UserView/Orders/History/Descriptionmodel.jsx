@@ -1,24 +1,25 @@
-import { Cross, X } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 
-const UpdateDescriptionmodel = ({ isOpen, onClose }) => {
-  const [status, setStatus] = useState("active");
-
+const DescriptionModel = ({ isOpen, onClose, description, orderId }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center backdrop-blur-md">
-      <div className=" bg-white rounded-xl w-80">
-        <div className="">
-          <h3 className="mb-4 flex text-center text-lg p-2 relative text-white rounded-t-xl bg-orange-500 ">Order info <span></span> <X className="absolute top-3 right-3 hover:text-black" onClick={() => {
-              // Handle Save Action
-              
-              onClose();
-            }}
-              type="button"/></h3>
-          
-          <div className="flex p-6 justify-end mt-6 space-x-4">
-          <h3>Meal info</h3>
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="p-6 text-white bg-gray-800 rounded-lg w-80">
+        <div className="text-center">
+          <h3 className="mb-4 text-lg font-semibold">Order Description</h3>
+          <p className="mb-4">Order ID: {orderId}</p>
+          <br/>
+          <p className="mb-4">{description}</p>
+
+          <div className="flex justify-end mt-6 space-x-4">
+            <button
+              onClick={onClose}
+              type="button"
+              className="px-4 py-2 text-white bg-gray-600 rounded-md hover:bg-gray-500 focus:outline-none"
+            >
+              Close
+            </button>
           </div>
         </div>
       </div>
@@ -26,4 +27,4 @@ const UpdateDescriptionmodel = ({ isOpen, onClose }) => {
   );
 };
 
-export default UpdateDescriptionmodel;
+export default DescriptionModel;

@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
 import DescriptionModel from "./Descriptionmodel";
@@ -88,6 +89,35 @@ const OrderTable = () => {
     return createdAt.toLocaleString();
   };
 
+  const updateStatus = async (orderId, status) => { // Added status parameter
+    try {
+      const response = await fetch(`/api/updateorderstatus?id=${orderId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderStatus: status }), // Use the passed status
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(errorData.message || "Failed to update status");
+      } else {
+        const updatedOrder = await response.json(); // Get the updated order from response
+        alert(`Status updated to ${status}`);
+        
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === orderId ? { ...order, orderStatus: updatedOrder.orderStatus } : order
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      alert("An error occurred while updating status");
+    }
+  };
+  
+  
+
   return (
     <div className="space-y-6">
       <div className="p-6 bg-gray-800 rounded-lg shadow-lg">
@@ -110,33 +140,39 @@ const OrderTable = () => {
               </tr>
             </thead>
             <tbody className="bg-gray-700">
-
-            {currentOrders
-              .filter((order) => order.mealStatus === "Pending")
-              .map((order) => (
-                <tr key={order._id} className="border-b border-gray-600">
-                  <td className="px-4 py-2">{order._id}</td>
-                  <td className="px-4 py-2">{order.userName}</td>
-                  <td className="px-4 py-2">
-                    <span className={`px-2 py-1 rounded ${getStatusClasses(order.mealStatus)}`}>
-                      {order.mealStatus}
-                    </span>
-                  </td>
-                  <td className="px-4 py-2">{formatDate(order.meals[0].timestamp)}</td>
-                  <td className="px-4 py-2">
-                    <button
-                      onClick={() => handleDescriptionClick(order._id)}
-                      className="text-orange-400 hover:underline"
-                    >
-                      View
-                    </button>
-                  </td>
-                  <td className="flex px-4 py-2 space-x-2">
-                    <button className="text-green-400 hover:underline">Accept</button>
-                    <button className="text-red-400 hover:underline">Cancel</button>
-                  </td>
-                </tr>
-              ))}
+              {currentOrders
+                .filter((order) => order.orderStatus === "Pending")
+                .map((order) => (
+                  <tr key={order._id} className="border-b border-gray-600">
+                    <td className="px-4 py-2">{order._id}</td>
+                    <td className="px-4 py-2">{order.userName}</td>
+                    <td className="px-4 py-2">
+                      <span className={`px-2 py-1 rounded ${getStatusClasses(order.mealStatus)}`}>
+                        {order.orderStatus}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2">{formatDate(order.meals[0].timestamp)}</td>
+                    <td className="px-4 py-2">
+                      <button
+                        onClick={() => handleDescriptionClick(order._id)}
+                        className="text-orange-400 hover:underline"
+                      >
+                        View
+                      </button>
+                    </td>
+                    <td className="flex px-4 py-2 space-x-2">
+                      <button
+                        onClick={() => updateStatus(order._id, "Active")}
+                        className="text-green-400 hover:underline"
+                      >
+                        Accept
+                      </button>
+                      <button 
+                       onClick={() => updateStatus(order._id, "Cancelled")}
+                       className="text-red-400 hover:underline">Cancel</button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
@@ -158,7 +194,6 @@ const OrderTable = () => {
         </div>
       </div>
 
-      {/* Description Modal */}
       <DescriptionModel
         isOpen={isDescriptionModelOpen}
         onClose={() => setIsDescriptionModelOpen(false)}

@@ -9,34 +9,49 @@ export async function POST(request) {
     const body = await request.json();
     
     // Destructure the body to get the user data
-    const { userName, userEmail, canteenName, mealType, meals } = body;
+    const { userName, userEmail, canteenName, orderType, meals } = body;
 
-    // Validate the meal data structure before creating the order
-    if (!Array.isArray(meals) || meals.some(meal => !meal.mealId || !meal.mealName || !meal.mealQuantity || !meal.mealPrice)) {
-      return new Response(JSON.stringify({ error: 'Invalid meal data provided' }), {
-        status: 400,
-      });
+    // Validate the required fields
+    if (!userName || !userEmail || !canteenName || !orderType) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required fields: userName, userEmail, canteenName, or orderType.' }),
+        { status: 400 }
+      );
     }
+
+    // Validate the meal data structure
+    if (!Array.isArray(meals) || meals.some(meal => !meal.mealId || !meal.mealName || !meal.mealQuantity || !meal.mealPrice)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid meal data: each meal must have mealId, mealName, mealQuantity, and mealPrice.' }),
+        { status: 400 }
+      );
+    }
+
+    // Set a default orderStatus if it's not provided
+    const orderStatus = "Pending"; // Default status, adjust if necessary
 
     // Create a new order document
     const newOrder = new Order({
       userName,
       userEmail,
       canteenName,
-      mealType,
+      orderType,
+      orderStatus,
       meals, // an array of meal objects
     });
 
     // Save the order to the database
     await newOrder.save();
 
-    return new Response(JSON.stringify({ message: 'Order created successfully', order: newOrder }), {
-      status: 201,
-    });
+    return new Response(
+      JSON.stringify({ message: 'Order created successfully', order: newOrder }),
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error creating order:', error);
-    return new Response(JSON.stringify({ error: 'Failed to create order' }), {
-      status: 500,
-    });
+    return new Response(
+      JSON.stringify({ error: 'Failed to create order. Please try again later.' }),
+      { status: 500 }
+    );
   }
 }

@@ -42,17 +42,17 @@ const orderSchema = new Schema({
     required: true,
     trim: true
   },
-  mealType: {
+  orderType: {
     type: String,
     required: true,
-    enum: ['Breakfast', 'Lunch', 'Dinner'] // Optional, can be customized
   },
-  meals: [mealSchema],  // Updated meal field to plural for clarity
-  mealStatus: {
+  orderStatus: {
     type: String,
-    default: 'Pending',
-    enum: ['Pending', 'Accepted', 'Cancelled', 'Picked', 'Ready'] // Ensure only valid statuses
-  }
+    default: 'Pending', 
+    required: true, 
+  },
+  meals: [mealSchema],  
+ 
 });
 
 // Check if the model already exists

@@ -89,7 +89,7 @@ export default function AddCanteens() {
     console.log("Submitted Data:", fullData); // Debugging log
 
     try {
-      const response = await fetch("/api/addmeal", {
+      const response = await fetch("/api/addcanteens", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(fullData),
@@ -207,7 +207,7 @@ export default function AddCanteens() {
           <div>
             <label htmlFor="openHour" className="p-1 text-orange-500 ">Open Hour</label>
             <input
-            type="text"
+            type="time"
             name="openHour"
             placeholder="HH:MM"
             value={canteenDetails.openHour}
@@ -218,7 +218,7 @@ export default function AddCanteens() {
          <div>
           <label htmlFor="closedHour" className="p-1 text-orange-500 ">Closed Hour</label>
           <input
-            type="text"
+            type="time"
             name="closedHour"
             placeholder="HH:MM"
             value={canteenDetails.closedHour}

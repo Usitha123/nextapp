@@ -1,4 +1,5 @@
-import Canteen from '../../../models/Canteen';
+// app/api/addcanteens/route.js
+import Canteen from '@/models/Canteen';
 import { connectMongoDB } from '@/lib/mongodb';
 
 export async function POST(req) {

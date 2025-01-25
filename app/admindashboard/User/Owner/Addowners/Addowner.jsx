@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-const AddOwnerForm = () => {
+const AddCashierForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [owner, setOwner] = useState({
     firstName: "",
@@ -15,86 +15,76 @@ const AddOwnerForm = () => {
     selectcanteen: "",
   });
   const [canteens, setCanteens] = useState([]);
-  const [imageFile, setImageFile] = useState(null);
-  const [localPreview, setLocalPreview] = useState(null);
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchCanteens();
   }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setOwner((prev) => ({ ...prev, [name]: value }));
+  };
 
   const fetchCanteens = async () => {
     try {
       const res = await fetch("/api/allcanteenslist");
       if (!res.ok) throw new Error("Failed to fetch canteens");
       const data = await res.json();
-      const inactiveCanteens = data.filter(
-        (canteen) => canteen.ownerstatus === "Inactive"
-      );
+      const inactiveCanteens = data.filter((canteen) => canteen.ownerstatus === "Inactive");
       setCanteens(inactiveCanteens);
     } catch (err) {
       setError("Failed to load canteens.");
     }
   };
 
-  const handleInputChange = ({ target: { name, value } }) =>
-    setOwner((prev) => ({ ...prev, [name]: value }));
-
-  const handleFileChange = ({ target: { files } }) => {
-    const file = files[0];
-    if (file) {
-      setImageFile(file);
-      setLocalPreview(URL.createObjectURL(file));
-    }
-  };
-
   const isFormValid = () => {
-    const { password, confirmPassword, ...requiredFields } = owner;
-    const hasAllFields = Object.values(requiredFields).every(Boolean);
-    return hasAllFields && password === confirmPassword && imageFile;
-  };
-
-  const uploadImage = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "my-uploads");
-
-    const response = await fetch(
-      "https://api.cloudinary.com/v1_1/dtvsl05hw/image/upload",
-      { method: "POST", body: formData }
+    const { firstName, lastName, email, password, confirmPassword, selectcanteen } = owner;
+    return (
+      firstName &&
+      lastName &&
+      email &&
+      password &&
+      confirmPassword &&
+      password === confirmPassword &&
+      selectcanteen
     );
-
-    if (!response.ok) throw new Error("Image upload failed.");
-    return response.json();
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!isFormValid()) {
       alert("Please fill out all fields correctly.");
       return;
     }
 
-    setIsLoading(true);
     try {
-      const { secure_url } = await uploadImage(imageFile);
-
       const response = await fetch("/api/addowner", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...owner, image: secure_url }),
+        body: JSON.stringify({
+          firstName: owner.firstName,
+          lastName: owner.lastName,
+          email: owner.email,
+          status: "Active", // Default status
+          phoneNumber: owner.phoneNumber,
+          nicNumber: owner.nicNumber,
+          selectcanteen: owner.selectcanteen,
+          password: owner.password,
+        }),
       });
 
-      if (!response.ok) throw new Error(await response.text());
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.error || "Failed to add owner.");
+      }
 
       alert("Owner added successfully!");
       resetForm();
     } catch (error) {
-      console.error(error);
-      alert("Error occurred while adding owner.");
-    } finally {
-      setIsLoading(false);
+      console.error("Form submission error:", error);
+      alert("An error occurred while submitting the form.");
     }
   };
 
@@ -109,54 +99,130 @@ const AddOwnerForm = () => {
       confirmPassword: "",
       selectcanteen: "",
     });
-    setImageFile(null);
-    setLocalPreview(null);
   };
 
   return (
-    <div className="bg-gray-800 text-white p-8 rounded-lg shadow-lg w-[400px] mx-auto">
-      <h2 className="mb-6 text-2xl font-bold">Add Owner</h2>
-      {error && <p className="mb-4 text-red-500">{error}</p>}
+    <div className="max-w-lg p-8 mx-auto text-white bg-gray-800 rounded-lg shadow-lg">
       <form onSubmit={handleSubmit}>
-        {Object.keys(owner).map((key) =>
-          key === "selectcanteen" ? (
-            <select
-              key={key}
-              name={key}
-              value={owner[key]}
-              onChange={handleInputChange}
-              className="w-full p-2 mb-4 text-white bg-gray-700 rounded focus:outline-none"
-            >
-              <option value="">Select Canteen</option>
-              {canteens.map(({ _id, canteenName }) => (
-                <option key={_id} value={_id}>
-                  {canteenName}
-                </option>
-              ))}
-            </select>
-          ) : (
+        {/* Name Fields */}
+        <div className="flex mb-4 space-x-4">
+          <div className="flex-1">
+            <label className="block mb-1 text-sm font-medium">First Name</label>
             <input
-              key={key}
-              type={key.includes("password") ? (showPassword ? "text" : "password") : "text"}
-              name={key}
-              value={owner[key]}
-              placeholder={key.replace(/([A-Z])/g, " $1")}
+              type="text"
+              name="firstName"
+              value={owner.firstName}
               onChange={handleInputChange}
-              className="w-full p-2 mb-4 text-white bg-gray-700 rounded focus:outline-none"
+              className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
             />
-          )
-        )}
-        {localPreview && <img src={localPreview} alt="Preview" />}
-        <button
-          type="submit"
-          className={`px-4 py-2 rounded ${isLoading ? "bg-gray-500 cursor-not-allowed" : "bg-orange-500"}`}
-          disabled={isLoading}
-        >
-          {isLoading ? "Adding..." : "Add"}
-        </button>
+          </div>
+          <div className="flex-1">
+            <label className="block mb-1 text-sm font-medium">Last Name</label>
+            <input
+              type="text"
+              name="lastName"
+              value={owner.lastName}
+              onChange={handleInputChange}
+              className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+            />
+          </div>
+        </div>
+
+        {/* Email Field */}
+        <div className="mb-4">
+          <label className="block mb-1 text-sm font-medium">Email</label>
+          <input
+            type="email"
+            name="email"
+            value={owner.email}
+            onChange={handleInputChange}
+            className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+          />
+        </div>
+
+        {/* Phone & NIC Fields */}
+        <div className="flex mb-4 space-x-4">
+          <div className="flex-1">
+            <label className="block mb-1 text-sm font-medium">Phone Number</label>
+            <input
+              type="text"
+              name="phoneNumber"
+              value={owner.phoneNumber}
+              onChange={handleInputChange}
+              className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="block mb-1 text-sm font-medium">NIC Number</label>
+            <input
+              type="text"
+              name="nicNumber"
+              value={owner.nicNumber}
+              onChange={handleInputChange}
+              className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+            />
+          </div>
+        </div>
+
+        {/* Password Fields */}
+        {["password", "confirmPassword"].map((field) => (
+          <div key={field} className="relative mb-4">
+            <label className="block mb-1 text-sm font-medium">
+              {field === "password" ? "Password" : "Confirm Password"}
+            </label>
+            <input
+              type={showPassword ? "text" : "password"}
+              name={field}
+              value={owner[field]}
+              onChange={handleInputChange}
+              className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+            />
+            <span
+              className="absolute inset-y-0 flex items-center text-gray-400 cursor-pointer right-3"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? <FaEye /> : <FaEyeSlash />}
+            </span>
+          </div>
+        ))}
+
+        {/* Canteen Select */}
+        <div className="mb-4">
+          <label className="block mb-1 text-sm font-medium">Select Canteen</label>
+          <select
+            name="selectcanteen"
+            value={owner.selectcanteen}
+            onChange={handleInputChange}
+            className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none"
+          >
+            <option value="">Select Canteen</option>
+            {canteens.map(({ _id, canteenName }) => (
+              <option key={_id} value={_id}>
+                {canteenName}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex justify-between">
+          <button
+            type="button"
+            className="px-4 py-2 text-white bg-gray-600 rounded hover:bg-gray-700"
+            onClick={resetForm}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 text-white bg-orange-500 rounded hover:bg-orange-600"
+          >
+            Add
+          </button>
+        </div>
       </form>
     </div>
   );
 };
 
-export default AddOwnerForm;
+export default AddCashierForm;

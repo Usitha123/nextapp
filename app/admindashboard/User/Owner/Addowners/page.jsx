@@ -13,7 +13,7 @@ const Meals = () => {
       <Sidebar />
       <div className="flex-1">
         <Topbar />
-        <Header title="User" /> {/* Pass another route-specific title */}
+        <Header title="Add Owner" /> {/* Pass another route-specific title */}
         <div className="p-4">
         <Addowner/>
           

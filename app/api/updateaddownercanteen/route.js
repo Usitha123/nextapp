@@ -1,4 +1,5 @@
-import OwnerDetails from "@/models/OwnerDetails";
+// app/api/updateaddownercanteen/route.js
+import Canteen from "@/models/Canteen";
 import { connectMongoDB } from "@/lib/mongodb";
 
 export async function PUT(req) {
@@ -16,38 +17,28 @@ export async function PUT(req) {
       );
     }
 
-
-    // Parse the request body
-    const { status } = await req.json();
-    if (!status) {
+    // Find the canteen by ID
+    const canteen = await Canteen.findById(id);
+    if (!canteen) {
       return new Response(
-        JSON.stringify({ message: "Missing status in the request body" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    // Find the owner by ID
-    const owner = await OwnerDetails.findById(id);
-    if (!owner) {
-      return new Response(
-        JSON.stringify({ message: "Owner not found" }),
+        JSON.stringify({ message: "Canteen not found" }),
         { status: 404, headers: { "Content-Type": "application/json" } }
       );
     }
 
     // Update the status field
-    owner.status = status;
-    await owner.save();
+    canteen.status = "Active"; // You can adjust this logic if needed
+    await canteen.save();
 
-    // Return the updated owner details
+    // Return the updated canteen details
     return new Response(
-      JSON.stringify(owner),
+      JSON.stringify(canteen),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("Error updating owner details:", error);
+    console.error("Error updating canteen details:", error);
     return new Response(
-      JSON.stringify({ message: "Failed to update owner details" }),
+      JSON.stringify({ message: "Failed to update canteen details" }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }

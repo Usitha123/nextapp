@@ -37,9 +37,9 @@ const OrderTable = () => {
   const getStatusClasses = (status) => {
     switch (status) {
       case "Accepted":
-        return "bg-yellow-500 text-gray-900";
+        return "bg-green-500 text-gray-900";
       case "Picked":
-        return "bg-green-500 text-white";
+        return "bg-yellow-500 text-white";
       case "Cancelled":
         return "bg-red-500 text-white";
       default:
@@ -101,14 +101,14 @@ const OrderTable = () => {
           </thead>
           <tbody className="bg-gray-700">
             {currentOrders
-              .filter((order) => order.mealStatus !== "Pending")
+              .filter((order) => order.orderStatus !== "Pending")
               .map((order) => (
                 <tr key={order._id} className="border-b border-gray-600">
                   <td className="px-4 py-2">{order._id}</td>
                   <td className="px-4 py-2">{order.userName}</td>
                   <td className="px-4 py-2">
-                    <span className={`px-2 py-1 rounded ${getStatusClasses(order.mealStatus)}`}>
-                      {order.mealStatus}
+                    <span className={`px-2 py-1 rounded ${getStatusClasses(order.orderStatus)}`}>
+                      {order.orderStatus}
                     </span>
                   </td>
                   <td className="px-4 py-2">{formatDate(order.meals[0].timestamp)}</td>

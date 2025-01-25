@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
 import UpdateStatusModal from "./Modal";
-import Deleteowners from './Deleteowners';
+import Deleteowners from "./Deleteowners";
 import Link from "next/link";
 
 const ITEMS_PER_PAGE = 4;
@@ -14,10 +14,28 @@ const OwnerTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedOwnerId, setSelectedOwnerId] = useState(null);
-  const [selectedOwner, setSelectedOwner] = useState(null); // Store selected owner
+  const [selectedOwner, setSelectedOwner] = useState(null);
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentOwners = owners.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  const fetchOwners = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("/api/viewownerDetails");
+      if (!response.ok) throw new Error("Failed to fetch owner details");
+      const data = await response.json();
+      setOwners(data);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOwners();
+  }, []);
 
   const handleNext = () => {
     if (currentPage < Math.ceil(owners.length / ITEMS_PER_PAGE)) {
@@ -36,53 +54,60 @@ const OwnerTable = () => {
     setLoading(true);
     try {
       const response = await fetch(`/api/deleteowner?id=${selectedOwnerId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
       if (response.ok) {
-        setOwners(owners.filter(owner => owner._id !== selectedOwnerId));
-        setIsDeleteOwnerModalOpen(false); // Close the modal
+        setOwners(owners.filter((owner) => owner._id !== selectedOwnerId));
+        setIsDeleteOwnerModalOpen(false);
       } else {
-        alert('Failed to delete owner');
+        alert("Failed to delete owner");
       }
     } catch (error) {
       console.error(error);
-      alert('An error occurred while deleting the owner');
+      alert("An error occurred while deleting the owner");
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    const fetchOwnerDetails = async () => {
-      try {
-        const response = await fetch('/api/viewownerDetails');
-        if (!response.ok) {
-          throw new Error('Failed to fetch owner details');
-        }
-        const data = await response.json();
-        setOwners(data);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchOwnerDetails();
-  }, []);
-
- 
 
   const formatDate = (dateString) => {
     const createdAt = new Date(dateString);
     return createdAt.toLocaleString();
   };
 
+  const updateStatus = async (ownerId, currentStatus) => {
+    const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
+
+    try {
+      const response = await fetch(`/api/updatestatusowner?id=${ownerId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(errorData.message || "Failed to update status");
+      } else {
+        alert(`Status updated to ${newStatus}`);
+        fetchOwners(); // Refresh the data
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      alert("An error occurred while updating status");
+    }
+  };
+
   return (
     <div className="p-4 text-white bg-gray-800 rounded-lg">
       <div className="flex justify-between mb-4">
         <h2 className="mb-4 text-xl font-semibold">Owners</h2>
-        <Link href="/admindashboard/User/Owner/Addowners" className="px-4 py-2 text-gray-900 bg-orange-500 rounded">
+        <Link
+          href="/admindashboard/User/Owner/Addowners"
+          className="px-4 py-2 text-gray-900 bg-orange-500 rounded"
+        >
           Add Owner
         </Link>
       </div>
@@ -116,20 +141,29 @@ const OwnerTable = () => {
                   className="text-red-500 hover:text-red-700"
                   onClick={() => {
                     setSelectedOwnerId(owner._id);
-                    setSelectedOwner(owner); // Store selected owner
                     setIsDeleteOwnerModalOpen(true);
                   }}
                 >
                   <FaRegTrashAlt />
                 </button>
-                <button 
+                <button
                   onClick={() => {
-                    setSelectedOwner(owner); // Store selected owner for editing
+                    setSelectedOwner(owner);
                     setIsModalOpen(true);
                   }}
                   className="text-red-500 hover:text-red-700"
                 >
                   <FaEdit />
+                </button>
+                <button
+                  className={`${
+                    owner.status === "Active"
+                      ? "text-green-500"
+                      : "text-red-500"
+                  } hover:text-red-700`}
+                  onClick={() => updateStatus(owner._id, owner.status)}
+                >
+                  {owner.status === "Active" ? "Inactive" : "Active"}
                 </button>
               </td>
             </tr>
@@ -153,17 +187,11 @@ const OwnerTable = () => {
           Next
         </button>
       </div>
-      {/* Modals */}
-      <UpdateStatusModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        owner={selectedOwner} // Pass selected owner to modal
-      />
+
       <Deleteowners
         isOpen={isDeleteOwnerModalOpen}
         onClose={() => setIsDeleteOwnerModalOpen(false)}
-        onDelete={handleDelete} // Pass delete function to Deleteowners
-        owner={selectedOwner} // Pass selected owner to modal
+        onDelete={handleDelete}
       />
     </div>
   );
