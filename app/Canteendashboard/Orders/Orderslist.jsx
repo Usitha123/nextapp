@@ -13,7 +13,6 @@ const OrderTable = () => {
   const [isDeleteOrderModalOpen, setIsDeleteOrderModalOpen] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState([]);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
-
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
 
@@ -55,12 +54,10 @@ const OrderTable = () => {
     setIsDescriptionModelOpen(true);
   };
 
-  const handleDeleteOrder = async () => {
+  const handleDelete = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/deleteorder?id=${selectedOrderId}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(`/api/deleteorder?id=${selectedOrderId}`, { method: "DELETE" });
       if (response.ok) {
         setOrders(orders.filter((order) => order._id !== selectedOrderId));
       } else {
@@ -72,6 +69,33 @@ const OrderTable = () => {
     } finally {
       setLoading(false);
       setIsDeleteOrderModalOpen(false);
+    }
+  };
+
+  const updateStatus = async (orderId, status) => {
+    try {
+      const response = await fetch(`/api/updateorderstatus?id=${orderId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderStatus: status }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(errorData.message || "Failed to update status");
+      } else {
+        const updatedOrder = await response.json();
+        alert(`Status updated to ${status}`);
+
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === orderId ? { ...order, orderStatus: updatedOrder.orderStatus } : order
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      alert("An error occurred while updating status");
     }
   };
 
@@ -133,7 +157,10 @@ const OrderTable = () => {
                         <FaRegTrashAlt />
                       </button>
                       <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={() => {
+                          setSelectedOrderId(order._id);
+                          setIsModalOpen(true);
+                        }}
                         className="text-gray-400 hover:text-orange-500"
                       >
                         <FaEdit />
@@ -145,6 +172,7 @@ const OrderTable = () => {
             </table>
           </div>
 
+          {/* Pagination */}
           <div className="flex justify-between mt-4">
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -164,9 +192,6 @@ const OrderTable = () => {
         </>
       )}
 
-      {/* Update Status Modal */}
-      <UpdateStatusModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-
       {/* Description Modal */}
       <DescriptionModel
         isOpen={isDescriptionModelOpen}
@@ -174,14 +199,26 @@ const OrderTable = () => {
         description={selectedDescription}
       />
 
-      {/* Delete Order Modal */}
+      {/* Edit Status Modal */}
+      <UpdateStatusModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={(newStatus) => {
+          updateStatus(selectedOrderId, newStatus);
+          setIsModalOpen(false);
+        }}
+        currentStatus={orders.find((order) => order._id === selectedOrderId)?.orderStatus}
+      />
+
+      {/* Delete Confirmation Modal */}
       <DeleteOrder
         isOpen={isDeleteOrderModalOpen}
         onClose={() => setIsDeleteOrderModalOpen(false)}
-        onDelete={handleDeleteOrder}
+        onDelete={handleDelete}
       />
     </div>
   );
 };
 
 export default OrderTable;
+

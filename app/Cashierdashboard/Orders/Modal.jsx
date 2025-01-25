@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-const UpdateStatusModal = ({ isOpen, onClose }) => {
-  const [status, setStatus] = useState("ready");
+const UpdateStatusModal = ({ isOpen, onClose, onSave, currentStatus }) => {
+  const [status, setStatus] = useState(currentStatus || "Pending");
 
   if (!isOpen) return null;
 
@@ -15,9 +15,9 @@ const UpdateStatusModal = ({ isOpen, onClose }) => {
               <input
                 type="radio"
                 name="status"
-                value="ready"
-                checked={status === "ready"}
-                onChange={() => setStatus("ready")}
+                value="Ready"
+                checked={status === "Ready"}
+                onChange={() => setStatus("Ready")}
                 className="mr-2 text-orange-500 focus:ring-orange-500"
               />
               Ready
@@ -26,9 +26,9 @@ const UpdateStatusModal = ({ isOpen, onClose }) => {
               <input
                 type="radio"
                 name="status"
-                value="accepted"
-                checked={status === "accepted"}
-                onChange={() => setStatus("accepted")}
+                value="Accepted"
+                checked={status === "Accepted"}
+                onChange={() => setStatus("Accepted")}
                 className="mr-2 text-orange-500 focus:ring-orange-500"
               />
               Accepted
@@ -37,9 +37,9 @@ const UpdateStatusModal = ({ isOpen, onClose }) => {
               <input
                 type="radio"
                 name="status"
-                value="picked"
-                checked={status === "picked"}
-                onChange={() => setStatus("picked")}
+                value="Picked"
+                checked={status === "Picked"}
+                onChange={() => setStatus("Picked")}
                 className="mr-2 text-orange-500 focus:ring-orange-500"
               />
               Picked
@@ -48,9 +48,9 @@ const UpdateStatusModal = ({ isOpen, onClose }) => {
               <input
                 type="radio"
                 name="status"
-                value="cancelled"
-                checked={status === "cancelled"}
-                onChange={() => setStatus("cancelled")}
+                value="Cancelled"
+                checked={status === "Cancelled"}
+                onChange={() => setStatus("Cancelled")}
                 className="mr-2 text-orange-500 focus:ring-orange-500"
               />
               Cancelled
@@ -59,8 +59,7 @@ const UpdateStatusModal = ({ isOpen, onClose }) => {
           <div className="flex justify-end mt-6 space-x-4">
             <button
               onClick={() => {
-                console.log(`Status updated to: ${status}`);
-                onClose();
+                onSave(status);
               }}
               type="button"
               className="px-4 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-400 focus:outline-none"
@@ -80,5 +79,6 @@ const UpdateStatusModal = ({ isOpen, onClose }) => {
     </div>
   );
 };
+
 
 export default UpdateStatusModal;

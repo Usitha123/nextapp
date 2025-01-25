@@ -158,7 +158,7 @@ const OrderTable = () => {
                     </td>
                     <td className="flex px-4 py-2 space-x-2">
                       <button
-                        onClick={() => updateStatus(order._id, "Active")}
+                        onClick={() => updateStatus(order._id, "Accepted")}
                         className="text-green-400 hover:underline"
                       >
                         Accept

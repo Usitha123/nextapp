@@ -96,10 +96,7 @@ const OwnerTable = () => {
   };
 
   // Format date for display
-  const formatDate = (dateString) => {
-    const createdAt = new Date(dateString);
-    return createdAt.toLocaleString();
-  };
+  const formatDate = (dateString) => new Date(dateString).toLocaleString();
 
   return (
     <div className="p-4 text-white bg-gray-800 rounded-lg">
