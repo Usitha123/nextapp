@@ -15,14 +15,6 @@ const OrdersTable = () => {
 
   const pathname = usePathname();
 
-  const statusStyles = {
-    Pending: "bg-blue-500 text-white",
-    Accepted: "bg-yellow-300 text-black",
-    Ready: "bg-green-500 text-white",
-    Picked: "bg-green-500 text-white",
-    Cancelled: "bg-red-500 text-white",
-  };
-
   const fetchOrders = async () => {
     try {
       const res = await fetch("/api/vieworders");
@@ -40,10 +32,31 @@ const OrdersTable = () => {
     fetchOrders();
   }, []);
 
-  const getTodayDate = () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return today;
+  const updateStatus = async (orderId, status) => {
+    try {
+      const response = await fetch(`/api/updateorderstatus?id=${orderId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderStatus: status }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(errorData.message || "Failed to update status");
+      } else {
+        const updatedOrder = await response.json();
+        alert(`Status updated to ${status}`);
+        
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === orderId ? { ...order, orderStatus: updatedOrder.orderStatus } : order
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      alert("An error occurred while updating status");
+    }
   };
 
   const handleDescriptionClick = (orderId) => {
@@ -58,13 +71,9 @@ const OrdersTable = () => {
     setIsDescriptionModalOpen(true);
   };
 
-  const formatDate = (dateString) => {
-    const createdAt = new Date(dateString);
-    return createdAt.toLocaleString();
-  };
-
   const renderTable = (orders) => {
-    const today = getTodayDate();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     return (
       <table className="w-full p-3 bg-white rounded-2xl">
         <thead>
@@ -90,12 +99,12 @@ const OrdersTable = () => {
                 <td className="p-2">{order._id}</td>
                 <td className="p-2">
                   <span
-                    className={`inline-block w-full px-4 py-2 leading-none ${statusStyles[order.orderStatus] || "bg-gray-200 text-black"} rounded-lg`}
+                    className={`inline-block w-full px-4 py-2 leading-none bg-green-500 text-white rounded-lg`}
                   >
                     {order.orderStatus}
                   </span>
                 </td>
-                <td className="p-2">{formatDate(order.meals[0].timestamp)}</td>
+                <td className="p-2">{new Date(order.meals[0].timestamp).toLocaleString()}</td>
                 <td className="p-2">{order.canteenName}</td>
                 <td className="p-2">
                   <button
@@ -141,7 +150,6 @@ const OrdersTable = () => {
           </Link>
         </div>
       </div>
-
       {loading ? (
         <p>Loading orders...</p>
       ) : orders.length > 0 ? (
@@ -150,7 +158,6 @@ const OrdersTable = () => {
         <p>No orders available</p>
       )}
 
-      
       <DescriptionModel
         isOpen={isDescriptionModalOpen}
         onClose={() => setIsDescriptionModalOpen(false)}
@@ -160,10 +167,11 @@ const OrdersTable = () => {
       <UpdateStatusModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
-        order={selectedOrder}
+        onConfirm={() => updateStatus(selectedOrder._id, "Drop")} // Pass the updateStatus function here
       />
     </div>
   );
 };
 
 export default OrdersTable;
+

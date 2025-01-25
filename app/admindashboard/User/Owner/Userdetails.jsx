@@ -14,11 +14,12 @@ const OwnerTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedOwnerId, setSelectedOwnerId] = useState(null);
-  const [selectedOwner, setSelectedOwner] = useState(null);
+  const [status, setStatus] = useState("");
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentOwners = owners.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
+  // Fetch owners data
   const fetchOwners = async () => {
     setLoading(true);
     try {
@@ -37,6 +38,7 @@ const OwnerTable = () => {
     fetchOwners();
   }, []);
 
+  // Pagination handlers
   const handleNext = () => {
     if (currentPage < Math.ceil(owners.length / ITEMS_PER_PAGE)) {
       setCurrentPage(currentPage + 1);
@@ -49,6 +51,7 @@ const OwnerTable = () => {
     }
   };
 
+  // Handle delete owner
   const handleDelete = async () => {
     if (!selectedOwnerId) return;
     setLoading(true);
@@ -63,27 +66,19 @@ const OwnerTable = () => {
         alert("Failed to delete owner");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error deleting owner:", error);
       alert("An error occurred while deleting the owner");
     } finally {
       setLoading(false);
     }
   };
 
-  const formatDate = (dateString) => {
-    const createdAt = new Date(dateString);
-    return createdAt.toLocaleString();
-  };
-
-  const updateStatus = async (ownerId, currentStatus) => {
-    const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
-
+  // Update owner status
+  const updateStatus = async (ownerId, newStatus) => {
     try {
       const response = await fetch(`/api/updatestatusowner?id=${ownerId}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
       });
 
@@ -100,6 +95,12 @@ const OwnerTable = () => {
     }
   };
 
+  // Format date for display
+  const formatDate = (dateString) => {
+    const createdAt = new Date(dateString);
+    return createdAt.toLocaleString();
+  };
+
   return (
     <div className="p-4 text-white bg-gray-800 rounded-lg">
       <div className="flex justify-between mb-4">
@@ -111,6 +112,7 @@ const OwnerTable = () => {
           Add Owner
         </Link>
       </div>
+
       <table className="w-full text-left text-gray-300">
         <thead>
           <tr className="text-white bg-orange-500">
@@ -147,29 +149,20 @@ const OwnerTable = () => {
                   <FaRegTrashAlt />
                 </button>
                 <button
+                  className="text-green-500 hover:text-green-700"
                   onClick={() => {
-                    setSelectedOwner(owner);
+                    setSelectedOwnerId(owner._id);
                     setIsModalOpen(true);
                   }}
-                  className="text-red-500 hover:text-red-700"
                 >
                   <FaEdit />
-                </button>
-                <button
-                  className={`${
-                    owner.status === "Active"
-                      ? "text-green-500"
-                      : "text-red-500"
-                  } hover:text-red-700`}
-                  onClick={() => updateStatus(owner._id, owner.status)}
-                >
-                  {owner.status === "Active" ? "Inactive" : "Active"}
                 </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
       <div className="flex items-center justify-between mt-4">
         <button
           onClick={handlePrev}
@@ -187,6 +180,16 @@ const OwnerTable = () => {
           Next
         </button>
       </div>
+
+      {/* Modals */}
+      <UpdateStatusModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={(newStatus) => {
+          updateStatus(selectedOwnerId, newStatus);
+          setIsModalOpen(false);
+        }}
+      />
 
       <Deleteowners
         isOpen={isDeleteOwnerModalOpen}

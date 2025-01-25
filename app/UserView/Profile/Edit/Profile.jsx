@@ -6,15 +6,16 @@ import ChangePassword from "./ChangePassword";
 import { Pencil, User2Icon } from "lucide-react";
 
 export default function Profile() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const { data: session } = useSession();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [targetStudent, setTargetStudent] = useState(null);
 
-  // Fetch student data
   useEffect(() => {
     const fetchStudents = async () => {
+      if (!session?.user?.email) return;
+
       try {
         const res = await fetch("/api/allstudentslist");
         if (!res.ok) throw new Error("Failed to fetch students");
@@ -22,7 +23,6 @@ export default function Profile() {
         const data = await res.json();
         setStudents(data);
 
-        // Find the student with the current users email
         const student = data.find((s) => s.email === session?.user?.email);
         setTargetStudent(student || null);
       } catch (error) {
@@ -32,15 +32,34 @@ export default function Profile() {
       }
     };
 
-    if (session?.user?.email) {
-      fetchStudents();
-    }
+    fetchStudents();
   }, [session?.user?.email]);
 
-  // Handle input field changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  const handleInputChange = ({ target: { name, value } }) => {
     setTargetStudent((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await fetch(`/api/updateuser?id=${targetStudent._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(targetStudent),
+      });
+
+      if (!response.ok) throw new Error(await response.text());
+
+      const updatedStudent = await response.json();
+      console.log("Student updated:", updatedStudent);
+      window.location.href = '/UserView/Profile';
+    } catch (err) {
+      console.error("Error updating student:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) {
@@ -63,116 +82,134 @@ export default function Profile() {
     <div className="w-full max-w-3xl p-8 mx-auto bg-white rounded-xl">
       <div className="relative flex items-center justify-center w-24 h-24 mx-auto text-orange-600 bg-orange-100 rounded-full">
         <User2Icon className="text-3xl font-bold" />
-        <button className="absolute bottom-0 right-0 p-1 text-white bg-orange-500 rounded-full">
+        <button
+          className="absolute bottom-0 right-0 p-1 text-white bg-orange-500 rounded-full"
+          onClick={() => setIsModalOpen(true)}
+        >
           <Pencil className="p-1" />
         </button>
       </div>
 
-      {/* Profile Form */}
-      <form className="mt-8 space-y-4" onSubmit={(e) => {
-        e.preventDefault();
-        // Add your form submission logic here
-      }}>
+      <form className="mt-8 space-y-4" onSubmit={handleFormSubmit}>
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm text-gray-600">First Name</label>
-            <input
-              className="w-full p-2 mt-1 text-black bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-              type="text"
-              placeholder="First Name"
-              name="firstName"
-              value={targetStudent?.firstName || ""}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-600">Last Name</label>
-            <input
-              className="w-full p-2 mt-1 text-black bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-              type="text"
-              placeholder="Last Name"
-              name="lastName"
-              value={targetStudent?.lastName || ""}
-              onChange={handleInputChange}
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm text-gray-600">Phone</label>
-            <input
-              className="w-full p-2 mt-1 text-black bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-              type="text"
-              placeholder="Phone"
-              name="phone"
-              value={targetStudent?.phoneNumber || ""}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-600">Email</label>
-            <input
-              className="w-full p-2 mt-1 text-black bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-              type="email"
-              placeholder="Email"
-              name="email"
-              value={targetStudent?.email || ""}
-              onChange={handleInputChange}
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <label htmlFor="faculty-select" className="block text-sm text-gray-600">
-            Faculty
-          </label>
-          <select
-            id="faculty-select"
-            name="faculty"
-            value={targetStudent?.faculty || ""}
+          <InputField
+            label="First Name"
+            name="firstName"
+            value={targetStudent?.firstName}
             onChange={handleInputChange}
             required
-            className="w-full p-2 mt-1 text-black bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-          >
-            <option value="">Select Faculty</option>
-            <option value="Computing">Computing</option>
-            <option value="Engineering">Engineering</option>
-            <option value="Science">Science</option>
-            <option value="Arts">Arts</option>
-          </select>
+          />
+          <InputField
+            label="Last Name"
+            name="lastName"
+            value={targetStudent?.lastName}
+            onChange={handleInputChange}
+            required
+          />
         </div>
 
-        <div className="mt-2">
-          <button
-            type="button"
-            onClick={() => setIsModalOpen(true)}
-            className="text-orange-500 hover:underline focus:outline-none"
-          >
-            Change Password
-          </button>
+        <div className="grid grid-cols-2 gap-4">
+          <InputField
+            label="Phone"
+            name="phone"
+            value={targetStudent?.phoneNumber}
+            onChange={handleInputChange}
+            required
+          />
+          <InputField
+            label="Email"
+            name="email"
+            type="email"
+            value={targetStudent?.email}
+            onChange={handleInputChange}
+            required
+          />
         </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <SelectField
+            label="Faculty"
+            name="faculty"
+            value={targetStudent?.faculty}
+            onChange={handleInputChange}
+            options={["Computing", "Engineering", "Science", "Arts"]}
+            required
+          />
+        </div>
+
+        <PasswordField
+          label="Password"
+          name="password"
+          onChange={handleInputChange}
+          required
+        />
+        <PasswordField
+          label="Confirm Password"
+          name="confirmpassword"
+          onChange={handleInputChange}
+          required
+        />
 
         <div className="flex justify-end mt-6 space-x-4">
-          <Link
-            href="/UserView/Profile"
-            className="px-4 py-2 text-white bg-gray-600 rounded-md hover:bg-gray-500 focus:outline-none"
-          >
+          <Link href="/UserView/Profile" className="button">
             Cancel
           </Link>
-          <button
-            type="submit"
-            className="px-4 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-400 focus:outline-none"
-          >
+          <button type="submit" className="bg-orange-500 button">
             Save
           </button>
         </div>
       </form>
 
-      <ChangePassword
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      <ChangePassword isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }
+
+const InputField = ({ label, name, value, onChange, type = "text", required }) => (
+  <div>
+    <label className="block text-sm text-gray-600">{label}</label>
+    <input
+      className="w-full p-2 mt-1 text-black bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+      type={type}
+      name={name}
+      value={value || ""}
+      onChange={onChange}
+      placeholder={label}
+      required={required}
+    />
+  </div>
+);
+
+const SelectField = ({ label, name, value, onChange, options, required }) => (
+  <div>
+    <label className="block text-sm text-gray-600">{label}</label>
+    <select
+      name={name}
+      value={value || ""}
+      onChange={onChange}
+      className="w-full p-2 mt-1 text-black bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+      required={required}
+    >
+      <option value="">Select {label}</option>
+      {options.map((option) => (
+        <option key={option} value={option}>
+          {option}
+        </option>
+      ))}
+    </select>
+  </div>
+);
+
+const PasswordField = ({ label, name, onChange, required }) => (
+  <div>
+    <label className="block text-sm text-gray-600">{label}</label>
+    <input
+      className="w-full p-2 mt-1 text-black bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+      type="password"
+      name={name}
+      onChange={onChange}
+      placeholder={label}
+      required={required}
+    />
+  </div>
+);

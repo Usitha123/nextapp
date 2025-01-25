@@ -1,108 +1,119 @@
 import React, { useEffect, useState } from "react";
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
 import UpdateStatusModal from "./Modal";
-import Deletestudents from './Deletestudents';
+import Deletestudents from "./Deletestudents";
 
-// Define pagination constants
+// Constants
 const ITEMS_PER_PAGE = 4;
 
 const StudentTable = () => {
-  const [students, setStudents] = useState([]); // State for storing student data
+  // State Management
+  const [students, setStudents] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteStudentsModalOpen, setIsDeleteStudentsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(true); // State for loading status
-  const [selectedStudent, setSelectedStudent] = useState(null); // Track selected student for edit/delete
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [selectedStudentId, setSelectedStudentId] = useState(null);
 
+  // Derived State
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentStudents = students.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
+  // Fetch Students
   useEffect(() => {
-    // Fetch student data from the API
     const fetchStudents = async () => {
+      setLoading(true);
       try {
-        const res = await fetch('/api/allstudentslist'); // Ensure this matches the API path
-        if (!res.ok) {
-          throw new Error('Failed to fetch students');
-        }
+        const res = await fetch("/api/allstudentslist");
+        if (!res.ok) throw new Error("Failed to fetch students");
         const data = await res.json();
-        setStudents(data); // Set the fetched data to state
+        setStudents(data);
       } catch (error) {
-        console.error('Error fetching students:', error);
+        console.error("Error fetching students:", error);
       } finally {
-        setLoading(false); // Set loading to false after the fetch operation
+        setLoading(false);
       }
     };
 
     fetchStudents();
   }, []);
 
-  
+  // Pagination Handlers
+  const handleNext = () => setCurrentPage((prev) => prev + 1);
+  const handlePrev = () => setCurrentPage((prev) => prev - 1);
 
-  const handleNext = () => {
-    if (currentPage < Math.ceil(students.length / ITEMS_PER_PAGE)) {
-      setCurrentPage(currentPage + 1);
-    }
+  // Modal Handlers
+  const openEditModal = (studentId) => {
+    setSelectedStudentId(studentId);
+    setIsEditModalOpen(true);
   };
 
-  const handlePrev = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleEdit = (student) => {
+  const openDeleteModal = (student) => {
     setSelectedStudent(student);
-    setIsModalOpen(true);
+    setIsDeleteModalOpen(true);
   };
 
-  const handleDelete = (student) => {
-    setSelectedStudent(student);
-    setIsDeleteStudentsModalOpen(true);
+  const closeModals = () => {
+    setIsEditModalOpen(false);
+    setIsDeleteModalOpen(false);
   };
 
-  // Handle student deletion with API request
-  const deleteStudent = async () => {
+  // Delete Student
+  const handleDelete = async () => {
     if (!selectedStudent) return;
     setLoading(true);
     try {
-      const response = await fetch(`/api/deleteuser?id=${selectedStudent._id}`, {
-        method: 'DELETE',
-      });
-      if (response.ok) {
-        setStudents(students.filter(student => student._id !== selectedStudent._id));
-        setIsDeleteStudentsModalOpen(false); // Close the modal after deletion
-      } else {
-        alert('Failed to delete student');
-      }
+      const response = await fetch(`/api/deleteuser?id=${selectedStudent._id}`, { method: "DELETE" });
+      if (!response.ok) throw new Error("Failed to delete student");
+      setStudents((prev) => prev.filter((student) => student._id !== selectedStudent._id));
+      closeModals();
     } catch (error) {
-      console.error(error);
-      alert('An error occurred while deleting the student');
+      console.error("Error deleting student:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Format the createdAt date
-  const formatDate = (dateString) => {
-    const createdAt = new Date(dateString);
-    return createdAt.toLocaleString(); // This will format the date and time to a default locale string
+  // Update Status
+  const updateStatus = async (studentId, newStatus) => {
+    try {
+      const response = await fetch(`/api/updatestatususer?id=${studentId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(errorData.message || "Failed to update status");
+      } else {
+        alert(`Status updated to ${newStatus}`);
+        setStudents((prev) =>
+          prev.map((student) =>
+            student._id === studentId ? { ...student, status: newStatus } : student
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      alert("An error occurred while updating status");
+    }
   };
+
+  // Format Date
+  const formatDate = (dateString) => new Date(dateString).toLocaleString();
 
   return (
     <div className="p-4 text-white bg-gray-800 rounded-lg">
-      <h2 className="mb-4 text-xl font-semibold">Student</h2>
+      <h2 className="mb-4 text-xl font-semibold">Students</h2>
+
       <table className="w-full text-left text-gray-300">
         <thead>
           <tr className="text-white bg-orange-500">
-            <th className="p-2">First Name</th>
-            <th className="p-2">Last Name</th>
-            <th className="p-2">Email</th>
-            <th className="p-2">Faculty</th>
-            <th className="p-2">Phone Number</th>
-            <th className="p-2">Status</th>
-            <th className="p-2">Date Registered</th>
-            <th className="p-2">Actions</th>
+            {["First Name", "Last Name", "Email", "Faculty", "Phone Number", "Status", "Date Registered", "Actions"].map((header) => (
+              <th key={header} className="p-2">{header}</th>
+            ))}
           </tr>
         </thead>
         <tbody>
@@ -116,23 +127,26 @@ const StudentTable = () => {
               <td className="p-2">{student.status}</td>
               <td className="p-2">{formatDate(student.createdAt)}</td>
               <td className="flex p-2 space-x-2">
-                <button 
-                  onClick={() => handleDelete(student)}
+                <button
+                  onClick={() => openDeleteModal(student)}
                   className="text-red-500 hover:text-red-700"
+                  aria-label="Delete Student"
                 >
-                  <FaRegTrashAlt /> {/* Font Awesome delete icon */}
+                  <FaRegTrashAlt />
                 </button>
-                <button 
-                  onClick={() => handleEdit(student)}
-                  className="text-red-500 hover:text-red-700"
+                <button
+                  onClick={() => openEditModal(student._id)}
+                  className="text-blue-500 hover:text-blue-700"
+                  aria-label="Edit Student"
                 >
-                  <FaEdit /> {/* Font Awesome edit icon */}
+                  <FaEdit />
                 </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
       <div className="flex items-center justify-between mt-4">
         <button
           onClick={handlePrev}
@@ -145,23 +159,27 @@ const StudentTable = () => {
         <button
           onClick={handleNext}
           className="px-4 py-2 text-white bg-orange-500 rounded hover:bg-orange-600"
-          disabled={currentPage === Math.ceil(students.length / ITEMS_PER_PAGE)}
+          disabled={currentPage >= Math.ceil(students.length / ITEMS_PER_PAGE)}
         >
           Next
         </button>
       </div>
-      {/* Update Status Modal */}
+
+      {/* Edit Status Modal */}
       <UpdateStatusModal
-        isOpen={isModalOpen}
-        student={selectedStudent}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isEditModalOpen}
+        onClose={closeModals}
+        onSave={(newStatus) => {
+          updateStatus(selectedStudentId, newStatus);
+          closeModals();
+        }}
       />
-      {/* Delete Students Modal */}
+
+      {/* Delete Confirmation Modal */}
       <Deletestudents
-        isOpen={isDeleteStudentsModalOpen}
-        student={selectedStudent}
-        onClose={() => setIsDeleteStudentsModalOpen(false)}
-        onDelete={deleteStudent} // Pass the delete function to the modal
+        isOpen={isDeleteModalOpen}
+        onClose={closeModals}
+        onDelete={handleDelete}
       />
     </div>
   );

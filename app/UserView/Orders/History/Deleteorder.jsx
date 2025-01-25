@@ -1,6 +1,6 @@
 import React from "react";
 
-const UpdateStatusModal = ({ isOpen, onClose }) => {
+const UpdateStatusModal = ({ isOpen, onClose, onConfirm }) => {
   if (!isOpen) return null;
 
   return (
@@ -12,9 +12,9 @@ const UpdateStatusModal = ({ isOpen, onClose }) => {
         <div className="flex justify-end mt-6 space-x-4">
           <button
             onClick={() => {
-              // Handle the delete action here
-              console.log("Item deleted");
-              onClose();
+              // Trigger the onConfirm callback passed as a prop
+              onConfirm(); // Update status to "Drop"
+              onClose(); // Close modal
             }}
             type="button"
             className="px-4 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-400 focus:outline-none"
@@ -24,7 +24,7 @@ const UpdateStatusModal = ({ isOpen, onClose }) => {
           <button
             onClick={onClose}
             type="button"
-            className="px-4 py-2 bg-white text-gray-900 rounded-md hover:bg-orange-300 focus:outline-none"
+            className="px-4 py-2 text-gray-900 bg-white rounded-md hover:bg-orange-300 focus:outline-none"
           >
             No
           </button>
@@ -33,5 +33,4 @@ const UpdateStatusModal = ({ isOpen, onClose }) => {
     </div>
   );
 };
-
 export default UpdateStatusModal;

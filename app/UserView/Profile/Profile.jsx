@@ -68,11 +68,12 @@ export default function Profile() {
         <label className="block text-sm text-black">Faculty:</label>
         <span>{targetStudent.faculty || "N/A"}</span>
       </div>
+      
 
       {/* Edit Button */}
       <div className="flex items-start mt-6 space-x-6">
         <Link
-          href="/UserView/Profile/Edit"
+          href={`/UserView/Profile/Edit?id=${targetStudent._id}`}
           className="px-4 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-400 focus:outline-none"
         >
           Edit

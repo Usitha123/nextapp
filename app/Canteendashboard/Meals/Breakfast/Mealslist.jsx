@@ -139,7 +139,7 @@ const MealsTable = () => {
                     <button onClick={() => handleDeleteClick(meal._id)} className="text-gray-400 hover:text-red-500">
                       <FaRegTrashAlt />
                     </button>
-                    <Link href={`/Canteendashboard/Meals/Updatemeal/${meal._id}`} className="text-gray-400 hover:text-orange-500">
+                    <Link href={`/Canteendashboard/Meals/Updatemeal?id=${meal._id}`} className="text-gray-400 hover:text-orange-500">
                       <FaEdit />
                     </Link>
                   </td>

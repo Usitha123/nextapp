@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-const UpdateStatusModal = ({ isOpen, onClose }) => {
-  const [status, setStatus] = useState("active");
+const UpdateStatusModal = ({ isOpen, onClose, onSave }) => {
+  const [status, setStatus] = useState("Active");
 
   if (!isOpen) return null;
 
@@ -15,9 +15,9 @@ const UpdateStatusModal = ({ isOpen, onClose }) => {
               <input
                 type="radio"
                 name="status"
-                value="active"
-                checked={status === "active"}
-                onChange={() => setStatus("active")}
+                value="Active"
+                checked={status === "Active"}
+                onChange={() => setStatus("Active")}
                 className="mr-2 text-orange-500 focus:ring-orange-500"
               />
               Active
@@ -26,9 +26,9 @@ const UpdateStatusModal = ({ isOpen, onClose }) => {
               <input
                 type="radio"
                 name="status"
-                value="block"
-                checked={status === "block"}
-                onChange={() => setStatus("block")}
+                value="Inactive"
+                checked={status === "Inactive"}
+                onChange={() => setStatus("Inactive")}
                 className="mr-2 text-orange-500 focus:ring-orange-500"
               />
               Block
@@ -37,8 +37,7 @@ const UpdateStatusModal = ({ isOpen, onClose }) => {
           <div className="flex justify-end mt-6 space-x-4">
             <button
               onClick={() => {
-                console.log(`Status updated to: ${status}`);
-                onClose();
+                onSave(status);
               }}
               type="button"
               className="px-4 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-400 focus:outline-none"

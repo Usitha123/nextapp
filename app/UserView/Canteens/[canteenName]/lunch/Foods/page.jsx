@@ -97,18 +97,28 @@ const FoodDisplay = ({ onAddToCart }) => {
     <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-4">
       {meals.filter((meal) => 
         meal.mealType === "Lunch" && 
-        meal.mealstatus === "Active" && 
+       
         meal.selectCanteen === currentCanteen
       ).map((meal) => (
         <div key={meal._id} className="w-full m-auto bg-white border rounded-3xl">
-          <Image
-            src={meal.image}
-            alt={meal.mealName}
-            width={800}
-            height={800}
-            className={`object-cover w-full rounded-3xl ${!isDinnerfastTime ? "opacity-50 blur-sm pointer-events-none" : ""}`}
-            quality={100}
-          />
+          <div className="relative">
+  <Image
+    src={meal.image}
+    alt={meal.mealName}
+    width={800}
+    height={800}
+    className={`object-cover w-full rounded-3xl ${!isDinnerfastTime || meal.mealstatus === "Inactive" ? "opacity-50 blur-sm pointer-events-none" : ""}`}
+    quality={100}
+  />
+  
+  {/* Overlay for "Not Available" */}
+  {(meal.mealstatus === "Inactive") && (
+    <div className="mt-2 text-sm font-semibold text-red-500">
+      Not Available Now
+    </div>
+  )}
+</div>
+
           <div className="p-4 grid grid-cols-[auto_40px]">
             <div className="flex-col">
               <h3 className="mt-2 text-lg font-semibold">{meal.mealName}</h3>
@@ -118,7 +128,7 @@ const FoodDisplay = ({ onAddToCart }) => {
               <button
                 onClick={() => onAddToCart(meal)}
                 className="absolute bottom-2 right-2 w-8 h-8 text-xl text-white bg-orange-500 rounded-[50%] hover:bg-orange-600"
-                disabled={!isDinnerfastTime}
+                disabled={!isDinnerfastTime || meal.mealstatus ===  "Inactive"}
               >
                 +
               </button>

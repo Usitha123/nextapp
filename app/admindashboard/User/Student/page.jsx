@@ -6,6 +6,7 @@ import Sidebar from '../../Sidebar/page';
 import Topbar from '../../Topbar/page';
 import Header from '../../Header/page';
 import Userdetails from './Userdetails';
+import Test from './test';
 
 const Meals = () => {
   return (
