@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
 import DescriptionModel from "./Descriptionmodel";
+import { useSession } from "next-auth/react";
 
 const OrderTable = () => {
   const [orders, setOrders] = useState([]);
@@ -11,6 +12,7 @@ const OrderTable = () => {
   const [isDescriptionModelOpen, setIsDescriptionModelOpen] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState("");
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+   const { data: session } = useSession();
 
   const ordersPerPage = 8;
 
@@ -137,6 +139,7 @@ const OrderTable = () => {
             </thead>
             <tbody className="bg-gray-700">
               {currentOrders
+                .filter((order) => session?.user?.canteenNamecashier === order.canteenName) 
                 .filter((order) => order.orderStatus === "Pending")
                 .map((order) => (
                   <tr key={order._id} className="border-b border-gray-600">

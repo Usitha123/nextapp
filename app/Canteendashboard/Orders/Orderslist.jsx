@@ -4,6 +4,7 @@ import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
 import UpdateStatusModal from "./Modal";
 import DeleteOrder from "./Deleteorder";
 import DescriptionModel from "./Descriptionmodel";
+import { useSession } from "next-auth/react";
 
 const OrderTable = () => {
   const [orders, setOrders] = useState([]);
@@ -14,8 +15,9 @@ const OrderTable = () => {
   const [selectedDescription, setSelectedDescription] = useState([]);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 10;
-
+  const rowsPerPage = 20;
+  const { data: session } = useSession();
+  
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -128,7 +130,7 @@ const OrderTable = () => {
                 </tr>
               </thead>
               <tbody className="bg-gray-700">
-                {currentOrders.map((order) => (
+                {currentOrders.filter((order) => session?.user?.canteenName === order.canteenName).map((order) => (
                   <tr key={order._id} className="border-b border-gray-600">
                     <td className="px-4 py-2">{order._id}</td>
                     <td className="px-4 py-2">{order.userName}</td>

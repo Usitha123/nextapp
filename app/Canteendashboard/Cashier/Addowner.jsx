@@ -1,10 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useSession } from "next-auth/react";
 
 
 const AddCashierForm = () => {
   const [showPassword, setShowPassword] = useState(false);
+   const { data: session } = useSession();
   const [cashier, setCashier] = useState({
     firstName: "",
     lastName: "",
@@ -13,6 +15,7 @@ const AddCashierForm = () => {
     nicNumber: "",
     password: "",
     confirmPassword: "",
+    selectCanteen: session?.user?.canteenName
   });
   const [imageFile, setImageFile] = useState(null);
   const [localPreview, setLocalPreview] = useState(null);
@@ -106,12 +109,12 @@ const AddCashierForm = () => {
   };
 
   return (
-    <div className="bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-lg mx-auto">
+    <div className="max-w-lg p-8 mx-auto text-white bg-gray-800 rounded-lg shadow-lg">
       {/* <h2 className="mb-6 text-2xl font-bold">Add Cashier</h2> */}
       <form onSubmit={handleSubmit}>
         {/* Input Fields */}
 {/* Name Fields in the Same Row */}
-<div className="mb-4 flex space-x-4">
+<div className="flex mb-4 space-x-4">
   <div className="flex-1">
     <label className="block mb-1 text-sm font-medium">First Name</label>
     <input
@@ -148,7 +151,7 @@ const AddCashierForm = () => {
             />
           </div>
         ))}
-        <div className="mb-4 flex space-x-4">
+        <div className="flex mb-4 space-x-4">
   <div className="flex-1">
     <label className="block mb-1 text-sm font-medium">Phone Number</label>
     <input

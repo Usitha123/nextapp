@@ -9,7 +9,7 @@ const cashierSchema = new mongoose.Schema(
     phoneNumber: { type: String, required: true },
     nicNumber: { type: String, required: true },
     status: { type: String, default: 'Active' },
-    selectCanteen: { type: String, default: 'Inactive' },
+    selectCanteen: { type: String, required: true },
     password: { type: String, required: true },
   },
   { timestamps: true }

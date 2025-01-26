@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { FaRegTrashAlt, FaEdit } from 'react-icons/fa';
 import Deletemealmodel from './Deletemealmodel';
 import DescriptionModel from './Descriptionmodel';
+import { useSession } from "next-auth/react";
 
 const MealsTable = () => {
   const pathname = usePathname();
@@ -17,6 +18,7 @@ const MealsTable = () => {
   const [selectedDescription, setSelectedDescription] = useState('');
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [selectedMealId, setSelectedMealId] = useState(null);
+  const { data: session } = useSession();
 
   const tabs = [
     { label: 'Breakfast', href: '/Canteendashboard/Meals/Breakfast' },
@@ -121,6 +123,7 @@ const MealsTable = () => {
           <tbody className="bg-gray-700">
             {meals
               .filter((meal) => meal.mealType === currentMealType)
+              .filter((meal) => session?.user?.canteenName === meal.selectCanteen)
               .map((meal) => (
                 <tr key={meal._id} className="border-b border-gray-600">
                   <td className="px-4 py-2">{meal.mealName}</td>

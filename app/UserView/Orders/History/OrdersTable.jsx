@@ -3,6 +3,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import UpdateStatusModal from "./Deleteorder";
 import DescriptionModel from "./Descriptionmodel";
+import { useSession } from "next-auth/react";
 
 const OrdersTable = () => {
   const [orders, setOrders] = useState([]);
@@ -12,7 +13,8 @@ const OrdersTable = () => {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
-
+  const { data: session } = useSession();
+  
   const pathname = usePathname();
 
   const fetchOrders = async () => {
@@ -92,7 +94,7 @@ const OrdersTable = () => {
               const orderDate = new Date(order.meals[0].timestamp);
               orderDate.setHours(0, 0, 0, 0);
               return orderDate.getTime() === today.getTime();
-            })
+            }).filter((order) => session?.user?.email === order.userEmail)
             .filter((order) => ["Accepted", "Cancelled", "Picked"].includes(order.orderStatus))
             .map((order) => (
               <tr key={order._id} className="text-center">

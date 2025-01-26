@@ -5,7 +5,7 @@ import { connectMongoDB } from "@/lib/mongodb";
 
 export async function POST(req) {
   try {
-    const { firstName, lastName, email, image, phoneNumber, nicNumber, password } = await req.json();
+    const { firstName, lastName, email, image, phoneNumber, nicNumber, password, selectCanteen } = await req.json();
 
     if (!firstName || !lastName || !email || !image || !phoneNumber || !nicNumber || !password) {
       return new Response(
@@ -35,6 +35,7 @@ export async function POST(req) {
       phoneNumber,
       nicNumber,
       password: hashedPassword,
+      selectCanteen,
     });
 
     await newCashier.save();

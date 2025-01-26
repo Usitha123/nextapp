@@ -37,6 +37,7 @@ export const authOptions = {
         token.model = user.model;
         token.name = user.name;
         token.canteenName = user.canteenName;
+        token.canteenNamecashier = user.canteenNamecashier;
       }
       return token;
     },
@@ -46,6 +47,7 @@ export const authOptions = {
         session.user.model = token.model;
         session.user.name = token.name;
         session.user.canteenName = token.canteenName;
+        session.user.canteenNamecashier = token.canteenNamecashier;
       }
       return session;
     }
