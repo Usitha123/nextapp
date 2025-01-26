@@ -36,6 +36,7 @@ export const authOptions = {
         token.role = user.role;
         token.model = user.model;
         token.name = user.name;
+        token.canteenName = user.canteenName;
       }
       return token;
     },
@@ -44,6 +45,7 @@ export const authOptions = {
         session.user.role = token.role;
         session.user.model = token.model;
         session.user.name = token.name;
+        session.user.canteenName = token.canteenName;
       }
       return session;
     }

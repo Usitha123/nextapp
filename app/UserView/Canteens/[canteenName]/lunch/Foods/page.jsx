@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Trash2 } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
+
 
 const CartItem = ({ item, onRemove }) => (
   <div key={item.id} className="flex items-center justify-between mb-2">
@@ -18,7 +20,7 @@ const CartItem = ({ item, onRemove }) => (
   </div>
 );
 
-const Cart = ({ cartItems, onRemove, onClear }) => {
+const Cart = ({ cartItems, onRemove, onClear, onPlaceOrder }) => {
   const subtotal = cartItems.reduce((total, item) => total + Number(item.mealPrice) * item.quantity, 0);
 
   return (
@@ -41,7 +43,10 @@ const Cart = ({ cartItems, onRemove, onClear }) => {
           >
             Cancel
           </button>
-          <button className="flex-1 py-2 text-white bg-orange-500 rounded hover:bg-orange-600">
+          <button 
+            onClick={onPlaceOrder}
+            className="flex-1 py-2 text-white bg-orange-500 rounded hover:bg-orange-600"
+          >
             Place Order
           </button>
         </div>
@@ -89,36 +94,32 @@ const FoodDisplay = ({ onAddToCart }) => {
     fetchMeals();
   }, []);
 
-  const pathname = usePathname();  // Gets the full URL path
-  const pathSegments = pathname?.split('/');  // Split the path into an array
-  const currentCanteen = pathSegments[3];  // The 4th segment is 'Skycafe'
-  
+  const pathname = usePathname();
+  const pathSegments = pathname?.split('/');
+  const currentCanteen = pathSegments[3];
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-4">
       {meals.filter((meal) => 
         meal.mealType === "Lunch" && 
-       
         meal.selectCanteen === currentCanteen
       ).map((meal) => (
         <div key={meal._id} className="w-full m-auto bg-white border rounded-3xl">
           <div className="relative">
-  <Image
-    src={meal.image}
-    alt={meal.mealName}
-    width={800}
-    height={800}
-    className={`object-cover w-full rounded-3xl ${!isDinnerfastTime || meal.mealstatus === "Inactive" ? "opacity-50 blur-sm pointer-events-none" : ""}`}
-    quality={100}
-  />
-  
-  {/* Overlay for "Not Available" */}
-  {(meal.mealstatus === "Inactive") && (
-    <div className="mt-2 text-sm font-semibold text-red-500">
-      Not Available Now
-    </div>
-  )}
-</div>
-
+            <Image
+              src={meal.image}
+              alt={meal.mealName}
+              width={800}
+              height={800}
+              className={`object-cover w-full rounded-3xl ${!isDinnerfastTime || meal.mealstatus === "Inactive" ? "opacity-50 blur-sm pointer-events-none" : ""}`}
+              quality={100}
+            />
+            {(meal.mealstatus === "Inactive") && (
+              <div className="mt-2 text-sm font-semibold text-red-500">
+                Not Available Now
+              </div>
+            )}
+          </div>
           <div className="p-4 grid grid-cols-[auto_40px]">
             <div className="flex-col">
               <h3 className="mt-2 text-lg font-semibold">{meal.mealName}</h3>
@@ -141,7 +142,19 @@ const FoodDisplay = ({ onAddToCart }) => {
 };
 
 const CombinedComponent = () => {
+  const { data: session, status } = useSession();
   const [cartItems, setCartItems] = useState([]);
+  const pathname = usePathname();
+  const pathSegments = pathname?.split('/');
+  const currentCanteen = pathSegments[3];
+  const [formData, setFormData] = useState({
+    userName: session?.user?.name,
+    userEmail: session?.user?.email,
+    canteenName: currentCanteen,
+    orderType: "Lunch",
+    meals: [],
+  });
+  
 
   const handleAddToCart = (meal) => {
     setCartItems((prevItems) => {
@@ -180,20 +193,46 @@ const CombinedComponent = () => {
     setCartItems([]);
   };
 
+  const handlePlaceOrder = async () => {
+    const updatedMeals = cartItems.map((item) => ({
+      mealId: item.id,
+      mealName: item.mealName,
+      mealQuantity: item.quantity,
+      mealPrice: item.mealPrice,
+    }));
+    const updatedFormData = { ...formData, meals: updatedMeals };
+
+    try {
+      const res = await fetch("/api/addorders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedFormData),
+      });
+
+      if (res.ok) {
+        alert("Order placed successfully!");
+        setCartItems([]);
+      } else {
+        alert("Failed to place order.");
+      }
+    } catch (error) {
+      alert("An error occurred. Please try again.");
+    }
+  };
+
   return (
     <div className="grid gap-8 p-4 md:grid-cols-[2fr_1fr]">
       <div>
         <FoodDisplay onAddToCart={handleAddToCart} />
       </div>
       <div>
-        <div className="p-4 mb-4 text-sm bg-white border border-orange-500 rounded-md shadow-sm shadow-orange-200">
-          <strong>Note:</strong> You are responsible for paying the full amount
-          of your order and collecting it.
-        </div>
         <Cart 
           cartItems={cartItems} 
           onRemove={handleRemoveFromCart} 
           onClear={handleClearCart}
+          onPlaceOrder={handlePlaceOrder}
         />
       </div>
     </div>

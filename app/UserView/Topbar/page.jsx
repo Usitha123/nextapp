@@ -25,7 +25,7 @@ const Topbar = () => {
 */
   return (
     <div className="flex items-center justify-between p-4 bg-white">
-      <span className='text-lg'>Hi <strong>{session?.user?.name}</strong> Welcome Back</span>
+      <span className='text-lg'>Hi <strong>{session?.user?.name}, {session?.user?.email} </strong> Welcome Back</span>
       <div className="flex space-x-4">
       <span className='text-[#ff842f]'><Settings/></span> {/* Settings Icon Placeholder */}
       <Link href="/UserView/Profile"><UserCircle/></Link> {/* Profile Icon Placeholder */}

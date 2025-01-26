@@ -53,13 +53,23 @@ const AddCashierForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     if (!isFormValid()) {
       alert("Please fill out all fields correctly.");
       return;
     }
 
     try {
+      // Find the selected canteen's ID
+      const selectedCanteen = canteens.find(
+        (canteen) => canteen.canteenName === owner.selectcanteen
+      );
+
+      if (!selectedCanteen) {
+        alert("Please select a valid canteen.");
+        return;
+      }
+
       const response = await fetch("/api/addowner", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -67,10 +77,10 @@ const AddCashierForm = () => {
           firstName: owner.firstName,
           lastName: owner.lastName,
           email: owner.email,
-          status: "Active", // Default status
+          status: "Active",
           phoneNumber: owner.phoneNumber,
           nicNumber: owner.nicNumber,
-          selectcanteen: owner.selectcanteen,
+          selectcanteen: selectedCanteen.canteenName, // Pass the actual canteen ID
           password: owner.password,
         }),
       });
@@ -81,10 +91,49 @@ const AddCashierForm = () => {
       }
 
       alert("Owner added successfully!");
+      
+      // Pass the selected canteen's ID to updateOwnerStatus
+      await updateOwnerStatus(selectedCanteen._id);  
+      
       resetForm();
     } catch (error) {
       console.error("Form submission error:", error);
       alert("An error occurred while submitting the form.");
+    }
+  };
+
+  const updateOwnerStatus = async (canteenId) => {
+    if (!canteenId) {
+      console.error('No canteen ID provided');
+      alert('Error: No canteen selected');
+      return;
+    }
+
+    try {
+      const updatedData = { 
+        ownerstatus: owner.email, 
+        lastUpdated: new Date().toISOString() 
+      };
+
+      const response = await fetch(`/api/updatecanteen?id=${canteenId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedData),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || `Failed to update canteen status for ID: ${canteenId}`);
+      }
+
+      const updatedCanteen = await response.json();
+      console.log('Canteen updated successfully:', updatedCanteen);
+
+      // Refresh the canteens list after update
+      fetchCanteens();
+    } catch (error) {
+      console.error('Error updating canteen status:', error);
+      alert(`Failed to update canteen: ${error.message}`);
     }
   };
 
@@ -197,7 +246,7 @@ const AddCashierForm = () => {
           >
             <option value="">Select Canteen</option>
             {canteens.map(({ _id, canteenName }) => (
-              <option key={_id} value={_id}>
+              <option key={_id} value={canteenName}>
                 {canteenName}
               </option>
             ))}

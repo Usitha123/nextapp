@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-
+import { useSession } from 'next-auth/react';
 // Form Component
 const AddMealForm = () => {
+  const { data: session, status } = useSession();
   const [meal, setMeal] = useState({
     mealName: "",
     mealDescription: "",
     mealPrice: "",
     mealType: "Breakfast",
     mealQuantity: "",
-    selectCanteen: "open",  // Default value set to "open"
+    selectCanteen: session?.user?.canteenName,  // Default value set to "open"
   });
   const [imageFile, setImageFile] = useState(null);
   const [localPreview, setLocalPreview] = useState(null);
@@ -91,7 +92,7 @@ const AddMealForm = () => {
       mealPrice: "",
       mealType: "Breakfast",
       mealQuantity: "",
-      selectCanteen: "open",  // Reset to default value
+      selectCanteen: "",  // Reset to default value
     });
     setImageFile(null);
     setLocalPreview(null);

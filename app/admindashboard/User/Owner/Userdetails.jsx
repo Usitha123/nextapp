@@ -4,7 +4,7 @@ import UpdateStatusModal from "./Modal";
 import Deleteowners from "./Deleteowners";
 import Link from "next/link";
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 7;
 
 const OwnerTable = () => {
   const [currentPage, setCurrentPage] = useState(1);

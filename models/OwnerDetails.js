@@ -37,7 +37,8 @@ const ownerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-});
+  
+},{ timestamps: true });
 
 // Ensure email uniqueness and index
 ownerSchema.index({ email: 1 }, { unique: true });
