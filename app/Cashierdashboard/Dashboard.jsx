@@ -140,7 +140,7 @@ const OrderTable = () => {
             <tbody className="bg-gray-700">
               {currentOrders
                 .filter((order) => session?.user?.canteenNamecashier === order.canteenName) 
-                .filter((order) => order.orderStatus === "Pending")
+                .filter((order) => order.orderStatus == "Pending" )
                 .map((order) => (
                   <tr key={order._id} className="border-b border-gray-600">
                     <td className="px-4 py-2">{order._id}</td>

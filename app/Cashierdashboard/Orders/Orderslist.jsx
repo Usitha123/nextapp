@@ -15,7 +15,7 @@ const OrderTable = () => {
   const [selectedDescription, setSelectedDescription] = useState([]);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 20;
+  const rowsPerPage = 30;
   const { data: session, status } = useSession();
 
   useEffect(() => {
@@ -132,6 +132,7 @@ const OrderTable = () => {
               <tbody className="bg-gray-700">
                 {currentOrders
                 .filter((order) => session?.user?.canteenNamecashier === order.canteenName)
+                .filter((order) => order.orderStatus !== "Pending" )
                 .map((order) => (
                   <tr key={order._id} className="border-b border-gray-600">
                     <td className="px-4 py-2">{order._id}</td>

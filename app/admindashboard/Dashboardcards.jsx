@@ -9,7 +9,7 @@ const DashboardCard = ({ count, label, Icon }) => (
       <span>{count}</span>
       <Icon className=" absolute top-4 w-[18px] h-[20px] right-4 text-[2px]" /> {/* Render the icon as a React component */}
     </div>
-    <div className="mt-2 text-md text-gray-300">{label}</div>
+    <div className="mt-2 text-gray-300 text-md">{label}</div>
   </div>
 );
 
@@ -56,8 +56,8 @@ const DashboardCards = () => {
         const studentsData = await studentsRes.json();
 
         // Separate active and blocked students
-        const activeStudents = studentsData.filter((student) => student.status === 'active');
-        const blockedStudents = studentsData.filter((student) => student.status !== 'active');
+        const activeStudents = studentsData.filter((student) => student.status === 'Active');
+        const blockedStudents = studentsData.filter((student) => student.status !== 'Active');
 
         setStudents(activeStudents);
         setBlockedStudents(blockedStudents);
@@ -78,7 +78,7 @@ const DashboardCards = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="flex flex-wrap justify-center xl:gap-16 gap-6 p-2 mt-2 rounded-lg">
+    <div className="flex flex-wrap justify-center gap-6 p-2 mt-2 rounded-lg xl:gap-16">
       <DashboardCard count={activeCanteenCount} label="Active Canteens" Icon={Store} />
       <DashboardCard count={blockedCanteenCount} label="Blocked Canteens" Icon={ServerOff} />
       <DashboardCard count={activeStudentCount} label="Active Students" Icon={UsersRound} />
