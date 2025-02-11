@@ -32,7 +32,7 @@ const OrderTable = () => {
       }
     };
     fetchOrders();
-  }, [orders]);
+  });
 
   const getStatusClasses = (status) => {
     switch (status) {
