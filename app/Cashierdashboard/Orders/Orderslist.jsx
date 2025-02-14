@@ -15,26 +15,24 @@ const OrderTable = () => {
   const [selectedDescription, setSelectedDescription] = useState([]);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 30;
+  const rowsPerPage = 20;
   const { data: session, status } = useSession();
 
   useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const res = await fetch("/api/vieworders");
+        if (!res.ok) throw new Error("Failed to fetch orders");
+        const data = await res.json();
+        setOrders(data.orders);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchOrders();
-  }, []); // Runs only on mount
-
-  const fetchOrders = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/vieworders");
-      if (!res.ok) throw new Error("Failed to fetch orders");
-      const data = await res.json();
-      setOrders(data.orders);
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [orders]);
 
   const getStatusClasses = (status) => {
     switch (status) {
@@ -76,29 +74,26 @@ const OrderTable = () => {
     }
   };
 
-  const updateStatus = async (orderId, newStatus) => {
+  const updateStatus = async (orderId, status) => {
     try {
       const response = await fetch(`/api/updateorderstatus?id=${orderId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderStatus: newStatus }),
+        body: JSON.stringify({ orderStatus: status }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
         alert(errorData.message || "Failed to update status");
       } else {
-        alert(`Status updated to ${newStatus}`);
+        const updatedOrder = await response.json();
+        alert(`Status updated to ${status}`);
 
-        // Update UI immediately
         setOrders((prevOrders) =>
           prevOrders.map((order) =>
-            order._id === orderId ? { ...order, orderStatus: newStatus } : order
+            order._id === orderId ? { ...order, orderStatus: updatedOrder.orderStatus } : order
           )
         );
-
-        // Fetch the latest data from the database
-        fetchOrders();
       }
     } catch (error) {
       console.error("Error updating status:", error);
@@ -106,9 +101,9 @@ const OrderTable = () => {
     }
   };
 
-  const indexOfLastOrder = currentPage * rowsPerPage;
+ /* const indexOfLastOrder = currentPage * rowsPerPage;
   const indexOfFirstOrder = indexOfLastOrder - rowsPerPage;
-  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);*/
 
   const formatDate = (dateString) => {
     const createdAt = new Date(dateString);
@@ -135,49 +130,48 @@ const OrderTable = () => {
                 </tr>
               </thead>
               <tbody className="bg-gray-700">
-                {currentOrders
-                  .filter((order) => session?.user?.canteenNamecashier === order.canteenName)
-                  .filter((order) => order.orderStatus !== "Pending")
-                  .map((order) => (
-                    <tr key={order._id} className="border-b border-gray-600">
-                      <td className="px-4 py-2">{order._id}</td>
-                      <td className="px-4 py-2">{order.userName}</td>
-                      <td className="px-4 py-2">
-                        <span className={`px-2 py-1 rounded ${getStatusClasses(order.orderStatus)}`}>
-                          {order.orderStatus}
-                        </span>
-                      </td>
-                      <td className="px-4 py-2">{formatDate(order.meals[0].timestamp)}</td>
-                      <td className="px-4 py-2">
-                        <button
-                          onClick={() => handleDescriptionClick(order._id)}
-                          className="text-orange-400 hover:underline"
-                        >
-                          View
-                        </button>
-                      </td>
-                      <td className="flex px-4 py-2 space-x-2">
-                        <button
-                          onClick={() => {
-                            setSelectedOrderId(order._id);
-                            setIsDeleteOrderModalOpen(true);
-                          }}
-                          className="text-gray-400 hover:text-red-500"
-                        >
-                          <FaRegTrashAlt />
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSelectedOrderId(order._id);
-                            setIsModalOpen(true);
-                          }}
-                          className="text-gray-400 hover:text-orange-500"
-                        >
-                          <FaEdit />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                {orders
+                .filter((order) => session?.user?.canteenNamecashier === order.canteenName)
+                .map((order) => (
+                  <tr key={order._id} className="border-b border-gray-600">
+                    <td className="px-4 py-2">{order._id}</td>
+                    <td className="px-4 py-2">{order.userName}</td>
+                    <td className="px-4 py-2">
+                      <span className={`px-2 py-1 rounded ${getStatusClasses(order.orderStatus)}`}>
+                        {order.orderStatus}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2">{formatDate(order.meals[0].timestamp)}</td>
+                    <td className="px-4 py-2">
+                      <button
+                        onClick={() => handleDescriptionClick(order._id)}
+                        className="text-orange-400 hover:underline"
+                      >
+                        View
+                      </button>
+                    </td>
+                    <td className="flex px-4 py-2 space-x-2">
+                      <button
+                        onClick={() => {
+                          setSelectedOrderId(order._id);
+                          setIsDeleteOrderModalOpen(true);
+                        }}
+                        className="text-gray-400 hover:text-red-500"
+                      >
+                        <FaRegTrashAlt />
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedOrderId(order._id);
+                          setIsModalOpen(true);
+                        }}
+                        className="text-gray-400 hover:text-orange-500"
+                      >
+                        <FaEdit />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -202,11 +196,33 @@ const OrderTable = () => {
         </>
       )}
 
-      <UpdateStatusModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSave={updateStatus} />
-      <DeleteOrder isOpen={isDeleteOrderModalOpen} onClose={() => setIsDeleteOrderModalOpen(false)} onDelete={handleDelete} />
-      <DescriptionModel isOpen={isDescriptionModelOpen} onClose={() => setIsDescriptionModelOpen(false)} description={selectedDescription} />
+      {/* Description Modal */}
+      <DescriptionModel
+        isOpen={isDescriptionModelOpen}
+        onClose={() => setIsDescriptionModelOpen(false)}
+        description={selectedDescription}
+      />
+
+      {/* Edit Status Modal */}
+      <UpdateStatusModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={(newStatus) => {
+          updateStatus(selectedOrderId, newStatus);
+          setIsModalOpen(false);
+        }}
+        currentStatus={orders.find((order) => order._id === selectedOrderId)?.orderStatus}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteOrder
+        isOpen={isDeleteOrderModalOpen}
+        onClose={() => setIsDeleteOrderModalOpen(false)}
+        onDelete={handleDelete}
+      />
     </div>
   );
 };
 
 export default OrderTable;
+
