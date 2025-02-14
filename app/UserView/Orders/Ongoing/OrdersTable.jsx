@@ -14,7 +14,7 @@ const OrdersTable = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
   const { data: session } = useSession();
-
+  
   const pathname = usePathname();
 
   const fetchOrders = async () => {
@@ -32,7 +32,7 @@ const OrdersTable = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [orders]);
 
   const updateStatus = async (orderId, status) => {
     try {
@@ -59,6 +59,11 @@ const OrdersTable = () => {
       console.error("Error updating status:", error);
       alert("An error occurred while updating status");
     }
+  };
+
+  const formatDate = (dateString) => {
+    const createdAt = new Date(dateString);
+    return createdAt.toLocaleString();
   };
 
   const handleDescriptionClick = (orderId) => {
@@ -90,11 +95,12 @@ const OrdersTable = () => {
         </thead>
         <tbody>
           {orders
-            .filter((order) => {
-              const orderDate = new Date(order.meals[0].timestamp);
-              orderDate.setHours(0, 0, 0, 0);
-              return orderDate.getTime() === today.getTime();
-            }).filter((order) => session?.user?.email === order.userEmail)
+          .filter((order) => {
+            const orderDate = new Date(order.meals?.[0]?.timestamp || 0);
+            orderDate.setHours(0, 0, 0, 0);
+            return orderDate.getTime() === today.getTime();
+          })
+            .filter((order) => session?.user?.email === order.userEmail)
             .filter((order) => ["Pending", "Ready"].includes(order.orderStatus))
             .map((order) => (
               <tr key={order._id} className="text-center">
@@ -106,7 +112,7 @@ const OrdersTable = () => {
                     {order.orderStatus}
                   </span>
                 </td>
-                <td className="p-2">{new Date(order.meals[0].timestamp).toLocaleString()}</td>
+                <td className="p-2">{formatDate(order.meals[0].timestamp)}</td>
                 <td className="p-2">{order.canteenName}</td>
                 <td className="p-2">
                   <button

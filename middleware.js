@@ -11,6 +11,17 @@ export async function middleware(req) {
 
   const { pathname } = req.nextUrl;
 
+      // Protect specific pages based on user roles
+      if (pathname.startsWith('/api/auth')) {
+        return NextResponse;
+      }
+
+    // Protect specific pages based on user roles
+    if (pathname.startsWith('/api') && !token) {
+      return NextResponse.redirect(new URL('/', req.url));
+    }
+  
+
   // Protect specific pages based on user roles
   if (pathname.startsWith('/admindashboard') && token.role !== 'admin') {
     return NextResponse.redirect(new URL('/', req.url));
@@ -38,5 +49,6 @@ export const config = {
     '/Canteendashboard/:path*', // Match /Canteendashboard and all sub-paths
     '/UserView/:path*', // Match /UserView and all sub-paths
     '/Cashierdashboard/:path*',  // Match /UserView and all sub-paths
+    '/api',
   ],
 };

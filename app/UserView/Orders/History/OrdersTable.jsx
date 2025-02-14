@@ -61,6 +61,11 @@ const OrdersTable = () => {
     }
   };
 
+  const formatDate = (dateString) => {
+    const createdAt = new Date(dateString);
+    return createdAt.toLocaleString();
+  };
+
   const handleDescriptionClick = (orderId) => {
     const selectedOrder = orders.find((order) => order._id === orderId);
     if (selectedOrder) {
@@ -90,11 +95,12 @@ const OrdersTable = () => {
         </thead>
         <tbody>
           {orders
-            .filter((order) => {
-              const orderDate = new Date(order.meals[0].timestamp);
-              orderDate.setHours(0, 0, 0, 0);
-              return orderDate.getTime() === today.getTime();
-            }).filter((order) => session?.user?.email === order.userEmail)
+          .filter((order) => {
+            const orderDate = new Date(order.meals?.[0]?.timestamp || 0);
+            orderDate.setHours(0, 0, 0, 0);
+            return orderDate.getTime() === today.getTime();
+          })
+            .filter((order) => session?.user?.email === order.userEmail)
             .filter((order) => ["Accepted", "Cancelled", "Picked"].includes(order.orderStatus))
             .map((order) => (
               <tr key={order._id} className="text-center">
@@ -106,7 +112,7 @@ const OrdersTable = () => {
                     {order.orderStatus}
                   </span>
                 </td>
-                <td className="p-2">{new Date(order.meals[0].timestamp).toLocaleString()}</td>
+                <td className="p-2">{formatDate(order.meals[0].timestamp)}</td>
                 <td className="p-2">{order.canteenName}</td>
                 <td className="p-2">
                   <button
