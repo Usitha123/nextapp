@@ -32,7 +32,7 @@ const OrderTable = () => {
       }
     };
     fetchOrders();
-  }, [orders]);
+  }, []);
 
   const getStatusClasses = (status) => {
     switch (status) {
@@ -101,10 +101,10 @@ const OrderTable = () => {
     }
   };
 
- /* const indexOfLastOrder = currentPage * rowsPerPage;
+  const indexOfLastOrder = currentPage * rowsPerPage;
   const indexOfFirstOrder = indexOfLastOrder - rowsPerPage;
-  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);*/
-
+  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+  
   const formatDate = (dateString) => {
     const createdAt = new Date(dateString);
     return createdAt.toLocaleString();
@@ -130,7 +130,7 @@ const OrderTable = () => {
                 </tr>
               </thead>
               <tbody className="bg-gray-700">
-                {orders
+                {currentOrders
                 .filter((order) => session?.user?.canteenNamecashier === order.canteenName)
                 .map((order) => (
                   <tr key={order._id} className="border-b border-gray-600">

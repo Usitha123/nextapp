@@ -13,6 +13,7 @@ const OrdersTable = () => {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
+  const [updateTrigger, setUpdateTrigger] = useState(0);
   const { data: session } = useSession();
   
   const pathname = usePathname();
@@ -32,7 +33,13 @@ const OrdersTable = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, [orders]);
+    
+    // Set up polling for updates every 30 seconds
+    const intervalId = setInterval(fetchOrders, 30000);
+    
+    // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [updateTrigger]); // Only depend on updateTrigger instead of orders
 
   const updateStatus = async (orderId, status) => {
     try {
@@ -49,11 +56,15 @@ const OrdersTable = () => {
         const updatedOrder = await response.json();
         alert(`Status updated to ${status}`);
         
+        // Update local state immediately
         setOrders((prevOrders) =>
           prevOrders.map((order) =>
             order._id === orderId ? { ...order, orderStatus: updatedOrder.orderStatus } : order
           )
         );
+        
+        // Trigger a refresh
+        setUpdateTrigger(prev => prev + 1);
       }
     } catch (error) {
       console.error("Error updating status:", error);
@@ -81,6 +92,16 @@ const OrdersTable = () => {
   const renderTable = (orders) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    
+    const filteredOrders = orders
+      .filter((order) => {
+        const orderDate = new Date(order.meals?.[0]?.timestamp || 0);
+        orderDate.setHours(0, 0, 0, 0);
+        return orderDate.getTime() === today.getTime();
+      })
+      .filter((order) => session?.user?.email === order.userEmail)
+      .filter((order) => ["Pending", "Ready"].includes(order.orderStatus));
+
     return (
       <table className="w-full p-3 bg-white rounded-2xl">
         <thead>
@@ -94,47 +115,41 @@ const OrdersTable = () => {
           </tr>
         </thead>
         <tbody>
-          {orders
-          .filter((order) => {
-            const orderDate = new Date(order.meals?.[0]?.timestamp || 0);
-            orderDate.setHours(0, 0, 0, 0);
-            return orderDate.getTime() === today.getTime();
-          })
-            .filter((order) => session?.user?.email === order.userEmail)
-            .filter((order) => ["Pending", "Ready"].includes(order.orderStatus))
-            .map((order) => (
-              <tr key={order._id} className="text-center">
-                <td className="p-2">{order._id}</td>
-                <td className="p-2">
-                  <span
-                    className={`inline-block w-full px-4 py-2 leading-none bg-green-500 text-white rounded-lg`}
-                  >
-                    {order.orderStatus}
-                  </span>
-                </td>
-                <td className="p-2">{formatDate(order.meals[0].timestamp)}</td>
-                <td className="p-2">{order.canteenName}</td>
-                <td className="p-2">
-                  <button
-                    onClick={() => handleDescriptionClick(order._id)}
-                    className="text-orange-400 hover:underline"
-                  >
-                    View
-                  </button>
-                </td>
-                <td className="p-2">
-                  <button
-                    onClick={() => {
-                      setSelectedOrder(order);
-                      setIsDeleteModalOpen(true);
-                    }}
-                    className="px-2 py-1 text-white bg-red-500 rounded-xl"
-                  >
-                    Cancel
-                  </button>
-                </td>
-              </tr>
-            ))}
+          {filteredOrders.map((order) => (
+            <tr key={order._id} className="text-center">
+              <td className="p-2">{order._id}</td>
+              <td className="p-2">
+                <span
+                  className={`inline-block w-full px-4 py-2 leading-none ${
+                    order.orderStatus === "Ready" ? "bg-green-500" : "bg-orange-500"
+                  } text-white rounded-lg`}
+                >
+                  {order.orderStatus}
+                </span>
+              </td>
+              <td className="p-2">{formatDate(order.meals[0].timestamp)}</td>
+              <td className="p-2">{order.canteenName}</td>
+              <td className="p-2">
+                <button
+                  onClick={() => handleDescriptionClick(order._id)}
+                  className="text-orange-400 hover:underline"
+                >
+                  View
+                </button>
+              </td>
+              <td className="p-2">
+                <button
+                  onClick={() => {
+                    setSelectedOrder(order);
+                    setIsDeleteModalOpen(true);
+                  }}
+                  className="px-2 py-1 text-white bg-red-500 rounded-xl"
+                >
+                  Cancel
+                </button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     );
@@ -175,11 +190,10 @@ const OrdersTable = () => {
       <UpdateStatusModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={() => updateStatus(selectedOrder._id, "Drop")} // Pass the updateStatus function here
+        onConfirm={() => updateStatus(selectedOrder._id, "Drop")}
       />
     </div>
   );
 };
 
 export default OrdersTable;
-
