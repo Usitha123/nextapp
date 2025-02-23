@@ -152,7 +152,7 @@ const OrderTable = () => {
                     <td className="px-4 py-2">{order._id}</td>
                     <td className="px-4 py-2">{order.userName}</td>
                     <td className="px-4 py-2">
-                      <span className={`px-2 py-1 rounded ${getStatusClasses(order.orderStatus)}`}>
+                      <span /*className={`px-2 py-1 rounded ${getStatusClasses(order.orderStatus)}`}*/>
                         {order.orderStatus}
                       </span>
                     </td>
