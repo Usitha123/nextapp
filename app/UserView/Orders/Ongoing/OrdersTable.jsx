@@ -32,7 +32,7 @@ const OrdersTable = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, [orders]);
+  }, []);
 
   const updateStatus = async (orderId, status) => {
     try {
