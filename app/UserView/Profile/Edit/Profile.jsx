@@ -79,7 +79,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="w-full max-w-3xl p-8 mx-auto bg-white rounded-xl">
+    <div className="w-full max-w-3xl p-6 mx-auto bg-white rounded-xl">
       <div className="relative flex items-center justify-center w-24 h-24 mx-auto text-orange-600 bg-orange-100 rounded-full">
         <User2Icon className="text-3xl font-bold" />
         <button
@@ -108,14 +108,8 @@ export default function Profile() {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <InputField
-            label="Phone"
-            name="phone"
-            value={targetStudent?.phoneNumber}
-            onChange={handleInputChange}
-            required
-          />
+        <div className="w-full">
+          
           <InputField
             label="Email"
             name="email"
@@ -127,6 +121,13 @@ export default function Profile() {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
+        <InputField
+            label="Phone"
+            name="phone"
+            value={targetStudent?.phoneNumber}
+            onChange={handleInputChange}
+            required
+          />
           <SelectField
             label="Faculty"
             name="faculty"
@@ -137,6 +138,9 @@ export default function Profile() {
           />
         </div>
 
+        <div className="grid grid-cols-2 gap-4">
+
+        
         <PasswordField
           label="Password"
           name="password"
@@ -149,12 +153,13 @@ export default function Profile() {
           onChange={handleInputChange}
           required
         />
+        </div>
 
         <div className="flex justify-end mt-6 space-x-4">
-          <Link href="/UserView/Profile" className="button">
+          <Link href="/UserView/Profile" className="button bg-black text-white px-3 py-2  rounded-xl">
             Cancel
           </Link>
-          <button type="submit" className="bg-orange-500 button">
+          <button type="submit" className="bg-orange-500 button px-3 py-2  rounded-xl ">
             Save
           </button>
         </div>
