@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import DescriptionModel from "./Descriptionmodel";
 
@@ -14,29 +13,36 @@ const OrderTable = () => {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const { data: session } = useSession();
   
-  const rowsPerPage = 3;
+  const ROWS_PER_PAGE = 4;
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const res = await fetch("/api/vieworders");
-        if (!res.ok) throw new Error("Failed to fetch orders");
-        const data = await res.json();
-        setOrders(data.orders);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchOrders();
   }, []);
+
+  const fetchOrders = async () => {
+    try {
+      const res = await fetch("/api/vieworders");
+      if (!res.ok) throw new Error("Failed to fetch orders");
+      const data = await res.json();
+      setOrders(data.orders);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    const createdAt = new Date(dateString);
+    return createdAt.toLocaleString();
+  };
 
   const getStatusClasses = (status) => {
     const statusClasses = {
       Accepted: "bg-yellow-500 text-gray-900",
       Picked: "bg-green-500 text-white",
       Cancelled: "bg-red-500 text-white",
+      Pending: "bg-blue-500 text-white"
     };
     return statusClasses[status] || "bg-gray-500 text-white";
   };
@@ -48,9 +54,9 @@ const OrderTable = () => {
         .map((meal) => `${meal.mealName}: ${meal.mealQuantity} x ${meal.mealPrice}`)
         .join(", <br/> ");
       setSelectedDescription(mealDescriptions);
+      setSelectedOrderId(orderId);
+      setIsDescriptionModelOpen(true);
     }
-    setSelectedOrderId(orderId);
-    setIsDescriptionModelOpen(true);
   };
 
   const updateStatus = async (orderId, status) => {
@@ -65,6 +71,12 @@ const OrderTable = () => {
         const errorData = await response.json();
         alert(errorData.message || "Failed to update status");
       } else {
+        // Update local state to avoid refetching
+        setOrders(prevOrders => 
+          prevOrders.map(order => 
+            order._id === orderId ? { ...order, orderStatus: status } : order
+          )
+        );
         alert(`Status updated to ${status}`);
       }
     } catch (error) {
@@ -79,12 +91,33 @@ const OrderTable = () => {
     { title: "Orders Cancelled", value: 2, icon: "⚙️" },
   ];
 
+  const handlePagination = (action) => {
+    if (action === "prev" && currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+    } else if (action === "next" && currentPage < Math.ceil(filteredOrders.length / ROWS_PER_PAGE)) {
+      setCurrentPage(prev => prev + 1);
+    }
+  };
+
+  // Filter pending orders
+  const filteredOrders = orders.filter(order => order.orderStatus === "Pending");
+  
+  // Calculate pagination
+  const paginatedOrders = filteredOrders.slice(
+    (currentPage - 1) * ROWS_PER_PAGE, 
+    currentPage * ROWS_PER_PAGE
+  );
+
+  if (loading) {
+    return <div className="p-6 text-center text-white">Loading orders...</div>;
+  }
+
   return (
     <div className="space-y-6">
       {/* Dashboard Cards Section */}
       <div className="p-6 bg-gray-800 rounded-lg shadow-lg">
         <h2 className="mb-6 text-2xl font-bold text-white">Dashboard</h2>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {stats.map(({ title, value, icon }, index) => (
             <div key={index} className="p-4 text-center text-orange-400 bg-gray-700 rounded-lg">
               <div className="mb-2 text-4xl">{String(value).padStart(2, "0")}</div>
@@ -96,78 +129,90 @@ const OrderTable = () => {
       </div>
 
       {/* Orders Table */}
-      <div className="p-6 bg-gray-800 rounded-lg shadow-lg">
+      <div className="p-6 bg-gray-800 rounded-lg shadow-lg overflow-auto max-h-[80vh]">
         <h2 className="mb-6 text-2xl font-bold text-white">Pending Orders</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left text-gray-400">
-            <thead className="text-gray-900 bg-orange-600">
-              <tr>
-                <th className="px-4 py-2">Order ID</th>
-                <th className="px-4 py-2">Customer</th>
-                <th className="px-4 py-2">Status</th>
-                <th className="px-4 py-2">Date</th>
-                <th className="px-4 py-2">Description</th>
-                <th className="px-4 py-2">Action</th>
-              </tr>
-            </thead>
-            <tbody className="bg-gray-700">
-              {orders
-                .filter((order) => session?.user?.canteenNamecashier === order.canteenName)
-                .filter((order) => order.orderStatus === "Pending")
-                .map((order) => (
+
+        {filteredOrders.length === 0 ? (
+          <div className="text-white">No pending orders available</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left text-gray-400">
+              <thead className="text-gray-900 bg-orange-600">
+                <tr>
+                  <th className="px-4 py-2">Order ID</th>
+                  <th className="px-4 py-2">Customer</th>
+                  <th className="px-4 py-2">Status</th>
+                  <th className="px-4 py-2">Date</th>
+                  <th className="px-4 py-2">Description</th>
+                  <th className="px-4 py-2">Action</th>
+                </tr>
+              </thead>
+              <tbody className="bg-gray-700">
+                {paginatedOrders.map((order) => (
                   <tr key={order._id} className="border-b border-gray-600">
                     <td className="px-4 py-2">{order._id}</td>
                     <td className="px-4 py-2">{order.userName}</td>
                     <td className="px-4 py-2">
-                      <span className={`px-2 py-1 rounded ${getStatusClasses(order.mealStatus)}`}>
+                      <span className={`px-2 py-1 rounded ${getStatusClasses(order.orderStatus)}`}>
                         {order.orderStatus}
                       </span>
                     </td>
-                    <td className="px-4 py-2">N/A</td>
                     <td className="px-4 py-2">
-                      <button
-                        onClick={() => handleDescriptionClick(order._id)}
+                      {formatDate(order.meals?.[0]?.timestamp || new Date())}
+                    </td>
+                    <td className="px-4 py-2">
+                      <button 
+                        onClick={() => handleDescriptionClick(order._id)} 
                         className="text-orange-400 hover:underline"
                       >
                         View
                       </button>
                     </td>
                     <td className="flex px-4 py-2 space-x-2">
-                      <button
-                        onClick={() => updateStatus(order._id, "Accepted")}
+                      <button 
+                        onClick={() => updateStatus(order._id, "Accepted")} 
                         className="text-green-400 hover:underline"
                       >
                         Accept
                       </button>
                       <button 
-                        onClick={() => updateStatus(order._id, "Cancelled")}
-                        className="text-red-400 hover:underline">
+                        onClick={() => updateStatus(order._id, "Cancelled")} 
+                        className="text-red-400 hover:underline"
+                      >
                         Cancel
                       </button>
                     </td>
                   </tr>
                 ))}
-            </tbody>
-          </table>
-        </div>
+              </tbody>
+            </table>
+          </div>
+        )}
 
         {/* Pagination */}
-        <div className="flex justify-between mt-4">
-          <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="px-4 py-2 text-white bg-orange-600 rounded disabled:bg-gray-400"
-          >
-            Prev
-          </button>
-          <button
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(orders.length / rowsPerPage)))}
-            disabled={currentPage === Math.ceil(orders.length / rowsPerPage)}
-            className="px-4 py-2 text-white bg-orange-600 rounded disabled:bg-gray-400"
-          >
-            Next
-          </button>
-        </div>
+        {filteredOrders.length > 0 && (
+          <div className="flex justify-between mt-4">
+            <button
+              onClick={() => handlePagination("prev")}
+              disabled={currentPage === 1}
+              className="px-4 py-2 text-white bg-orange-600 rounded disabled:bg-gray-400"
+            >
+              Prev
+            </button>
+            
+            <span className="self-center text-white">
+              Page {currentPage} of {Math.max(1, Math.ceil(filteredOrders.length / ROWS_PER_PAGE))}
+            </span>
+
+            <button
+              onClick={() => handlePagination("next")}
+              disabled={currentPage >= Math.ceil(filteredOrders.length / ROWS_PER_PAGE)}
+              className="px-4 py-2 text-white bg-orange-600 rounded disabled:bg-gray-400"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Description Modal */}
