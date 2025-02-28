@@ -6,7 +6,11 @@ export async function middleware(req) {
   const { pathname } = req.nextUrl;
 
   // Allow requests to /api/auth/[...nextauth] without a token check
-  if (pathname.startsWith('/api/auth')) {
+  if (
+    pathname.startsWith('/api/auth') ||
+    pathname.startsWith('/register') ||
+    pathname.startsWith('/api/register')
+  ) {
     return NextResponse.next();
   }
 
