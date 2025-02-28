@@ -1,12 +1,18 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FaRegTrashAlt, FaEdit } from 'react-icons/fa';
 import Deletemealmodel from './Deletemealmodel';
 import DescriptionModel from './Descriptionmodel';
 import { useSession } from "next-auth/react";
+
+const MEAL_TABS = [
+  { label: 'Breakfast', href: '/Canteendashboard/Meals/Breakfast' },
+  { label: 'Lunch', href: '/Canteendashboard/Meals/Lunch' },
+  { label: 'Dinner', href: '/Canteendashboard/Meals/Dinner' },
+];
 
 const MealsTable = () => {
   const pathname = usePathname();
@@ -20,43 +26,44 @@ const MealsTable = () => {
   const [selectedMealId, setSelectedMealId] = useState(null);
   const { data: session } = useSession();
 
-  const tabs = [
-    { label: 'Breakfast', href: '/Canteendashboard/Meals/Breakfast' },
-    { label: 'Lunch', href: '/Canteendashboard/Meals/Lunch' },
-    { label: 'Dinner', href: '/Canteendashboard/Meals/Dinner' },
-  ];
+  const currentMealType = pathname.split('/').pop();
+
+  const fetchMeals = useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/viewmeal');
+      if (!res.ok) throw new Error('Failed to fetch meals');
+      const { meals } = await res.json();
+      setMeals(meals);
+      setError(null);
+    } catch (error) {
+      setError(error.message);
+      console.error('Error fetching meals:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchMeals = async () => {
-      try {
-        const res = await fetch('/api/viewmeal');
-        if (!res.ok) throw new Error('Failed to fetch meals');
-        const { meals } = await res.json();
-        setMeals(meals);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchMeals();
-  }, [meals]);
+  }, [fetchMeals]);
 
   const handleDeleteOrder = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const response = await fetch(`/api/deletemeal?id=${selectedMealId}`, {
         method: "DELETE",
       });
+      
       if (response.ok) {
-        setMeals(meals.filter((meal) => meal._id !== selectedMealId));
+        setMeals(prevMeals => prevMeals.filter(meal => meal._id !== selectedMealId));
       } else {
-        alert("Failed to delete order");
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to delete meal');
       }
     } catch (error) {
-      console.error("Error deleting order:", error);
-      alert("An error occurred while deleting the order");
+      console.error("Error deleting meal:", error);
+      setError(error.message);
     } finally {
       setLoading(false);
       setIsModalOpen(false);
@@ -68,8 +75,6 @@ const MealsTable = () => {
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => setIsModalOpen(false);
-
   const handleDescriptionClick = (mealId) => {
     const selectedMeal = meals.find((meal) => meal._id === mealId);
     setSelectedDescription(selectedMeal?.mealDescription || '');
@@ -77,7 +82,13 @@ const MealsTable = () => {
     setIsDescriptionModelOpen(true);
   };
 
-  const currentMealType = pathname.split('/').pop();
+  const filteredMeals = meals
+    .filter((meal) => meal.mealType === currentMealType)
+    .filter((meal) => session?.user?.canteenName === meal.selectCanteen);
+
+  if (error) {
+    return <div className="p-6 text-red-500 bg-gray-800 rounded-lg shadow-lg">Error: {error}</div>;
+  }
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg shadow-lg">
@@ -95,7 +106,7 @@ const MealsTable = () => {
 
       {/* Meal Type Tabs */}
       <div className="flex mb-4 space-x-2">
-        {tabs.map((tab) => (
+        {MEAL_TABS.map((tab) => (
           <Link
             key={tab.label}
             href={tab.href}
@@ -107,24 +118,26 @@ const MealsTable = () => {
       </div>
 
       {/* Meals Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left text-gray-400">
-          <thead className="text-gray-900 bg-orange-600">
-            <tr>
-              <th className="px-4 py-2">Meal Name</th>
-              <th className="px-4 py-2">Description</th>
-              <th className="px-4 py-2">Price</th>
-              <th className="px-4 py-2">Quantity</th>
-              <th className="px-4 py-2">Status</th>
-              <th className="px-4 py-2">Image</th>
-              <th className="px-4 py-2">Action</th>
-            </tr>
-          </thead>
-          <tbody className="bg-gray-700">
-            {meals
-              .filter((meal) => meal.mealType === currentMealType)
-              .filter((meal) => session?.user?.canteenName === meal.selectCanteen)
-              .map((meal) => (
+      {loading ? (
+        <div className="py-4 text-center text-gray-400">Loading meals...</div>
+      ) : filteredMeals.length === 0 ? (
+        <div className="py-4 text-center text-gray-400">No meals found for this category</div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left text-gray-400">
+            <thead className="text-gray-900 bg-orange-600">
+              <tr>
+                <th className="px-4 py-2">Meal Name</th>
+                <th className="px-4 py-2">Description</th>
+                <th className="px-4 py-2">Price</th>
+                <th className="px-4 py-2">Quantity</th>
+                <th className="px-4 py-2">Status</th>
+                <th className="px-4 py-2">Image</th>
+                <th className="px-4 py-2">Action</th>
+              </tr>
+            </thead>
+            <tbody className="bg-gray-700">
+              {filteredMeals.map((meal) => (
                 <tr key={meal._id} className="border-b border-gray-600">
                   <td className="px-4 py-2">{meal.mealName}</td>
                   <td className="px-4 py-2">
@@ -139,18 +152,27 @@ const MealsTable = () => {
                     <img src={meal.image} alt={`Image of ${meal.mealName}`} className="w-16 h-16 rounded" />
                   </td>
                   <td className="flex items-center px-4 py-2 space-x-2">
-                    <button onClick={() => handleDeleteClick(meal._id)} className="text-gray-400 hover:text-red-500">
+                    <button 
+                      onClick={() => handleDeleteClick(meal._id)} 
+                      className="text-gray-400 hover:text-red-500"
+                      aria-label={`Delete ${meal.mealName}`}
+                    >
                       <FaRegTrashAlt />
                     </button>
-                    <Link href={`/Canteendashboard/Meals/Updatemeal?id=${meal._id}`} className="text-gray-400 hover:text-orange-500">
+                    <Link 
+                      href={`/Canteendashboard/Meals/Updatemeal?id=${meal._id}`} 
+                      className="text-gray-400 hover:text-orange-500"
+                      aria-label={`Edit ${meal.mealName}`}
+                    >
                       <FaEdit />
                     </Link>
                   </td>
                 </tr>
               ))}
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* Pagination */}
       <div className="flex items-center justify-between mt-4">
@@ -158,7 +180,7 @@ const MealsTable = () => {
         <button className="text-orange-400 hover:underline">Next</button>
       </div>
 
-      {/* Modals */}
+      {/* Description Modal */}
       <DescriptionModel
         isOpen={isDescriptionModelOpen}
         onClose={() => setIsDescriptionModelOpen(false)}
@@ -166,9 +188,9 @@ const MealsTable = () => {
         orderId={selectedOrderId}
       />
       
-      {/* Confirmation Modal for Deletion */}
+      {/* Delete Confirmation Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 text-white bg-gray-800 rounded-lg w-80">
             <div className="text-center">
               <h3 className="mb-4 text-lg font-semibold">Are you sure you want to delete?</h3>
@@ -178,11 +200,12 @@ const MealsTable = () => {
                 onClick={handleDeleteOrder}
                 type="button"
                 className="px-4 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-400 focus:outline-none"
+                disabled={loading}
               >
-                Yes
+                {loading ? 'Deleting...' : 'Yes'}
               </button>
               <button
-                onClick={handleCloseModal}
+                onClick={() => setIsModalOpen(false)}
                 type="button"
                 className="px-4 py-2 text-white bg-gray-600 rounded-md hover:bg-gray-500 focus:outline-none"
               >

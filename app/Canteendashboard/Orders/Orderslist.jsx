@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
 import UpdateStatusModal from "./Modal";
@@ -7,8 +8,12 @@ import DescriptionModel from "./Descriptionmodel";
 import { useSession } from "next-auth/react";
 
 const OrderTable = () => {
+  // State management
   const [orders, setOrders] = useState([]);
-  const [pagination, setPagination] = useState({ currentPage: 1, rowsPerPage: 9 });
+  const [pagination, setPagination] = useState({ 
+    currentPage: 1, 
+    rowsPerPage: 9 
+  });
   const [modalState, setModalState] = useState({
     isModalOpen: false,
     isDescriptionModelOpen: false,
@@ -16,39 +21,45 @@ const OrderTable = () => {
     selectedDescription: [],
     selectedOrderId: null,
   });
+  
   const { data: session, status } = useSession();
   const { currentPage, rowsPerPage } = pagination;
 
-  // Fetch orders from API
+  // Fetch orders on component mount
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const res = await fetch("/api/vieworders");
-        if (!res.ok) throw new Error("Failed to fetch orders");
-        const data = await res.json();
-        setOrders(data.orders);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      }
-    };
     fetchOrders();
   }, []);
 
-  // Get status classes
-  const getStatusClasses = (status) => {
-    switch (status) {
-      case "Accepted":
-        return "bg-green-500 text-gray-900";
-      case "Picked":
-        return "bg-yellow-500 text-white";
-      case "Cancelled":
-        return "bg-red-500 text-white";
-      default:
-        return "bg-gray-500 text-white";
+  const fetchOrders = async () => {
+    try {
+      const res = await fetch("/api/vieworders");
+      if (!res.ok) throw new Error("Failed to fetch orders");
+      const data = await res.json();
+      setOrders(data.orders);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
     }
   };
 
-  // Handle description click
+  // Status styling helper
+  const getStatusClasses = (status) => {
+    const statusStyles = {
+      "Accepted": "bg-green-500 text-gray-900",
+      "Picked": "bg-yellow-500 text-white",
+      "Cancelled": "bg-red-500 text-white",
+      "Pending": "bg-blue-500 text-white"
+    };
+    
+    return statusStyles[status] || "bg-gray-500 text-white";
+  };
+
+  // Date formatting helper
+  const formatDate = (dateString) => {
+    const createdAt = new Date(dateString);
+    return createdAt.toLocaleString();
+  };
+
+  // Modal handlers
   const handleDescriptionClick = (orderId) => {
     const selectedOrder = orders.find((order) => order._id === orderId);
     if (selectedOrder) {
@@ -61,12 +72,36 @@ const OrderTable = () => {
     }
   };
 
-  // Handle delete order
+  const openDeleteModal = (orderId) => {
+    setModalState((prev) => ({ 
+      ...prev, 
+      selectedOrderId: orderId, 
+      isDeleteOrderModalOpen: true 
+    }));
+  };
+
+  const openStatusModal = (orderId) => {
+    setModalState((prev) => ({ 
+      ...prev, 
+      selectedOrderId: orderId, 
+      isModalOpen: true 
+    }));
+  };
+
+  const closeModals = (modalType) => {
+    setModalState((prev) => ({ 
+      ...prev, 
+      [modalType]: false 
+    }));
+  };
+
+  // API interactions
   const handleDelete = async () => {
     try {
       const response = await fetch(`/api/deleteorder?id=${modalState.selectedOrderId}`, {
         method: "DELETE",
       });
+      
       if (response.ok) {
         setOrders(orders.filter((order) => order._id !== modalState.selectedOrderId));
       } else {
@@ -76,11 +111,10 @@ const OrderTable = () => {
       console.error("Error deleting order:", error);
       alert("An error occurred while deleting the order");
     } finally {
-      setModalState((prev) => ({ ...prev, isDeleteOrderModalOpen: false }));
+      closeModals("isDeleteOrderModalOpen");
     }
   };
 
-  // Update order status
   const updateStatus = async (orderId, status) => {
     try {
       const response = await fetch(`/api/updateorderstatus?id=${orderId}`, {
@@ -94,12 +128,15 @@ const OrderTable = () => {
         alert(errorData.message || "Failed to update status");
       } else {
         const updatedOrder = await response.json();
-        alert(`Status updated to ${status}`);
+        
+        // Update local state to avoid refetching
         setOrders((prevOrders) =>
           prevOrders.map((order) =>
-            order._id === orderId ? { ...order, orderStatus: updatedOrder.orderStatus } : order
+            order._id === orderId ? { ...order, orderStatus: status } : order
           )
         );
+        
+        alert(`Status updated to ${status}`);
       }
     } catch (error) {
       console.error("Error updating status:", error);
@@ -107,22 +144,40 @@ const OrderTable = () => {
     }
   };
 
-  // Pagination logic
+  // Pagination handlers
+  const handlePrevPage = () => {
+    setPagination((prev) => ({ 
+      ...prev, 
+      currentPage: Math.max(prev.currentPage - 1, 1) 
+    }));
+  };
+
+  const handleNextPage = () => {
+    const maxPage = Math.ceil(filteredOrders.length / rowsPerPage);
+    setPagination((prev) => ({ 
+      ...prev, 
+      currentPage: Math.min(prev.currentPage + 1, maxPage) 
+    }));
+  };
+
+  // Filter and pagination logic
+  const filteredOrders = orders.filter(order => order.orderStatus !== "Pending");
   const indexOfLastOrder = currentPage * rowsPerPage;
   const indexOfFirstOrder = indexOfLastOrder - rowsPerPage;
-  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const paginatedOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const totalPages = Math.ceil(filteredOrders.length / rowsPerPage);
 
-  const formatDate = (dateString) => {
-    const createdAt = new Date(dateString);
-    return createdAt.toLocaleString();
+  // Get current order status
+  const getCurrentStatus = () => {
+    return orders.find((order) => order._id === modalState.selectedOrderId)?.orderStatus || "";
   };
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg shadow-lg overflow-auto max-h-[80vh]">
-      <h2 className="mb-6 text-2xl font-bold text-white">Orders</h2>
+      <h2 className="mb-6 text-2xl font-bold text-white">Processed Orders</h2>
 
-      {orders.length === 0 ? (
-        <div className="text-white">No orders available</div>
+      {filteredOrders.length === 0 ? (
+        <div className="text-white">No processed orders available</div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left text-gray-400">
@@ -137,7 +192,7 @@ const OrderTable = () => {
               </tr>
             </thead>
             <tbody className="bg-gray-700">
-              {currentOrders.map((order) => (
+              {paginatedOrders.map((order) => (
                 <tr key={order._id} className="border-b border-gray-600">
                   <td className="px-4 py-2">{order._id}</td>
                   <td className="px-4 py-2">{order.userName}</td>
@@ -159,18 +214,16 @@ const OrderTable = () => {
                   </td>
                   <td className="flex px-4 py-2 space-x-2">
                     <button
-                      onClick={() => {
-                        setModalState((prev) => ({ ...prev, selectedOrderId: order._id, isDeleteOrderModalOpen: true }));
-                      }}
+                      onClick={() => openDeleteModal(order._id)}
                       className="text-gray-400 hover:text-red-500"
+                      aria-label="Delete order"
                     >
                       <FaRegTrashAlt />
                     </button>
                     <button
-                      onClick={() => {
-                        setModalState((prev) => ({ ...prev, selectedOrderId: order._id, isModalOpen: true }));
-                      }}
+                      onClick={() => openStatusModal(order._id)}
                       className="text-gray-400 hover:text-orange-500"
+                      aria-label="Update order status"
                     >
                       <FaEdit />
                     </button>
@@ -183,44 +236,50 @@ const OrderTable = () => {
       )}
 
       {/* Pagination */}
-      <div className="flex justify-between mt-4">
-        <button
-          onClick={() => setPagination((prev) => ({ ...prev, currentPage: Math.max(prev.currentPage - 1, 1) }))}
-          disabled={currentPage === 1}
-          className="px-4 py-2 text-white bg-orange-600 rounded disabled:bg-gray-400"
-        >
-          Prev
-        </button>
+      {filteredOrders.length > 0 && (
+        <div className="flex items-center justify-between mt-4">
+          <button
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+            className="px-4 py-2 text-white bg-orange-600 rounded disabled:bg-gray-400"
+          >
+            Prev
+          </button>
 
-        <button
-          onClick={() => setPagination((prev) => ({ ...prev, currentPage: Math.min(prev.currentPage + 1, Math.ceil(orders.length / rowsPerPage)) }))}
-          disabled={currentPage === Math.ceil(orders.length / rowsPerPage)}
-          className="px-4 py-2 text-white bg-orange-600 rounded disabled:bg-gray-400"
-        >
-          Next
-        </button>
-      </div>
+          <span className="text-white">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage >= totalPages}
+            className="px-4 py-2 text-white bg-orange-600 rounded disabled:bg-gray-400"
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {/* Modals */}
       <DescriptionModel
         isOpen={modalState.isDescriptionModelOpen}
-        onClose={() => setModalState((prev) => ({ ...prev, isDescriptionModelOpen: false }))}
+        onClose={() => closeModals("isDescriptionModelOpen")}
         description={modalState.selectedDescription}
       />
 
       <UpdateStatusModal
         isOpen={modalState.isModalOpen}
-        onClose={() => setModalState((prev) => ({ ...prev, isModalOpen: false }))}
+        onClose={() => closeModals("isModalOpen")}
         onSave={(newStatus) => {
           updateStatus(modalState.selectedOrderId, newStatus);
-          setModalState((prev) => ({ ...prev, isModalOpen: false }));
+          closeModals("isModalOpen");
         }}
-        currentStatus={orders.find((order) => order._id === modalState.selectedOrderId)?.orderStatus}
+        currentStatus={getCurrentStatus()}
       />
 
       <DeleteOrder
         isOpen={modalState.isDeleteOrderModalOpen}
-        onClose={() => setModalState((prev) => ({ ...prev, isDeleteOrderModalOpen: false }))}
+        onClose={() => closeModals("isDeleteOrderModalOpen")}
         onDelete={handleDelete}
       />
     </div>
