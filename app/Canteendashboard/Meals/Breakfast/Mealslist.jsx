@@ -41,7 +41,7 @@ const MealsTable = () => {
     };
 
     fetchMeals();
-  }, []);
+  }, [meals]);
 
   const handleDeleteOrder = async () => {
     setLoading(true);
