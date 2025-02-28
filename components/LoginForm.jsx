@@ -128,9 +128,10 @@ export default function LoginForm() {
 
           <div className="mt-4 text-sm text-center text-gray-600">
             Don’t have an account?{" "}
-            <Link href="/register" className="font-semibold text-orange-500 hover:text-orange-600">
-              Register
-            </Link>
+          
+<Link href="/register" className="font-semibold text-orange-500 cursor-pointer hover:text-orange-600">
+  Register
+</Link>
             
           </div>
 
