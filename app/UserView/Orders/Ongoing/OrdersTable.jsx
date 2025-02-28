@@ -17,20 +17,19 @@ const OrdersTable = () => {
   
   const pathname = usePathname();
 
-  const fetchOrders = async () => {
-    try {
-      const res = await fetch("/api/vieworders");
-      if (!res.ok) throw new Error("Failed to fetch orders");
-      const data = await res.json();
-      setOrders(data.orders || data);
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const res = await fetch("/api/vieworders");
+        if (!res.ok) throw new Error("Failed to fetch orders");
+        const data = await res.json();
+        setOrders(data.orders || data);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchOrders();
   }, []);
 

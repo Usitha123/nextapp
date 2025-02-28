@@ -10,10 +10,10 @@ export async function middleware(req) {
     return NextResponse.next();
   }
 
-  // Block all other API calls if no token is found
+  /*// Block all other API calls if no token is found
   if (pathname.startsWith('/api') && !token) {
     return NextResponse.redirect(new URL('/', req.url));
-  }
+  }*/
 
   // If there's no token for protected routes, redirect to home
   if (!token) {
