@@ -10,10 +10,21 @@ export async function middleware(req) {
     return NextResponse.next();
   }
 
-  /*// Block all other API calls if no token is found
-  if (pathname.startsWith('/api') && !token) {
+  // Redirect any random/unknown paths to root
+  // This needs to be before the role-based checks to catch truly random paths
+  const validPaths = [
+    '/',
+    '/api',
+    '/admindashboard',
+    '/Canteendashboard',
+    '/UserView',
+    '/Cashierdashboard'
+  ];
+
+  const isValidPath = validPaths.some(path => pathname === path || pathname.startsWith(`${path}/`));
+  if (!isValidPath) {
     return NextResponse.redirect(new URL('/', req.url));
-  }*/
+  }
 
   // If there's no token for protected routes, redirect to home
   if (!token) {
@@ -21,7 +32,8 @@ export async function middleware(req) {
       pathname.startsWith('/admindashboard') ||
       pathname.startsWith('/Canteendashboard') ||
       pathname.startsWith('/UserView') ||
-      pathname.startsWith('/Cashierdashboard')
+      pathname.startsWith('/Cashierdashboard') ||
+      pathname.startsWith('/api')
     ) {
       return NextResponse.redirect(new URL('/', req.url));
     }
@@ -50,12 +62,9 @@ export async function middleware(req) {
   return NextResponse.next();
 }
 
+// Update the matcher to catch ALL paths, not just the specific ones
 export const config = {
   matcher: [
-    '/admindashboard/:path*',  // Match /admindashboard and all sub-paths
-    '/Canteendashboard/:path*', // Match /Canteendashboard and all sub-paths
-    '/UserView/:path*', // Match /UserView and all sub-paths
-    '/Cashierdashboard/:path*',  // Match /Cashierdashboard and all sub-paths
-    '/api/:path*',
+    '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 };
