@@ -4,9 +4,9 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { ChartColumn, LayoutDashboard, LogOut, UserRoundPen, UsersRound, Utensils } from "lucide-react";
+import { ChartColumn, ChevronDown, ChevronUp, LayoutDashboard, LogOut, UserRoundPen, UsersRound, Utensils } from "lucide-react";
 
-const Sidebar = () => {
+const Sidebar = ({ activePath }) => {
   const pathname = usePathname(); // Get the current path
   const [openUserMenu, setOpenUserMenu] = useState(false);
   const [openCanteensMenu, setOpenCanteensMenu] = useState(false);
@@ -28,146 +28,114 @@ const Sidebar = () => {
   };
 
   const isActive = (path) => pathname === path;
+  const [openMenu, setOpenMenu] = useState(null);
 
-  return (
-    <div className="w-12 md:w-64 h-screen p-4 text-white bg-[#2B2623]">
-      {/* Logo */}
-      <h1 className=" hidden md:block mb-10 mt-2 text-3xl text-center font-bold text-orange-500">LOGO</h1>
+const links = [
+  { href: "/admindashboard", label: "Dashboard", icon: <LayoutDashboard /> },
+  {
+    label: "Canteens",
+    icon: <Utensils />,
+    subMenu: [
+      { href: "/admindashboard/Canteens/AllCanteens", label: "All Canteens" },
+      { href: "/admindashboard/Canteens/AddNew", label: "Add New" }
+    ]
+  },
+  {
+    label: "Users",
+    icon: <UsersRound />,
+    subMenu: [
+      { href: "/admindashboard/User/Owner", label: "Owner" },
+      { href: "/admindashboard/User/Student", label: "Student" },
+      { href: "/admindashboard/User/Cashier", label: "Cashier" }
+    ]
+  },
+  { href: "/admindashboard/Reports_", label: "Reports", icon: <ChartColumn /> },
+  { href: "/admindashboard/Profile", label: "Profile", icon: <UserRoundPen /> }
+];
 
-      {/* Navigation Links */}
-      <ul className="space-y-4 text-md font-normal text-gray-300">
-        <li>
-          <Link
-            href="/admindashboard"
-            className={`block p-2 rounded ${
-              isActive("/admindashboard") ? "font-semibold bg-[#3d3632] text-white" : "hover:bg-[#3d3632] "
-            }`}
-          >
-            <div><span><LayoutDashboard/></span>
-            <span className="md:flex hidden">Dashboard</span> </div>                    
-          </Link>
-        </li>
-{/* Canteens Dropdown Menu */}
-<li className="relative">
-  <div className="space-y-1">
-    <button
-      onClick={() => setOpenCanteensMenu(!openCanteensMenu)}
-      className="p-2 flex items-center justify-between w-full rounded hover:bg-[#3d3632]"
-    >
-      {/* Utensils Icon */}
-      <span className="flex items-center">
-        <Utensils />
-      </span>
-
-      {/* Hidden label for medium screens and above */}
-      <span className="hidden md:flex ml-2">Canteens</span>
-    </button>
-
-    {/* Floating Dropdown Menu */}
-    {openCanteensMenu && (
-      <div className="absolute left-0 mt-2 w-48 bg-[#3d3632] text-white rounded shadow-lg z-50">
-        <Link
-          href="/admindashboard/Canteens/AllCanteens"
-          className={`block p-2 rounded ${
-            isActive("/admindashboard/Canteens/AllCanteens")
-              ? "font-semibold bg-[#5a524e]"
-              : "hover:bg-[#5a524e]"
-          }`}
-        >
-          All Canteens
-        </Link>
-        <Link
-          href="/admindashboard/Canteens/AddNew"
-          className={`block p-2 rounded ${
-            isActive("/admindashboard/Canteens/AddNew")
-              ? "font-semibold bg-[#5a524e]"
-              : "hover:bg-[#5a524e]"
-          }`}
-        >
-          Add New
-        </Link>
-      </div>
-    )}
-  </div>
-</li>
-
-
-        {/* User Dropdown Menu */}
-        <li>
-          <div className="space-y-1">
-            <button
-              onClick={() => setOpenUserMenu(!openUserMenu)}
-              className="flex items-center justify-between w-full p-2 rounded hover:bg-[#3d3632]"
+return (
+  <div className="w-20 h-[100vh] p-4 text-gray-300 bg-[#2B2623] md:w-60">
+    <h1 className="mb-10 hidden md:block text-center text-2xl font-bold text-[#ff842f]">LOGO</h1>
+    <ul className="space-y-4">
+      {links.map((link) => {
+        if (link.subMenu) {
+          return (
+            <li key={link.label} className="relative">
+              <button
+                onClick={() => setOpenMenu(openMenu === link.label ? null : link.label)}
+                className="flex justify-between items-center gap-3 p-2 w-full rounded hover:bg-[#3d3632] hover:text-orange-500"
+              >
+                <span className="flex gap-2">
+                  {link.icon}
+                  <span className="hidden md:flex">{link.label}</span>
+                </span>
+                
+                <span>{openMenu === link.label ? <ChevronUp className="hidden md:flex"/> : <ChevronDown className="hidden md:flex"/>  }</span>
+              </button>
+              {/* Submenu for larger screens */}
+              {openMenu === link.label && (
+                <ul className="ml-4 mt-1 space-y-2 md:block hidden">
+                  {link.subMenu.map((subLink) => (
+                    <li key={subLink.href}>
+                      <Link
+                        href={subLink.href}
+                        className={`block p-2 rounded hover:bg-[#3d3632] hover:text-orange-500 ${
+                          activePath === subLink.href ? "text-orange-500 font-bold" : ""
+                        }`}
+                      >
+                        {subLink.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {/* Floating submenu for small screens */}
+              {openMenu === link.label && (
+                <div className="absolute left-full top-0 mt-2 w-48 bg-[#2B2623]  shadow-lg rounded md:hidden">
+                  <ul className="p-2">
+                    {link.subMenu.map((subLink) => (
+                      <li key={subLink.href}>
+                        <Link
+                          href={subLink.href}
+                          className="block p-2 rounded hover:bg-[#3d3632] hover:text-orange-500"
+                        >
+                          {subLink.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </li>
+          );
+        }
+        return (
+          <li key={link.href}>
+            <Link
+              href={link.href}
+              className={`gap-3 flex p-2 rounded hover:bg-[#3d3632] hover:text-orange-500 ${
+                activePath === link.href ? "text-orange-500 font-bold" : ""
+              }`}
             >
-              <UsersRound/>
-              User
-              <span>{openUserMenu ? "-" : "+"}</span>
-            </button>
-            {openUserMenu && (
-              <div className="ml-4 space-y-1">
-                <Link
-                  href="/admindashboard/User/Owner"
-                  className={`block p-2 rounded ${
-                    isActive("/admindashboard/User/Owner") ?  "font-semibold bg-[#3d3632] text-white" : "hover:bg-[#3d3632] "
-                  }`}
-                >
-                  Owner
-                </Link>
-                <Link
-                  href="/admindashboard/User/Student"
-                  className={`block p-2 rounded ${
-                    isActive("/admindashboard/User/Student") ?  "font-semibold bg-[#3d3632] text-white" : "hover:bg-[#3d3632] "
-                  }`}
-                >
-                  Student
-                </Link>
-                <Link
-                  href="/admindashboard/User/Cashier"
-                  className={`block p-2 rounded ${
-                    isActive("/admindashboard/User/Cashier") ?  "font-semibold bg-[#3d3632] text-white" : "hover:bg-[#3d3632] "
-                  }`}
-                >
-                  Cashier
-                </Link>
-              </div>
-            )}
-          </div>
-        </li>
+              <span>{link.icon}</span>
+              <span className="hidden md:flex">{link.label}</span>
+            </Link>
+          </li>
+        );
+      })}
+      <li>
+        <button
+          onClick={handleSignOut}
+          className="flex w-full gap-3 p-2 rounded hover:bg-[#3d3632] hover:text-orange-500"
+        >
+          <LogOut />
+          <span className="hidden md:flex">Logout</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+);
 
-        <li>
-          <Link
-            href="/admindashboard/Reports_"
-            className={`block p-2 rounded ${
-              isActive("/admindashboard/Reports_") ?  "font-semibold bg-[#3d3632] text-white" : "hover:bg-[#3d3632] "
-            }`}
-          >
-            <ChartColumn/>
-            Reports
-          </Link>
-        </li>
-        <li>
-          <Link
-            href="/admindashboard/Profile"
-            className={`block p-2 rounded ${
-              isActive("/admindashboard/Profile") ?  "font-semibold bg-[#3d3632] text-white" : "hover:bg-[#3d3632] "
-            }`}
-          >
-            <UserRoundPen/>
-            Profile
-          </Link>
-        </li>
-        <li>
-          <button
-            onClick={handleSignOut}
-            className="block text-left p-2 w-full rounded hover:bg-orange-600 hover:text-white"
-          >
-            <LogOut/>
-            Logout
-          </button>
-        </li>
-      </ul>
-    </div>
-  );
 };
 
 export default Sidebar;
