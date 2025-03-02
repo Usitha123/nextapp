@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { FaTrash, FaEdit } from "react-icons/fa";
 import Deletecanteens from './Deletecanteens';
+import { PlusCircle } from "lucide-react";
 
 const CanteensTable = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -55,11 +56,14 @@ const CanteensTable = () => {
   }
 
   return (
-    <div className="bg-[#1b1b1b] p-6 rounded-md shadow-lg">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-white">Canteens</h2>
-        <Link href="/admindashboard/Canteens/AddNew" className="px-4 py-2 text-sm font-medium text-white bg-orange-500 rounded-md hover:bg-orange-400">
-          Add Canteen
+    <div className="rounded-md shadow-lg">
+      <div className="mb-4 flex justify-end">
+        <Link
+          href="/admindashboard/Canteens/AddNew"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
+        >
+          <span>Add Canteen</span>
+          <PlusCircle size={20} />
         </Link>
       </div>
 
