@@ -20,7 +20,7 @@ const Sidebar = ({ activePath }) => {
   };
 
   return (
-    <div className="w-20 p-4 text-black bg-white md:w-60">
+    <div className="w-20 h-[100vh] p-4 text-black bg-white md:w-60">
       <h1 className="mb-10 hidden md:block text-center text-2xl font-bold text-[#ff842f]">LOGO</h1>
       <ul className="space-y-4">
         {links.map((link) => {
