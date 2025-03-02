@@ -1,88 +1,82 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi, describe, test, expect } from 'vitest';
-import LoginForm from '../../components/LoginForm';
-import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { vi } from "vitest";
+import LoginForm from "../../components/LoginForm";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
-vi.mock('next/navigation', () => ({
-    useRouter: vi.fn(),
+vi.mock("next-auth/react", () => ({
+  signIn: vi.fn(),
 }));
 
-vi.mock('next-auth/react', () => ({
-    signIn: vi.fn(),
+vi.mock("next/navigation", () => ({
+  useRouter: vi.fn(),
 }));
 
-beforeEach(() => {
-    vi.spyOn(console, 'error').mockImplementation(() => { });
+describe("Checking the LoginForm component", () => {
+  let push;
+
+  beforeEach(() => {
+    push = vi.fn();
+    useRouter.mockReturnValue({ push });
+  });
+
+  test("renders the loginform correctly", () => {
+    render(<LoginForm />);
+
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /login/i })).toBeInTheDocument();
+  });
+
+  test("allows the user to type in email and password fields", () => {
+    render(<LoginForm />);
+
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+    fireEvent.change(passwordInput, { target: { value: "password123" } });
+
+    expect(emailInput.value).toBe("test@example.com");
+    expect(passwordInput.value).toBe("password123");
+  });
+
+  test("shows an error message on failed login", async () => {
+    signIn.mockResolvedValue({ error: "Invalid credentials" });
+    render(<LoginForm />);
+
+    fireEvent.change(screen.getByLabelText(/email/i), { 
+        target: { value: "wrong@example.com" }
+    ,});
+    fireEvent.change(screen.getByLabelText(/password/i), { 
+        target: { value: "wrongpassword" }
+    ,});
+    fireEvent.click(screen.getByRole("button", { name: /login/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/invalid credentials/i)).toBeInTheDocument();
+    });
+  });
+
+  test("redirects the user based on role after successful login", async () => {
+    signIn.mockResolvedValue({ error: null });
+    global.fetch = vi.fn(() =>
+      Promise.resolve({
+        json: () => Promise.resolve({ user: { role: "admin" } }),
+      })
+    );
+    render(<LoginForm />);
+    
+    fireEvent.change(screen.getByLabelText(/email/i), {
+      target: { value: "admin@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText(/password/i), {
+      target: { value: "admin" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /login/i }));
+
+    await waitFor(() => {
+      expect(push).toHaveBeenCalledWith("/admindashboard");
+    });
+  });
 });
-
-afterEach(() => {
-    console.error.mockRestore();
-});
-
-describe('LoginForm Component', () => {
-    test('renders the loginform correctly', () => {
-        render(<LoginForm />);
-        //check the loginform heading  is present
-        expect(screen.getByRole('heading'), { name: /japura cms/i }).toBeInTheDocument();
-        //check if input fields and submit button are rendered
-        expect(screen.getByPlaceholderText(/email/i)).toBeInTheDocument();
-        expect(screen.getByPlaceholderText(/password/i)).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
-    });
-
-    /*test('show validation message for empty input fields', () => {
-        render(<LoginForm />);
-        //click the submit button without filling in any fields
-        const loginbutton = screen.getByRole('button', { name: /login/i });
-        fireEvent.click(loginbutton);
-        //check if a validation warning is displayed
-        expect(screen.getByText(/pleace fill out this field/i)).toBeInTheDocument();
-        expect(screen.getByText(/pleace fill out this field/i)).toBeInTheDocument();
-    });*/
-
-    test('shows error message when login fails', async () => {
-        signIn.mockResolvedValueOnce({ error: 'Invalid Credentials' });
-
-        render(<LoginForm />);
-
-        fireEvent.change(screen.getByPlaceholderText(/email/i), { target: { value: 'test@example.com' } });
-        fireEvent.change(screen.getByPlaceholderText(/password/i), { target: { value: 'wrongpassword' } });
-        fireEvent.click(screen.getByRole('button', { name: /login/i }));
-        //check the error message is appear
-        expect(await screen.findByText(/invalid credentials/i)).toBeInTheDocument();
-    });
-
-    /*test('navigates to UserView on successful login', async () => {
-        const mockReplace = vi.fn();
-        useRouter.mockReturnValue({ replace: mockReplace });
-
-        signIn.mockResolvedValueOnce({ error: null });
-
-        render(<LoginForm />);
-
-        fireEvent.change(screen.getByPlaceholderText(/email/i), { target: { value: 'test@example.com' } });
-        fireEvent.change(screen.getByPlaceholderText(/password/i), { target: { value: 'correctpassword' } });
-        fireEvent.click(screen.getByRole('button', { name: /login/i }));
-
-        await waitFor(() => {
-            expect(mockReplace).toHaveBeenCalledWith('UserView');
-        });
-    });*/
-
-    test('show a error message when a login fails', async () => {
-        signIn.mockRejectedValueOnce(new Error('Network error'));
-
-        render(<LoginForm />);
-
-        fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'user@example.com' } });
-        fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'somepassword' } });
-        fireEvent.click(screen.getByRole('button', { name: /login/i }));
-
-        // console log or error message to appear
-        await waitFor(() => {
-            expect(console.error).toHaveBeenCalledWith('Login error:', expect.any(Error));
-        });
-    });
-
-})
