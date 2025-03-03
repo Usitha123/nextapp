@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { FaTrash, FaEdit } from "react-icons/fa";
 import Deletecanteens from './Deletecanteens';
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, SquarePen, Trash2 } from "lucide-react";
 
 const CanteensTable = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -67,9 +67,9 @@ const CanteensTable = () => {
         </Link>
       </div>
 
-      <div className="overflow-auto max-w-[75vw] lg:max-w-full">
-        <table className="w-full text-sm text-left text-gray-400">
-          <thead className="text-gray-900 bg-orange-600">
+      <div className="overflow-auto justify-center max-w-[75vw] lg:max-w-full rounded-xl">
+        <table className="w-full text-sm  text-left text-gray-400 rounded-xl bg-[#2B2623]">
+          <thead className="text-gray-900 bg-orange-500">
             <tr>
               <th className="px-4 py-2">Canteen</th>
               <th className="px-4 py-2">Email</th>
@@ -84,7 +84,7 @@ const CanteensTable = () => {
 
           <tbody>
             {canteens.map((canteen) => (
-              <tr key={canteen._id} className="border-b border-gray-700">
+              <tr key={canteen._id} className="border-b-2 border-[#3B3737]">
                 <td className="px-4 py-2">{canteen.canteenName}</td>
                 <td className="px-4 py-2">{canteen.businessEmail}</td>
                 <td className="px-4 py-2">{canteen.phoneNumber}</td>
@@ -92,18 +92,17 @@ const CanteensTable = () => {
                 <td className="px-4 py-2">{canteen.ownerstatus}</td>
                 <td className="px-4 py-2">{formatDate(canteen.openingDate)}</td>
                 <td className="px-4 py-2">{canteen.openHour} - {canteen.closedHour}</td>
-                <td className="px-4 py-2">
+                <td className="px-4 py-2 flex">
                   <button
                     onClick={() => {
                       setSelectedCanteenId(canteen._id);
                       setIsDeleteModalOpen(true);
                     }}
-                    className="text-red-500"
                   >
-                    <FaTrash />
+                   <Trash2/>
                   </button>
-                  <Link href={`/admindashboard/Canteens/UpdateCanteens?id=${canteen._id}`} className="ml-3 text-blue-500">
-                    <FaEdit />
+                  <Link href={`/admindashboard/Canteens/UpdateCanteens?id=${canteen._id}`} className="ml-2">
+                    <SquarePen/>
                   </Link>
                 </td>
               </tr>
