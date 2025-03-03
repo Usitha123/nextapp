@@ -36,45 +36,49 @@ const Profile = () => {
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (
-    <div className="bg-[#1b1b1b] p-6 rounded-md shadow-lg w-full max-w-xl mx-auto">
-      <h2 className="mb-6 text-2xl font-semibold text-white">Profile</h2>
+    <div className=" bg-[#2B2623] p-6 rounded-md shadow-lg w-full max-w-xl mx-auto">
+
       <div className="space-y-4">
-        {/* First Name */}
-        <div>
-          <label className="block text-sm text-gray-400">First Name</label>
-          <div className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md">
+
+        <div className='flex gap-2'>
+ {/* First Name */}
+ <div className='flex-1'>
+          <label className="block text-sm text-orange-500">First Name</label>
+          <div className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md">
             {admin.firstName || 'N/A'}
           </div>
         </div>
 
         {/* Last Name */}
-        <div>
-          <label className="block text-sm text-gray-400">Last Name</label>
-          <div className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md">
+        <div className='flex-1'>
+          <label className="block text-sm text-orange-500">Last Name</label>
+          <div className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md">
             {admin.lastName || 'N/A'}
           </div>
         </div>
+        </div>
+       
 
         {/* Phone */}
         <div>
-          <label className="block text-sm text-gray-400">Phone</label>
-          <div className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md">
+          <label className="block text-sm text-orange-500">Phone</label>
+          <div className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md">
             {admin.phone || 'N/A'}
           </div>
         </div>
 
         {/* Email */}
         <div>
-          <label className="block text-sm text-gray-400">Email</label>
-          <div className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md">
+          <label className="block text-sm text-orange-500">Email</label>
+          <div className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md">
             {admin.email || 'N/A'}
           </div>
         </div>
 
         {/* NIC Number */}
         <div>
-          <label className="block text-sm text-gray-400">NIC Number</label>
-          <div className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md">
+          <label className="block text-sm text-orange-500">NIC Number</label>
+          <div className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md">
             {admin.nic || 'N/A'}
           </div>
         </div>
@@ -83,7 +87,7 @@ const Profile = () => {
         <div className="flex justify-end mt-6 space-x-4">
           <Link
             href="/admindashboard/Profile/Edit"
-            className="px-4 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-400 focus:outline-none"
+            className="px-2 py-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
           >
             Edit
           </Link>
