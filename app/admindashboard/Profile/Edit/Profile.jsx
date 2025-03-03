@@ -73,79 +73,86 @@ const UpdateAdminProfile = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="bg-[#1b1b1b] p-6 rounded-md shadow-lg w-full max-w-xl mx-auto">
-      <h2 className="mb-6 text-2xl font-semibold text-white">Profile</h2>
+    <div className="bg-[#2B2623] p-6 rounded-md shadow-lg w-full max-w-xl mx-auto">
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* First Name */}
-        <div>
-          <label className="block text-sm text-gray-400">First Name</label>
+        <div className='flex gap-2'>
+        <div className='flex-1'>
+          <label className="block text-sm text-orange-500">First Name</label>
           <input
             type="text"
             name="firstName"
             value={admin.firstName}
             onChange={handleChange}
-            className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
           />
         </div>
 
         {/* Last Name */}
-        <div>
-          <label className="block text-sm text-gray-400">Last Name</label>
+        <div className='flex-1'>
+          <label className="block text-sm text-orange-500">Last Name</label>
           <input
             type="text"
             name="lastName"
             value={admin.lastName}
             onChange={handleChange}
-            className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
           />
         </div>
-
-        {/* Phone */}
-        <div>
-          <label className="block text-sm text-gray-400">Phone</label>
+        </div>
+        
+        <div className='flex gap-2'> 
+          {/* Phone */}
+        <div className='flex-1'>
+          <label className="block text-sm text-orange-500">Phone</label>
           <input
             type="text"
             name="phone"
             value={admin.phone}
             onChange={handleChange}
-            className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
           />
         </div>
-
-        {/* Email */}
-        <div>
-          <label className="block text-sm text-gray-400">Email</label>
-          <input
-            type="email"
-            name="email"
-            value={admin.email}
-            onChange={handleChange}
-            className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-          />
-        </div>
-
+        
         {/* NIC Number */}
-        <div>
-          <label className="block text-sm text-gray-400">NIC Number</label>
+        <div className='flex-1'>
+          <label className="block text-sm text-orange-500">NIC Number</label>
           <input
             type="text"
             name="nic"
             value={admin.nic}
             onChange={handleChange}
-            className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
+          />
+        </div>
+        </div>
+        
+
+        {/* Email */}
+        <div>
+          <label className="block text-sm text-orange-500">Email</label>
+          <input
+            type="email"
+            name="email"
+            value={admin.email}
+            onChange={handleChange}
+            className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
           />
         </div>
 
+
+        <div className='flex gap-2'>
+          
         {/* Password */}
-        <div>
-          <label className="block text-sm text-gray-400">Password</label>
+        <div className='flex-1'>
+          <label className="block text-sm text-orange-500">Password</label>
           <div className="relative">
             <input
               type={showPassword ? 'text' : 'password'}
               name="password"
               value={admin.password}
               onChange={handleChange}
-              className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
               placeholder="Password"
               aria-label="Password"
             />
@@ -161,30 +168,32 @@ const UpdateAdminProfile = () => {
         </div>
 
         {/* Confirm Password */}
-        <div>
-          <label className="block text-sm text-gray-400">Confirm Password</label>
+        <div className='flex-1'>
+          <label className="block text-sm text-orange-500">Confirm Password</label>
           <input
             type={showPassword ? 'text' : 'password'}
             name="confirmPassword"
             value={admin.confirmPassword}
             onChange={handleChange}
-            className="w-full p-2 mt-1 text-white bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
             placeholder="Confirm Password"
           />
         </div>
+        </div>
+
 
         {/* Submit Buttons */}
         <div className="flex justify-end mt-6 space-x-4">
           <button
             type="submit"
-            className="px-4 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-400 focus:outline-none"
+            className="px-3 py-1 text-white bg-orange-500 rounded-xl hover:bg-orange-400 focus:outline-none"
           >
             Save
           </button>
           <button
             type="button"
             onClick={() => router.push('/admindashboard')}
-            className="px-4 py-2 text-white bg-gray-600 rounded-md hover:bg-gray-500 focus:outline-none"
+            className=" px-3 py-1 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
           >
             Cancel
           </button>
