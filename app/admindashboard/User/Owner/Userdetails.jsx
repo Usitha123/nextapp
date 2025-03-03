@@ -3,6 +3,7 @@ import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
 import UpdateStatusModal from "./Modal";
 import Deleteowners from "./Deleteowners";
 import Link from "next/link";
+import { ChevronLeft, ChevronRight, PlusCircle } from "lucide-react";
 
 const ITEMS_PER_PAGE = 7;
 
@@ -99,20 +100,20 @@ const OwnerTable = () => {
   const formatDate = (dateString) => new Date(dateString).toLocaleString();
 
   return (
-    <div className="p-4 text-white bg-gray-800 rounded-lg">
-      <div className="flex justify-between mb-4">
-        <h2 className="mb-4 text-xl font-semibold">Owners</h2>
+    <div className="p-4  rounded-lg">
+      <div className="mb-4 flex justify-end">
         <Link
           href="/admindashboard/User/Owner/Addowners"
-          className="px-4 py-2 text-gray-900 bg-orange-500 rounded"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
         >
-          Add Owner
+          <span>Add Owner</span>
+          <PlusCircle size={20} />
         </Link>
       </div>
-
-      <table className="w-full text-left text-gray-300">
+<div className="overflow-auto justify-center max-w-[75vw] lg:max-w-full rounded-xl">
+<table className="w-full text-sm  text-left text-gray-400 rounded-xl bg-[#2B2623]">
         <thead>
-          <tr className="text-white bg-orange-500">
+          <tr className="text-black bg-orange-500">
             <th className="p-2">First Name</th>
             <th className="p-2">Last Name</th>
             <th className="p-2">Phone</th>
@@ -126,7 +127,7 @@ const OwnerTable = () => {
         </thead>
         <tbody>
           {currentOwners.map((owner) => (
-            <tr key={owner._id} className="border-b border-gray-700">
+            <tr key={owner._id} className="border-b-2 border-[#3B3737]">
               <td className="p-2">{owner.firstName}</td>
               <td className="p-2">{owner.lastName}</td>
               <td className="p-2">{owner.phoneNumber}</td>
@@ -137,7 +138,7 @@ const OwnerTable = () => {
               <td className="p-2">{formatDate(owner.createdAt)}</td>
               <td className="flex p-2 space-x-2">
                 <button
-                  className="text-red-500 hover:text-red-700"
+                  className=" hover:text-red-700"
                   onClick={() => {
                     setSelectedOwnerId(owner._id);
                     setIsDeleteOwnerModalOpen(true);
@@ -146,7 +147,7 @@ const OwnerTable = () => {
                   <FaRegTrashAlt />
                 </button>
                 <button
-                  className="text-green-500 hover:text-green-700"
+                  className=" hover:text-green-700"
                   onClick={() => {
                     setSelectedOwnerId(owner._id);
                     setIsModalOpen(true);
@@ -160,21 +161,25 @@ const OwnerTable = () => {
         </tbody>
       </table>
 
-      <div className="flex items-center justify-between mt-4">
+</div>
+      
+      <div className="flex items-center gap-2 justify-end mt-4">
         <button
           onClick={handlePrev}
-          className="px-4 py-2 text-white bg-orange-500 rounded hover:bg-orange-600"
+          className="flex items-center gap-0 px-2 py-1 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
           disabled={currentPage === 1}
         >
+          <ChevronLeft/>
           Prev
         </button>
-        <span>Page {currentPage}</span>
+        <span className="text-gray-400">Page {currentPage}</span>
         <button
           onClick={handleNext}
-          className="px-4 py-2 text-white bg-orange-500 rounded hover:bg-orange-600"
+          className="flex items-center gap-0 px-2 py-1 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
           disabled={currentPage === Math.ceil(owners.length / ITEMS_PER_PAGE)}
         >
-          Next
+          Next 
+          <ChevronRight/>
         </button>
       </div>
 
