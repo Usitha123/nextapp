@@ -20,4 +20,10 @@
       @apply cursor-pointer;
       filter: invert(1); /* Adjust for dark mode */
     }
+    
+    input[type="time"]::-webkit-calendar-picker-indicator {
+      @apply cursor-pointer;
+      filter: invert(1); /* Adjust for dark mode */
+    }
+
   }

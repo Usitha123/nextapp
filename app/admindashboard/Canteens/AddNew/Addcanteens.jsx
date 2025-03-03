@@ -1,4 +1,5 @@
 "use client";
+import { Image } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export default function AddCanteens() {
@@ -155,15 +156,15 @@ export default function AddCanteens() {
   }
 
   return (
-    <div className="w-full md:w-[90%] p-6 mx-auto text-white bg-gray-700 rounded-md">
+    <div className="w-full md:w-[90%] p-6 mx-auto text-gray-400 bg-[#2B2623] rounded-md">
       {/* <h2 className="mb-4 text-xl font-bold">Add Canteens</h2> */}
       <form onSubmit={handleSubmit}>
         <div className="space-y-4">
           <div className="flex items-center justify-center m-5">
-            <div className="flex items-center justify-center w-20 h-20 bg-gray-700 rounded-md">
+            <div className="flex items-center justify-center w-20 h-20 bg-[#3B3737] rounded-md">
               <img
-                src={canteenDetails.image ? URL.createObjectURL(canteenDetails.image) : "/placeholder.png"}
-                alt="Canteen Upload"
+                src={canteenDetails.image ? URL.createObjectURL(canteenDetails.image) : <Image/>}
+                alt="Canteen Upload" 
                 className="object-cover w-full h-full"
               />
             </div>
@@ -177,7 +178,7 @@ export default function AddCanteens() {
             // placeholder="Canteen Name"
             value={canteenDetails.canteenName}
             onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+            className="w-full p-2 text-gray-300 bg-[#3B3737]  rounded-md"
             required
           /></div>
           <div>
@@ -188,7 +189,7 @@ export default function AddCanteens() {
             // placeholder="Business Email"
             value={canteenDetails.businessEmail}
             onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+            className="w-full p-2 text-gray-300 bg-[#3B3737] rounded-md"
             required
           />
           </div>
@@ -198,7 +199,7 @@ export default function AddCanteens() {
 
           <input type="file"
             onChange={handleFileChange}
-            className="w-full h-11 p-2 text-white bg-gray-800 border border-gray-600 rounded-md  file:cursor-pointer file:p-0.5 file:px-2   file:rounded-md file:border-0 file:text-white file:bg-gray-500 hover:file:bg-gray-600 "
+            className="w-full h-11 p-2 text-gray-300 bg-[#3B3737]  rounded-md  file:cursor-pointer file:p-0.5 file:px-2   file:rounded-md file:border-0 file:text-white file:bg-[#5E5E63CF] hover:file:bg-gray-600 "
             required
           />
           {canteenProgress > 0 && <p>{canteenProgress}% Uploaded</p>}
@@ -212,7 +213,7 @@ export default function AddCanteens() {
             placeholder="HH:MM"
             value={canteenDetails.openHour}
             onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md h-11"
+            className="w-full p-2 text-gray-300 bg-[#3B3737]  rounded-md h-11"
             required
           /></div>
          <div>
@@ -223,7 +224,7 @@ export default function AddCanteens() {
             placeholder="HH:MM"
             value={canteenDetails.closedHour}
             onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+            className="w-full p-2 text-gray-300 bg-[#3B3737]  rounded-md"
             required
           />
          </div>
@@ -235,7 +236,7 @@ export default function AddCanteens() {
             placeholder=" 10 digits"
             value={canteenDetails.phoneNumber}
             onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+            className="w-full p-2 text-gray-300 bg-[#3B3737]  rounded-md"
             required
             pattern="^[0-9]{10}$"
           />
@@ -247,7 +248,7 @@ export default function AddCanteens() {
             name="openingDate"
             value={canteenDetails.openingDate}
             onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+            className="w-full p-2 text-gray-300 bg-[#3B3737] rounded-md"
             required
           />
           </div>
@@ -257,7 +258,7 @@ export default function AddCanteens() {
             name="status"
             value={canteenDetails.status}
             onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
+            className="w-full p-2 text-gray-300 bg-[#3B3737] rounded-md"
           >
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
