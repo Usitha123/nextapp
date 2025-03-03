@@ -122,7 +122,7 @@ const AddCashierForm = () => {
       name="firstName"
       value={cashier.firstName}
       onChange={handleInputChange}
-      className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+      className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
     />
   </div>
   <div className="flex-1">
@@ -132,7 +132,7 @@ const AddCashierForm = () => {
       name="lastName"
       value={cashier.lastName}
       onChange={handleInputChange}
-      className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+      className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
     />
   </div>
 </div>
@@ -147,7 +147,7 @@ const AddCashierForm = () => {
               name={field}
               value={cashier[field]}
               onChange={handleInputChange}
-              className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+              className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
             />
           </div>
         ))}
@@ -159,7 +159,7 @@ const AddCashierForm = () => {
       name="phoneNumber"
       value={cashier.phoneNumber}
       onChange={handleInputChange}
-      className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+      className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
     />
   </div>
   <div className="flex-1">
@@ -169,7 +169,7 @@ const AddCashierForm = () => {
       name="nicNumber"
       value={cashier.nicNumber}
       onChange={handleInputChange}
-      className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+      className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
     />
   </div>
 </div>
@@ -186,7 +186,7 @@ const AddCashierForm = () => {
               name={field}
               value={cashier[field]}
               onChange={handleInputChange}
-              className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+              className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
             />
             <span
               className="absolute inset-y-0 flex items-center text-gray-400 cursor-pointer right-3"

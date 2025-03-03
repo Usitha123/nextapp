@@ -1,4 +1,5 @@
 "use client";
+import { Eye, EyeOff } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -151,98 +152,51 @@ const AddCashierForm = () => {
   };
 
   return (
-    <div className="max-w-lg p-8 mx-auto text-white bg-gray-800 rounded-lg shadow-lg">
+    <div className="w-full md:max-w-3xl p-6 mx-auto text-gray-400 bg-[#2B2623] rounded-md">
       <form onSubmit={handleSubmit}>
         {/* Name Fields */}
         <div className="flex mb-4 space-x-4">
           <div className="flex-1">
-            <label className="block mb-1 text-sm font-medium">First Name</label>
+            <label className="p-1 text-orange-500 text-sm">First Name</label>
             <input
               type="text"
               name="firstName"
               value={owner.firstName}
               onChange={handleInputChange}
-              className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+              className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
             />
           </div>
           <div className="flex-1">
-            <label className="block mb-1 text-sm font-medium">Last Name</label>
+            <label className="p-1 text-orange-500 text-sm">Last Name</label>
             <input
               type="text"
               name="lastName"
               value={owner.lastName}
               onChange={handleInputChange}
-              className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+              className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md "
             />
           </div>
         </div>
 
         {/* Email Field */}
-        <div className="mb-4">
-          <label className="block mb-1 text-sm font-medium">Email</label>
+        <div className="flex mb-4 space-x-4">
+        <div className="flex-1">
+          <label className="p-1 text-orange-500 text-sm">Email</label>
           <input
             type="email"
             name="email"
             value={owner.email}
             onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+            className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
           />
         </div>
-
-        {/* Phone & NIC Fields */}
-        <div className="flex mb-4 space-x-4">
-          <div className="flex-1">
-            <label className="block mb-1 text-sm font-medium">Phone Number</label>
-            <input
-              type="text"
-              name="phoneNumber"
-              value={owner.phoneNumber}
-              onChange={handleInputChange}
-              className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
-            />
-          </div>
-          <div className="flex-1">
-            <label className="block mb-1 text-sm font-medium">NIC Number</label>
-            <input
-              type="text"
-              name="nicNumber"
-              value={owner.nicNumber}
-              onChange={handleInputChange}
-              className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
-            />
-          </div>
-        </div>
-
-        {/* Password Fields */}
-        {["password", "confirmPassword"].map((field) => (
-          <div key={field} className="relative mb-4">
-            <label className="block mb-1 text-sm font-medium">
-              {field === "password" ? "Password" : "Confirm Password"}
-            </label>
-            <input
-              type={showPassword ? "text" : "password"}
-              name={field}
-              value={owner[field]}
-              onChange={handleInputChange}
-              className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
-            />
-            <span
-              className="absolute inset-y-0 flex items-center text-gray-400 cursor-pointer right-3"
-              onClick={() => setShowPassword((prev) => !prev)}
-            >
-              {showPassword ? <FaEye /> : <FaEyeSlash />}
-            </span>
-          </div>
-        ))}
-
-        {/* Canteen Select */}
-        <div className="mb-4">
-          <label className="block mb-1 text-sm font-medium">Select Canteen</label>
+        <div className="flex-1">
+          <label className="p-1 text-orange-500 text-sm">Select Canteen</label>
           <select
             name="selectcanteen"
             value={owner.selectcanteen}
             onChange={handleInputChange}
-            className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none"
+            className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
           >
             <option value="">Select Canteen</option>
             {canteens.map(({ _id, canteenName }) => (
@@ -252,19 +206,69 @@ const AddCashierForm = () => {
             ))}
           </select>
         </div>
+        </div>
+
+        {/* Phone & NIC Fields */}
+        <div className="flex mb-4 space-x-4">
+          <div className="flex-1">
+            <label className="p-1 text-orange-500 text-sm">Phone Number</label>
+            <input
+              type="text"
+              name="phoneNumber"
+              value={owner.phoneNumber}
+              onChange={handleInputChange}
+              className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="p-1 text-orange-500 text-sm">NIC Number</label>
+            <input
+              type="text"
+              name="nicNumber"
+              value={owner.nicNumber}
+              onChange={handleInputChange}
+              className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
+            />
+          </div>
+        </div>
+
+        {/* Password Fields */}
+        {["password", "confirmPassword"].map((field) => (
+          <div key={field} className="relative mb-4">
+            <label className="p-1 text-orange-500 text-sm">
+              {field === "password" ? "Password" : "Confirm Password"}
+            </label>
+            <input
+              type={showPassword ? "text" : "password"}
+              name={field}
+              value={owner[field]}
+              onChange={handleInputChange}
+              className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
+            />
+            <span
+              className="absolute flex items-center text-gray-400 cursor-pointer right-3 bottom-2"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? <Eye className="w-5 h-5"/> : <EyeOff className="w-5 h-5"/> }
+            </span>
+          </div>
+        ))}
+
+        {/* Canteen Select */}
+        
 
         {/* Buttons */}
-        <div className="flex justify-between">
+        <div className="flex justify-end gap-3">
           <button
             type="button"
-            className="px-4 py-2 text-white bg-gray-600 rounded hover:bg-gray-700"
+            className="flex items-center gap-0 px-2 py-1 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
             onClick={resetForm}
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-4 py-2 text-white bg-orange-500 rounded hover:bg-orange-600"
+            className=" px-4 py-2 text-sm font-medium  bg-orange-500 text-black border border-orange-500 rounded-xl hover:bg-orange-600 transition"
           >
             Add
           </button>

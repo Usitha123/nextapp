@@ -132,7 +132,7 @@ const InputField = ({ label, name, type = "text", value, onChange }) => (
       name={name}
       value={value}
       onChange={onChange}
-      className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+      className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
     />
   </div>
 );
@@ -144,7 +144,7 @@ const TextareaField = ({ label, name, value, onChange }) => (
       name={name}
       value={value}
       onChange={onChange}
-      className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+      className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
     ></textarea>
   </div>
 );
@@ -156,7 +156,7 @@ const SelectField = ({ label, name, options, value, onChange }) => (
       name={name}
       value={value}
       onChange={onChange}
-      className="w-full p-2 text-white bg-gray-700 rounded focus:outline-none focus:ring focus:ring-orange-500"
+      className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
     >
       {options.map((option) => (
         <option key={option} value={option}>
