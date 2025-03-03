@@ -67,7 +67,7 @@ const CanteensTable = () => {
         </Link>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-auto max-w-[75vw] lg:max-w-full">
         <table className="w-full text-sm text-left text-gray-400">
           <thead className="text-gray-900 bg-orange-600">
             <tr>
