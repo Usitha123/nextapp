@@ -101,70 +101,84 @@ const UpdateCanteen = () => {
   }
 
   return (
-    <div className="w-full max-w-lg p-6 mx-auto text-white bg-gray-900 rounded-md">
-      <h2 className="mb-4 text-xl font-bold">Update Canteen</h2>
-
-      {/* Image preview section */}
-      {canteen.image && (
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-300">Image Preview</label>
-          <img src={canteen.image} alt="Canteen Image" className="object-cover w-full h-48 mt-2 rounded-md" />
-        </div>
-      )}
-      {error && <p className="text-red-500">{error}</p>}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {['canteenName', 'businessEmail', 'openHour', 'closedHour', 'phoneNumber'].map((field) => (
-          <div key={field}>
-            <label className="block text-sm font-medium text-gray-300">{field}</label>
-            <input
-              type={field === 'openHour' || field === 'closedHour' ? 'time' : 'text'}
-              name={field}
-              value={canteen[field]}
-              onChange={handleChange}
-              required
-              className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
-            />
-          </div>
-        ))}
-
-        {/* Handle openingDate field separately */}
+    <div className="bg-[#2B2623] p-6 rounded-md shadow-lg w-full mx-auto">
+      <div className="grid grid-cols-2 gap-6">
+        {/* Left Column - Image Preview */}
         <div>
-          <label className="block text-sm font-medium text-gray-300">Opening Date</label>
-          <input
-            type="date"
-            name="openingDate"
-            value={canteen.openingDate ? canteen.openingDate.substring(0, 10) : ''} // Ensure correct date format
-            onChange={handleChange}
-            required
-            className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
-          />
+          {canteen.image && (
+            <div>
+              <label className="block text-sm text-orange-500 mb-1">Image Preview</label>
+              <img
+                src={canteen.image}
+                alt="Canteen Image"
+                className="object-cover w-full h-80 rounded-md"
+              />
+            </div>
+          )}
         </div>
-
-        {['status', 'ownerstatus'].map((field) => (
-          <div key={field}>
-            <label className="block text-sm font-medium text-gray-300">{field}</label>
-            <select
-              name={field}
-              value={canteen[field]}
-              onChange={handleChange}
-              className="w-full p-2 text-white bg-gray-800 border border-gray-600 rounded-md"
-            >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
-          </div>
-        ))}
-
-        <div className="flex justify-between mt-4">
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-4 py-2 text-white bg-green-600 rounded-md"
-          >
-            {loading ? 'Updating...' : 'Update Canteen'}
-          </button>
+  
+        {/* Right Column - Form */}
+        <div>
+          {error && <p className="text-red-500">{error}</p>}
+  
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              {['Canteen Name', 'Business Email', 'Open Hour', 'Closed Hour', 'Phone Number'].map((field) => (
+                <div key={field}>
+                  <label className="block text-sm text-orange-500 mb-1">{field}</label>
+                  <input
+                    type={field === 'Open Hour' || field === 'Closed Hour' ? 'time' : 'text'}
+                    name={field}
+                    value={canteen[field]}
+                    onChange={handleChange}
+                    required
+                    className="w-full p-2 text-gray-300 bg-[#3B3737] border border-gray-600 rounded-md"
+                  />
+                </div>
+              ))}
+  
+              {/* Opening Date Field */}
+              <div>
+                <label className="block text-sm text-orange-500 mb-1">Opening Date</label>
+                <input
+                  type="date"
+                  name="openingDate"
+                  value={canteen.openingDate ? canteen.openingDate.substring(0, 10) : ''}
+                  onChange={handleChange}
+                  required
+                  className="w-full p-2 text-gray-300 bg-[#3B3737] border border-gray-600 rounded-md"
+                />
+              </div>
+  
+              {['status', 'ownerstatus'].map((field) => (
+                <div key={field}>
+                  <label className="block text-sm text-orange-500 mb-1">{field}</label>
+                  <select
+                    name={field}
+                    value={canteen[field]}
+                    onChange={handleChange}
+                    className="w-full p-2 text-gray-300 bg-[#3B3737] border border-gray-600 rounded-md"
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
+              ))}
+            </div>
+  
+            {/* Submit Button */}
+            <div className="flex justify-end mt-4">
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-4 py-2 text-orange-500 bg-[#3B3737] border border-orange-500 rounded-xl hover:bg-black transition"
+              >
+                {loading ? 'Updating...' : 'Update Canteen'}
+              </button>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
   );
 };
