@@ -36,11 +36,11 @@ const Profile = () => {
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (
-    <div className=" bg-[#2B2623] p-6 rounded-md shadow-lg w-full max-w-xl mx-auto">
+    <div className=" bg-[#2B2623] p-8 rounded-md shadow-lg w-full max-w-xl mx-auto">
 
       <div className="space-y-4">
 
-        <div className='flex gap-2'>
+        <div className='flex gap-2 mt-6'>
  {/* First Name */}
  <div className='flex-1'>
           <label className="block text-sm text-orange-500">First Name</label>
