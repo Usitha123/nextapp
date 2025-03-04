@@ -30,11 +30,11 @@ const InvoiceTable = () => {
   };
 
   return (
-    <div className="max-w-4xl p-6 mx-auto my-8 bg-white rounded-lg shadow-lg">
-      <h2 className="mb-4 text-2xl font-bold">Admin Report</h2>
-      <table className="min-w-full border-collapse table-auto">
-        <thead>
-          <tr className="text-left bg-gray-200">
+    <div className="w-full p-2 mx-auto bg-white rounded-lg shadow-lg overflow-auto">
+      <h2 className="m-4 text-xl font-bold">Admin Report</h2>
+      <table className="min-w-full rounded-lg border-collapse table-auto">
+        <thead className="rounded-lg">
+          <tr className="rounded-lg text-left bg-[#5E5E63CF]">
             <th className="px-4 py-2 border-b">Item</th>
             <th className="px-4 py-2 border-b">Description</th>
             <th className="px-4 py-2 border-b">Quantity</th>

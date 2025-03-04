@@ -11,7 +11,7 @@ function page() {
       <div className="flex-1">
         <Topbar />
         <Header title="Reports"/>
-        <div className="p-4">
+        <div className="p-1 px-2">
         <ReportGenerate />
         </div>
       </div>
