@@ -26,4 +26,7 @@
       filter: invert(1); /* Adjust for dark mode */
     }
 
+    input[type="radio"] {
+      @apply accent-orange-500;
+    }
   }
