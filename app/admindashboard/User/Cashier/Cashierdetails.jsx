@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
 import UpdateStatusModal from "./Cashierstatus";
 import Deletecashier from "./Deletecashier";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const ITEMS_PER_PAGE = 4;
 
@@ -111,69 +112,75 @@ const StudentTable = () => {
   const currentCashiers = cashiers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   return (
-    <div className="p-4 text-white bg-gray-800 rounded-lg">
-      <h2 className="mb-4 text-xl font-semibold">Cashier List</h2>
-      <table className="w-full text-left text-gray-300">
-        <thead>
-          <tr className="text-white bg-orange-500">
-            <th className="p-2">First Name</th>
-            <th className="p-2">Last Name</th>
-            <th className="p-2">Email</th>
-            <th className="p-2">Phone Number</th>
-            <th className="p-2">Nic Number</th>
-            <th className="p-2">Status</th>
-            <th className="p-2">Canteen</th>
-            <th className="p-2">Date Registered</th>
-            <th className="p-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentCashiers.map((cashier) => (
-            <tr key={cashier._id} className="border-b border-gray-700">
-              <td className="p-2">{cashier.firstName}</td>
-              <td className="p-2">{cashier.lastName}</td>
-              <td className="p-2">{cashier.email}</td>
-              <td className="p-2">{cashier.phoneNumber}</td>
-              <td className="p-2">{cashier.nicNumber}</td>
-              <td className="p-2">{cashier.status}</td>
-              <td className="p-2">{cashier.selectCanteen}</td>
-              <td className="p-2">{formatDate(cashier.createdAt)}</td>
-              <td className="flex p-2 space-x-2">
-                <button
-                  onClick={() => openDeleteModal(cashier)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  <FaRegTrashAlt />
-                </button>
-                <button
-                  onClick={() => openEditModal(cashier._id)}
-                  className="text-blue-500 hover:text-blue-700"
-                  aria-label="Edit Cashier"
-                >
-                  <FaEdit />
-                </button>
-              </td>
+    <div className="p-4 rounded-lg">
+
+      <div className="overflow-auto justify-center max-w-[75vw] lg:max-w-full rounded-xl">
+        <table className="w-full text-sm text-left text-gray-400 rounded-xl bg-[#2B2623]">
+          <thead>
+            <tr className="text-black bg-orange-500">
+              <th className="p-2">First Name</th>
+              <th className="p-2">Last Name</th>
+              <th className="p-2">Email</th>
+              <th className="p-2">Phone Number</th>
+              <th className="p-2">Nic Number</th>
+              <th className="p-2">Status</th>
+              <th className="p-2">Canteen</th>
+              <th className="p-2">Date Registered</th>
+              <th className="p-2">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="flex items-center justify-between mt-4">
+          </thead>
+          <tbody>
+            {currentCashiers.map((cashier) => (
+              <tr key={cashier._id} className="border-b-2 border-[#3B3737]">
+                <td className="p-2">{cashier.firstName}</td>
+                <td className="p-2">{cashier.lastName}</td>
+                <td className="p-2">{cashier.email}</td>
+                <td className="p-2">{cashier.phoneNumber}</td>
+                <td className="p-2">{cashier.nicNumber}</td>
+                <td className="p-2">{cashier.status}</td>
+                <td className="p-2">{cashier.selectCanteen}</td>
+                <td className="p-2">{formatDate(cashier.createdAt)}</td>
+                <td className="flex p-2 space-x-2">
+                  <button
+                    onClick={() => openDeleteModal(cashier)}
+                    className="hover:text-red-700"
+                  >
+                    <FaRegTrashAlt />
+                  </button>
+                  <button
+                    onClick={() => openEditModal(cashier._id)}
+                    className="hover:text-green-700"
+                    aria-label="Edit Cashier"
+                  >
+                    <FaEdit />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+  
+      <div className="flex items-center gap-2 justify-end mt-4">
         <button
           onClick={() => handlePagination("prev")}
-          className="px-4 py-2 text-white bg-orange-500 rounded hover:bg-orange-600"
+          className="flex items-center gap-0 px-2 py-1 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
           disabled={currentPage === 1}
         >
+          <ChevronLeft />
           Prev
         </button>
-        <span>Page {currentPage}</span>
+        <span className="text-gray-400">Page {currentPage}</span>
         <button
           onClick={() => handlePagination("next")}
-          className="px-4 py-2 text-white bg-orange-500 rounded hover:bg-orange-600"
+          className="flex items-center gap-0 px-2 py-1 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
           disabled={currentPage === Math.ceil(cashiers.length / ITEMS_PER_PAGE)}
         >
           Next
+          <ChevronRight />
         </button>
       </div>
+  
       {/* Modals */}
       <UpdateStatusModal
         isOpen={isEditModalOpen}
@@ -189,7 +196,7 @@ const StudentTable = () => {
         onDelete={handleDelete}
       />
     </div>
-  );
+  );  
 };
 
 export default StudentTable;
