@@ -13,6 +13,7 @@ export default function RegisterForm() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [nicNumber, setnicNumber] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [faculty, setFaculty] = useState(""); // New state for faculty
   const [phoneNumber, setPhoneNumber] = useState(""); // New state for phone number
@@ -25,7 +26,7 @@ export default function RegisterForm() {
     e.preventDefault();
 
     // Validation for required fields
-    if (!firstName || !lastName || !email || !password || !confirmPassword || !faculty || !phoneNumber) {
+    if (!firstName || !lastName || !email || !password || !confirmPassword || !faculty || !phoneNumber || !nicNumber) {
       //setError("All fields are required.");
       toast.error("All fields are required.");
       return;
@@ -62,7 +63,7 @@ export default function RegisterForm() {
       const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, lastName, email, password, faculty, phoneNumber }),
+        body: JSON.stringify({ firstName, lastName, email, password, faculty, phoneNumber, nicNumber }),
       });
 
       if (res.ok) {
@@ -163,6 +164,23 @@ export default function RegisterForm() {
               onChange={(e) => setPhoneNumber(e.target.value)}
               required
               maxLength={10} // Limit input to 10 characters
+            />
+          </div>
+
+          
+          {/*Nic Number */}
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="phoneNumber">
+              Nic Number
+            </label>
+            <input
+              className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
+              type="text"
+              placeholder="Nic number"
+              value={nicNumber}
+              onChange={(e) => setnicNumber(e.target.value)}
+              required
+              maxLength={12} // Limit input to 12 characters
             />
           </div>
 

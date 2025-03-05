@@ -5,7 +5,7 @@ import Deleteowners from "./Deleteowners";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, PlusCircle } from "lucide-react";
 
-const ITEMS_PER_PAGE = 7;
+const ITEMS_PER_PAGE = 10;
 
 const OwnerTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -100,8 +100,8 @@ const OwnerTable = () => {
   const formatDate = (dateString) => new Date(dateString).toLocaleString();
 
   return (
-    <div className="p-4  rounded-lg">
-      <div className="mb-4 flex justify-end">
+    <div className="p-4 rounded-lg">
+      <div className="flex justify-end mb-4">
         <Link
           href="/admindashboard/User/Owner/Addowners"
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
@@ -163,7 +163,7 @@ const OwnerTable = () => {
 
 </div>
       
-      <div className="flex items-center gap-2 justify-end mt-4">
+      <div className="flex items-center justify-end gap-2 mt-4">
         <button
           onClick={handlePrev}
           className="flex items-center gap-0 px-2 py-1 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"

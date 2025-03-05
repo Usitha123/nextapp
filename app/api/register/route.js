@@ -5,10 +5,10 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req) {
   try {
-    const { firstName, lastName, email, password, faculty, phoneNumber } = await req.json();
+    const { firstName, lastName, email, password, faculty, phoneNumber, nicNumber } = await req.json();
 
     // Check for required fields
-    if (!firstName || !lastName || !email || !password || !faculty || !phoneNumber) {
+    if (!firstName || !lastName || !email || !password || !faculty || !phoneNumber || !nicNumber) {
       return NextResponse.json({ message: "All fields are required." }, { status: 400 });
     }
 
@@ -37,6 +37,7 @@ export async function POST(req) {
       password: hashedPassword,
       faculty,
       phoneNumber,
+      nicNumber,
       status: 'active', // Default status is active
      
     });

@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true },
     faculty: { type: String, required: true },  // New field for faculty
     phoneNumber: { type: String, required: true }, // New field for phone number
+    nicNumber: { type: String, required: true },
     status: { type: String, default: 'active' },  // Default status as active
    
   },

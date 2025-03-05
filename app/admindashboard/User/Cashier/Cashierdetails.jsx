@@ -6,7 +6,7 @@ import UpdateStatusModal from "./Cashierstatus";
 import Deletecashier from "./Deletecashier";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 10;
 
 const StudentTable = () => {
   const [cashiers, setCashiers] = useState([]);
@@ -161,7 +161,7 @@ const StudentTable = () => {
         </table>
       </div>
   
-      <div className="flex items-center gap-2 justify-end mt-4">
+      <div className="flex items-center justify-end gap-2 mt-4">
         <button
           onClick={() => handlePagination("prev")}
           className="flex items-center gap-0 px-2 py-1 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"

@@ -11,7 +11,7 @@ export default async function Home() {
     if (session.user.role === "admin") {
       redirect("/admindashboard");
     } else if (session.user.role === "cashier") {
-      redirect("/cashierdashboard");
+      redirect("/Cashierdashboard");
     } else if (session.user.role === "canteenOwner") {
       redirect("/Canteendashboard");
     } else {
