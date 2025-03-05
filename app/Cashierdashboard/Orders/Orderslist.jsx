@@ -173,38 +173,37 @@ const OrderTable = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-800 rounded-lg shadow-lg overflow-auto max-h-[80vh]">
-      <h2 className="mb-6 text-2xl font-bold text-white">Processed Orders</h2>
+    <div className="px-2 overflow-auto max-h-[80vh]">
 
       {filteredOrders.length === 0 ? (
         <div className="text-white">No processed orders available</div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left text-gray-400">
-            <thead className="text-gray-900 bg-orange-600">
+        <div className="overflow-auto justify-center max-w-[75vw] lg:max-w-full rounded-xl">
+          <table className="w-full text-sm  text-center text-gray-400 rounded-xl bg-[#2B2623]">
+            <thead className="text-black bg-orange-500">
               <tr>
-                <th className="px-4 py-2">Order ID</th>
-                <th className="px-4 py-2">Customer</th>
-                <th className="px-4 py-2">Status</th>
-                <th className="px-4 py-2">Date</th>
-                <th className="px-4 py-2">Description</th>
-                <th className="px-4 py-2">Action</th>
+                <th className="px-4 py-1">Order ID</th>
+                <th className="px-4 py-1">Customer</th>
+                <th className="px-4 py-1">Status</th>
+                <th className="px-4 py-1">Date</th>
+                <th className="px-4 py-1">Description</th>
+                <th className="px-4 py-1">Action</th>
               </tr>
             </thead>
-            <tbody className="bg-gray-700">
+            <tbody>
               {paginatedOrders.map((order) => (
-                <tr key={order._id} className="border-b border-gray-600">
-                  <td className="px-4 py-2">{order._id}</td>
-                  <td className="px-4 py-2">{order.userName}</td>
-                  <td className="px-4 py-2">
+                <tr key={order._id} className="border-b-2 border-[#3B3737]">
+                  <td className="px-4 py-1">{order._id}</td>
+                  <td className="px-4 py-1">{order.userName}</td>
+                  <td className="px-4 py-1">
                     <span className={`px-2 py-1 rounded ${getStatusClasses(order.orderStatus)}`}>
                       {order.orderStatus}
                     </span>
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-1">
                     {formatDate(order.meals?.[0]?.timestamp || new Date())}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-1">
                     <button
                       onClick={() => handleDescriptionClick(order._id)}
                       className="text-orange-400 hover:underline"
