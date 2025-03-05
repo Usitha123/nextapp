@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import DescriptionModel from "./Descriptionmodel";
+import { ArrowBigUpDash, OctagonAlert, SquareArrowDown } from "lucide-react";
 
 const OrderTable = () => {
   const [orders, setOrders] = useState([]);
@@ -86,9 +87,9 @@ const OrderTable = () => {
   };
 
   const stats = [
-    { title: "New Orders", value: 3, icon: "🔄" },
-    { title: "Orders Ready", value: 5, icon: "📦" },
-    { title: "Orders Cancelled", value: 2, icon: "⚙️" },
+    { title: "New Orders", value: 3, icon: <SquareArrowDown/> },
+    { title: "Orders Ready", value: 5, icon: <ArrowBigUpDash/>},
+    { title: "Orders Cancelled", value: 2, icon: <OctagonAlert/> },
   ];
 
   const handlePagination = (action) => {
@@ -116,7 +117,7 @@ const OrderTable = () => {
     <div className="space-y-6">
     {/* Dashboard Cards Section */}
     <div className="p-6 rounded-lg ">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="flex flex-wrap justify-center gap-6   rounded-lg xl:gap-16">
         {stats.map(({ title, value, icon }, index) => (
           <div key={index} className="relative flex flex-col h-32 w-60 items-center justify-center p-2 text-orange-500 bg-[#2B2623] rounded-lg">
             <div className="flex items-center gap-2 text-5xl bg-[#4D423E] px-8 py-4 rounded-lg font-thin">
