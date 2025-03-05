@@ -114,19 +114,21 @@ const OrderTable = () => {
 
   return (
     <div className="space-y-6">
-      {/* Dashboard Cards Section */}
-      <div className="p-6 bg-gray-800 rounded-lg shadow-lg">
-        <h2 className="mb-6 text-2xl font-bold text-white">Dashboard</h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          {stats.map(({ title, value, icon }, index) => (
-            <div key={index} className="p-4 text-center text-orange-400 bg-gray-700 rounded-lg">
-              <div className="mb-2 text-4xl">{String(value).padStart(2, "0")}</div>
-              <div className="text-sm tracking-wide text-gray-400 uppercase">{title}</div>
-              <div className="text-2xl">{icon}</div>
+    {/* Dashboard Cards Section */}
+    <div className="p-6 rounded-lg ">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {stats.map(({ title, value, icon }, index) => (
+          <div key={index} className="relative flex flex-col h-32 w-60 items-center justify-center p-2 text-orange-500 bg-[#2B2623] rounded-lg">
+            <div className="flex items-center gap-2 text-5xl bg-[#4D423E] px-8 py-4 rounded-lg font-thin">
+              <span>{String(value).padStart(2, "0")}</span>
+              <span className="absolute top-4 w-[18px] h-[20px] right-4 text-[2px]">{icon}</span>
             </div>
-          ))}
-        </div>
+            <div className="mt-2 text-gray-300 text-md">{title}</div>
+          </div>
+        ))}
       </div>
+    </div>
+  
 
       {/* Orders Table */}
       <div className="p-6 bg-gray-800 rounded-lg shadow-lg overflow-auto max-h-[80vh]">
