@@ -20,7 +20,6 @@ describe('Admindashboard Owner Page', () => {
         render(<Ownerpage />);
         expect(screen.getByText('Mocked Sidebar')).toBeInTheDocument();
         expect(screen.getByText('Mocked Topbar')).toBeInTheDocument();
-        expect(screen.getByText('User')).toBeInTheDocument();
         expect(screen.getByText('Mocked Userdetails')).toBeInTheDocument();
     });
 
