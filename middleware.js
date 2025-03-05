@@ -5,17 +5,21 @@ export async function middleware(req) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const { pathname } = req.nextUrl;
 
-  // Allow requests to /api/auth/[...nextauth] without a token check
+  // Debugging: Log path being processed
+  console.log("Middleware processing path:", pathname);
+
+  // ✅ Allow unauthenticated access to authentication and registration routes
   if (
     pathname.startsWith('/api/auth') ||
     pathname.startsWith('/register') ||
-    pathname.startsWith('/api/register')
+    pathname.startsWith('/api/register') ||
+    pathname.startsWith('/api/userExists')
+    
   ) {
     return NextResponse.next();
   }
 
-  // Redirect any random/unknown paths to root
-  // This needs to be before the role-based checks to catch truly random paths
+  // ✅ Redirect unknown paths to root (ensures only valid paths are accessible)
   const validPaths = [
     '/',
     '/api',
@@ -24,13 +28,13 @@ export async function middleware(req) {
     '/UserView',
     '/Cashierdashboard'
   ];
-
   const isValidPath = validPaths.some(path => pathname === path || pathname.startsWith(`${path}/`));
+  
   if (!isValidPath) {
     return NextResponse.redirect(new URL('/', req.url));
   }
 
-  // If there's no token for protected routes, redirect to home
+  // ✅ If no token is present, redirect to home for protected routes
   if (!token) {
     if (
       pathname.startsWith('/admindashboard') ||
@@ -43,7 +47,7 @@ export async function middleware(req) {
     }
   }
 
-  // Role-based access control (only check if token exists)
+  // ✅ Role-based access control (only check if token exists)
   if (token) {
     if (pathname.startsWith('/admindashboard') && token.role !== 'admin') {
       return NextResponse.redirect(new URL('/', req.url));
@@ -62,13 +66,13 @@ export async function middleware(req) {
     }
   }
 
-  // Allow users to continue to the requested page if role matches or path is not protected
+  // ✅ Allow users to continue to the requested page if role matches or path is not protected
   return NextResponse.next();
 }
 
-// Update the matcher to catch ALL paths, not just the specific ones
+// ✅ Middleware Matcher (Excludes `/api/register`, `/api/auth`, `/api/userExists`, etc.)
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico).*)',
+    '/((?!api/register|api/auth|api/userExists|_next/static|_next/image|favicon.ico).*)',
   ],
 };
