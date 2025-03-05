@@ -40,12 +40,12 @@ const OrderTable = () => {
 
   const getStatusClasses = (status) => {
     const statusClasses = {
-      Accepted: "bg-yellow-500 text-gray-900",
-      Picked: "bg-green-500 text-white",
-      Cancelled: "bg-red-500 text-white",
-      Pending: "bg-blue-500 text-white"
+      Accepted: "text-yellow-400",
+      Picked: "text-green-400",
+      Cancelled: "text-red-400",
+      Pending: "text-blue-400"
     };
-    return statusClasses[status] || "bg-gray-500 text-white";
+    return statusClasses[status] || "bg-gray-500 text-white rounded-xl";
   };
 
   const handleDescriptionClick = (orderId) => {
@@ -114,12 +114,12 @@ const OrderTable = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-2">
     {/* Dashboard Cards Section */}
-    <div className="p-6 rounded-lg ">
+    <div className="rounded-lg ">
       <div className="flex flex-wrap justify-center gap-6   rounded-lg xl:gap-16">
         {stats.map(({ title, value, icon }, index) => (
-          <div key={index} className="relative flex flex-col h-32 w-60 items-center justify-center p-2 text-orange-500 bg-[#2B2623] rounded-lg">
+          <div key={index} className="relative flex flex-col h-32 w-60 items-center justify-center  text-orange-500 bg-[#2B2623] rounded-lg">
             <div className="flex items-center gap-2 text-5xl bg-[#4D423E] px-8 py-4 rounded-lg font-thin">
               <span>{String(value).padStart(2, "0")}</span>
               <span className="absolute top-4 w-[18px] h-[20px] right-4 text-[2px]">{icon}</span>
@@ -132,55 +132,55 @@ const OrderTable = () => {
   
 
       {/* Orders Table */}
-      <div className="p-6 bg-gray-800 rounded-lg shadow-lg overflow-auto max-h-[80vh]">
-        <h2 className="mb-6 text-2xl font-bold text-white">Pending Orders</h2>
+      <div className="px-6 overflow-auto max-h-[80vh]">
+        <h2 className="my-2 mx-1 text-orange-500">Pending Orders</h2>
 
         {filteredOrders.length === 0 ? (
           <div className="text-white">No pending orders available</div>
         ) : (
           <div className="overflow-auto justify-center max-w-[75vw] lg:max-w-full rounded-xl">
-            <table className="w-full text-sm  text-left text-gray-400 rounded-xl bg-[#2B2623]">
+            <table className="w-full text-sm  text-center text-gray-400 rounded-xl bg-[#2B2623]">
               <thead className="text-black bg-orange-500">
                 <tr>
-                  <th className="px-4 py-2">Order ID</th>
-                  <th className="px-4 py-2">Customer</th>
-                  <th className="px-4 py-2">Status</th>
-                  <th className="px-4 py-2">Date</th>
-                  <th className="px-4 py-2">Description</th>
-                  <th className="px-4 py-2">Action</th>
+                  <th className="px-4 py-1">Order ID</th>
+                  <th className="px-4 py-1">Customer</th>
+                  <th className="px-4 py-1">Status</th>
+                  <th className="px-4 py-1">Description</th>
+                  <th className="px-4 py-1">Date</th>
+                  <th className="px-4 py-1">Action</th>
                 </tr>
               </thead>
               <tbody className="">
                 {paginatedOrders.map((order) => (
                   <tr key={order._id} className="border-b-2 border-[#3B3737]">
-                    <td className="px-4 py-2">{order._id}</td>
-                    <td className="px-4 py-2">{order.userName}</td>
-                    <td className="px-4 py-2">
+                    <td className="px-4 py-1">{order._id}</td>
+                    <td className="px-4 py-1">{order.userName}</td>
+                    <td className="px-4 py-1">
                       <span className={`px-2 py-1 rounded ${getStatusClasses(order.orderStatus)}`}>
                         {order.orderStatus}
                       </span>
                     </td>
-                    <td className="px-4 py-2">
+                    <td className="px-4 py-1">
                       {formatDate(order.meals?.[0]?.timestamp || new Date())}
                     </td>
                     <td className="px-4 py-2">
                       <button 
                         onClick={() => handleDescriptionClick(order._id)} 
-                        className="text-orange-400 hover:underline"
+                        className="text-orange-500 hover:underline"
                       >
                         View
                       </button>
                     </td>
-                    <td className="flex px-4 py-2 space-x-2">
+                    <td className="flex px-4 py-1 space-x-2">
                       <button 
                         onClick={() => updateStatus(order._id, "Accepted")} 
-                        className="text-green-400 hover:underline"
+                        className="flex-1 text-green-400"
                       >
                         Accept
                       </button>
                       <button 
                         onClick={() => updateStatus(order._id, "Cancelled")} 
-                        className="text-red-400 hover:underline"
+                        className="flex-1 text-red-400"
                       >
                         Cancel
                       </button>
@@ -194,11 +194,11 @@ const OrderTable = () => {
 
         {/* Pagination */}
         {filteredOrders.length > 0 && (
-          <div className="flex items-center gap-2 justify-end mt-4">
+          <div className="flex items-center gap-2 justify-end mt-2">
             <button
               onClick={() => handlePagination("prev")}
               disabled={currentPage === 1}
-              className="flex items-center gap-0 px-2 py-1 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
+              className="flex items-center gap-0 px-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
             >
               <ChevronLeft/>
               Prev
@@ -211,7 +211,7 @@ const OrderTable = () => {
             <button
               onClick={() => handlePagination("next")}
               disabled={currentPage >= Math.ceil(filteredOrders.length / ROWS_PER_PAGE)}
-              className="flex items-center gap-0 px-2 py-1 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition "
+              className="flex items-center gap-0 px-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition "
             >
               Next
               <ChevronRight/>
