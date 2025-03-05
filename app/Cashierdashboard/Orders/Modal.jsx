@@ -7,7 +7,7 @@ const UpdateStatusModal = ({ isOpen, onClose, onSave, currentStatus }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm">
-      <div className="p-8 bg-black text-gray-300 rounded-lg ">
+      <div className="p-8 bg-black text-gray-300 w-80 rounded-lg ">
         <div className="text-center">
           <h3 className="mb-4 text-lg font-semibold">Update Status</h3>
           <div className="flex flex-col items-start space-y-3">

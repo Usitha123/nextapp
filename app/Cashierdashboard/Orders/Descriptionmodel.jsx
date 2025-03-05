@@ -5,7 +5,7 @@ const DescriptionModel = ({ isOpen, onClose, description, orderId }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm">
-      <div className="p-10 bg-black text-gray-300 rounded-lg">
+      <div className="p-10 bg-black text-gray-300 w-80 rounded-lg">
         <div className="text-center">
           <h3 className="mb-4 text-lg font-semibold">Order Description</h3>
           <p className="mb-4">Order ID: {orderId}</p>
