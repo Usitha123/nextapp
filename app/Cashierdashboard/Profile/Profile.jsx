@@ -40,20 +40,14 @@ export default function Profile() {
   }
 
   return (
-    <div className="w-full max-w-3xl p-6 mx-auto bg-white rounded-xl">
+    <div className="bg-[#2B2623] p-8 rounded-md shadow-lg w-full max-w-xl mx-auto">
       {/* Profile Picture */}
       <div className="relative flex items-center justify-center w-24 h-24 mx-auto text-orange-600 bg-orange-100 rounded-full">
         <User2Icon className="text-3xl font-bold" />
-        <button
-          className="absolute bottom-0 right-0 p-1 text-white bg-orange-500 rounded-full"
-          onClick={() => setIsModalOpen(true)}
-        >
-          <Pencil className="p-1" />
-        </button>
       </div>
   
       {/* Profile Details */}
-      <div className="bg-[#2B2623] p-8 rounded-md shadow-lg w-full max-w-xl mx-auto">
+      
         <div className="space-y-4">
           <div className='flex gap-2 mt-6'>
             {/* First Name */}
@@ -107,13 +101,6 @@ export default function Profile() {
             </Link>
           </div>
         </div>
-      </div>
-  
-      {/* Change Password Modal */}
-      <ChangePassword
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
     </div>
   );  
 }
