@@ -6,6 +6,7 @@ import UpdateStatusModal from "./Modal";
 import DeleteOrder from "./Deleteorder";
 import DescriptionModel from "./Descriptionmodel";
 import { useSession } from "next-auth/react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const OrderTable = () => {
   // State management
@@ -44,13 +45,13 @@ const OrderTable = () => {
   // Status styling helper
   const getStatusClasses = (status) => {
     const statusStyles = {
-      "Accepted": "bg-green-500 text-gray-900",
-      "Picked": "bg-yellow-500 text-white",
-      "Cancelled": "bg-red-500 text-white",
-      "Pending": "bg-blue-500 text-white"
+      "Accepted":   "inline-block text-white w-[70%] border border-green-300 rounded-xl bg-green-500  ",
+      "Picked":     "inline-block text-black w-[70%] border border-yellow-300 rounded-xl bg-yellow-400 ",
+      "Cancelled":  "inline-block text-white w-[70%] border border-red-300 rounded-xl bg-red-500  ",
+      "Ready":    "  inline-block text-white w-[70%] border border-blue-300 rounded-xl bg-blue-500  "
     };
     
-    return statusStyles[status] || "bg-gray-500 text-white";
+    return statusStyles[status] || "bg-gray-500 border border-gray-300 inline-block w-[70%] rounded-xl text-white";
   };
 
   // Date formatting helper
@@ -236,12 +237,13 @@ const OrderTable = () => {
 
       {/* Pagination */}
       {filteredOrders.length > 0 && (
-        <div className="flex items-center justify-between mt-4">
+        <div className="flex text-sm items-center gap-2 justify-end mt-2">
           <button
             onClick={handlePrevPage}
             disabled={currentPage === 1}
-            className="px-4 py-2 text-white bg-orange-600 rounded disabled:bg-gray-400"
+            className="flex items-center gap-0 px-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
           >
+            <ChevronLeft/>
             Prev
           </button>
 
@@ -252,9 +254,10 @@ const OrderTable = () => {
           <button
             onClick={handleNextPage}
             disabled={currentPage >= totalPages}
-            className="px-4 py-2 text-white bg-orange-600 rounded disabled:bg-gray-400"
+            className="flex items-center gap-0 px-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
           >
             Next
+            <ChevronRight/>
           </button>
         </div>
       )}
