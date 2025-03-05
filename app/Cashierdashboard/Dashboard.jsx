@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import DescriptionModel from "./Descriptionmodel";
-import { ArrowBigUpDash, OctagonAlert, SquareArrowDown } from "lucide-react";
+import { ArrowBigUpDash, ChevronLeft, ChevronRight, OctagonAlert, SquareArrowDown } from "lucide-react";
 
 const OrderTable = () => {
   const [orders, setOrders] = useState([]);
@@ -138,9 +138,9 @@ const OrderTable = () => {
         {filteredOrders.length === 0 ? (
           <div className="text-white">No pending orders available</div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left text-gray-400">
-              <thead className="text-gray-900 bg-orange-600">
+          <div className="overflow-auto justify-center max-w-[75vw] lg:max-w-full rounded-xl">
+            <table className="w-full text-sm  text-left text-gray-400 rounded-xl bg-[#2B2623]">
+              <thead className="text-black bg-orange-500">
                 <tr>
                   <th className="px-4 py-2">Order ID</th>
                   <th className="px-4 py-2">Customer</th>
@@ -150,9 +150,9 @@ const OrderTable = () => {
                   <th className="px-4 py-2">Action</th>
                 </tr>
               </thead>
-              <tbody className="bg-gray-700">
+              <tbody className="">
                 {paginatedOrders.map((order) => (
-                  <tr key={order._id} className="border-b border-gray-600">
+                  <tr key={order._id} className="border-b-2 border-[#3B3737]">
                     <td className="px-4 py-2">{order._id}</td>
                     <td className="px-4 py-2">{order.userName}</td>
                     <td className="px-4 py-2">
@@ -194,12 +194,13 @@ const OrderTable = () => {
 
         {/* Pagination */}
         {filteredOrders.length > 0 && (
-          <div className="flex justify-between mt-4">
+          <div className="flex items-center gap-2 justify-end mt-4">
             <button
               onClick={() => handlePagination("prev")}
               disabled={currentPage === 1}
-              className="px-4 py-2 text-white bg-orange-600 rounded disabled:bg-gray-400"
+              className="flex items-center gap-0 px-2 py-1 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
             >
+              <ChevronLeft/>
               Prev
             </button>
             
@@ -210,9 +211,10 @@ const OrderTable = () => {
             <button
               onClick={() => handlePagination("next")}
               disabled={currentPage >= Math.ceil(filteredOrders.length / ROWS_PER_PAGE)}
-              className="px-4 py-2 text-white bg-orange-600 rounded disabled:bg-gray-400"
+              className="flex items-center gap-0 px-2 py-1 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition "
             >
               Next
+              <ChevronRight/>
             </button>
           </div>
         )}
