@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { vi, describe, test, expect } from 'vitest';
-import Addmeal from '../../../../app/Canteendashboard/Meals/Addmeal/page'
+import Addmeal from '../../../../../app/Canteendashboard/Meals/Addmeal/page'
 import { SessionProvider } from 'next-auth/react';
 
 vi.mock('next-auth/react', async (importOriginal) => {
@@ -15,16 +15,16 @@ vi.mock('next-auth/react', async (importOriginal) => {
   };
 });
 
-vi.mock('../../../../app/Canteendashboard/Sidebar/page', () => ({
+vi.mock('../../../../../app/Canteendashboard/Sidebar/page', () => ({
     default: () => <div>Mocked Sidebar</div>,
 }));
-vi.mock('../../../../app/Canteendashboard/Topbar/page', () => ({
+vi.mock('../../../../../app/Canteendashboard/Topbar/page', () => ({
     default: () => <div>Mocked Topbar</div>,
 }));
-vi.mock('../../../../app/Canteendashboard/Header/page', () => ({
+vi.mock('../../../../../app/Canteendashboard/Header/page', () => ({
     default: ({ title }) => <div>Mocked Header {title}</div>,
 }));
-vi.mock('../../../../app/Canteendashboard/Meals/Addmeal/Addmeals', () => ({
+vi.mock('../../../../../app/Canteendashboard/Meals/Addmeal/Addmeals', () => ({
   default: () => <div>Mocked Addmeals</div>,
 }));
 

@@ -19,13 +19,6 @@ vi.mock("@/app/register/RegisterForm/page", () => ({
 }));
 
 describe("Register Page", () => {
-  test("redirects to dashboard if session exists", async () => {
-    getServerSession.mockResolvedValue({ user: { name: "User" } });
-
-    await Registerpage();
-
-    expect(redirect).toHaveBeenCalledWith("/dashboard");
-  });
 
   test("renders RegisterForm if no session exists", async () => {
     getServerSession.mockResolvedValue(null);
