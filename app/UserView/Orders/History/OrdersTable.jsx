@@ -101,7 +101,7 @@ const OrdersTable = () => {
             return orderDate.getTime() === today.getTime();
           })
             .filter((order) => session?.user?.email === order.userEmail)
-            .filter((order) => ["Accepted", "Cancelled", "Picked"].includes(order.orderStatus))
+            .filter((order) => ["Cancelled", "Picked"].includes(order.orderStatus))
             .map((order) => (
               <tr key={order._id} className="text-center">
                 <td className="p-2">{order._id}</td>

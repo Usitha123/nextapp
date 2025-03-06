@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import UpdateStatusModal from "./Deleteorder";
-import DescriptionModel from "./Descriptionmodel";
 import { useSession } from "next-auth/react";
+import UpdateStatusModal from "./Deleteorder";
+import DescriptionModal from "./Descriptionmodel";
 
 const OrdersTable = () => {
   const [orders, setOrders] = useState([]);
@@ -14,24 +14,24 @@ const OrdersTable = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
   const { data: session } = useSession();
-  
   const pathname = usePathname();
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const res = await fetch("/api/vieworders");
-        if (!res.ok) throw new Error("Failed to fetch orders");
-        const data = await res.json();
-        setOrders(data.orders || data);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchOrders();
   }, []);
+
+  const fetchOrders = async () => {
+    try {
+      const res = await fetch("/api/vieworders");
+      if (!res.ok) throw new Error("Failed to fetch orders");
+      const data = await res.json();
+      setOrders(data.orders || data);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const updateStatus = async (orderId, status) => {
     try {
@@ -44,16 +44,19 @@ const OrdersTable = () => {
       if (!response.ok) {
         const errorData = await response.json();
         alert(errorData.message || "Failed to update status");
-      } else {
-        const updatedOrder = await response.json();
-        alert(`Status updated to ${status}`);
-        
-        setOrders((prevOrders) =>
-          prevOrders.map((order) =>
-            order._id === orderId ? { ...order, orderStatus: updatedOrder.orderStatus } : order
-          )
-        );
+        return;
       }
+      
+      const updatedOrder = await response.json();
+      alert(`Status updated to ${status}`);
+      
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order._id === orderId 
+            ? { ...order, orderStatus: updatedOrder.orderStatus } 
+            : order
+        )
+      );
     } catch (error) {
       console.error("Error updating status:", error);
       alert("An error occurred while updating status");
@@ -66,20 +69,46 @@ const OrdersTable = () => {
   };
 
   const handleDescriptionClick = (orderId) => {
-    const selectedOrder = orders.find((order) => order._id === orderId);
-    if (selectedOrder) {
-      const mealDescriptions = selectedOrder.meals
+    const order = orders.find((order) => order._id === orderId);
+    if (order) {
+      const mealDescriptions = order.meals
         .map((meal) => `${meal.mealName}: ${meal.mealQuantity} x ${meal.mealPrice}`)
         .join(", <br/> ");
       setSelectedDescription(mealDescriptions);
+      setSelectedOrderId(orderId);
+      setIsDescriptionModalOpen(true);
     }
-    setSelectedOrderId(orderId);
-    setIsDescriptionModalOpen(true);
   };
 
-  const renderTable = (orders) => {
+  const handleCancelClick = (order) => {
+    setSelectedOrder(order);
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => setIsDeleteModalOpen(false);
+  const closeDescriptionModal = () => setIsDescriptionModalOpen(false);
+
+  const getFilteredOrders = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    
+    return orders
+      .filter((order) => {
+        const orderDate = new Date(order.meals?.[0]?.timestamp || 0);
+        orderDate.setHours(0, 0, 0, 0);
+        return orderDate.getTime() === today.getTime();
+      })
+      .filter((order) => session?.user?.email === order.userEmail)
+      .filter((order) => ["Pending", "Ready", "Accepted"].includes(order.orderStatus));
+  };
+
+  const renderOrdersTable = () => {
+    const filteredOrders = getFilteredOrders();
+    
+    if (filteredOrders.length === 0) {
+      return <p>No active orders today</p>;
+    }
+
     return (
       <table className="w-full p-3 bg-white rounded-2xl">
         <thead>
@@ -93,47 +122,34 @@ const OrdersTable = () => {
           </tr>
         </thead>
         <tbody>
-          {orders
-          .filter((order) => {
-            const orderDate = new Date(order.meals?.[0]?.timestamp || 0);
-            orderDate.setHours(0, 0, 0, 0);
-            return orderDate.getTime() === today.getTime();
-          })
-            .filter((order) => session?.user?.email === order.userEmail)
-            .filter((order) => ["Pending", "Ready"].includes(order.orderStatus))
-            .map((order) => (
-              <tr key={order._id} className="text-center">
-                <td className="p-2">{order._id}</td>
-                <td className="p-2">
-                  <span
-                    className={`inline-block w-full px-4 py-2 leading-none bg-green-500 text-white rounded-lg`}
-                  >
-                    {order.orderStatus}
-                  </span>
-                </td>
-                <td className="p-2">{formatDate(order.meals[0].timestamp)}</td>
-                <td className="p-2">{order.canteenName}</td>
-                <td className="p-2">
-                  <button
-                    onClick={() => handleDescriptionClick(order._id)}
-                    className="text-orange-400 hover:underline"
-                  >
-                    View
-                  </button>
-                </td>
-                <td className="p-2">
-                  <button
-                    onClick={() => {
-                      setSelectedOrder(order);
-                      setIsDeleteModalOpen(true);
-                    }}
-                    className="px-2 py-1 text-white bg-red-500 rounded-xl"
-                  >
-                    Cancel
-                  </button>
-                </td>
-              </tr>
-            ))}
+          {filteredOrders.map((order) => (
+            <tr key={order._id} className="text-center">
+              <td className="p-2">{order._id}</td>
+              <td className="p-2">
+                <span className="inline-block w-full px-4 py-2 leading-none text-white bg-green-500 rounded-lg">
+                  {order.orderStatus}
+                </span>
+              </td>
+              <td className="p-2">{formatDate(order.meals[0].timestamp)}</td>
+              <td className="p-2">{order.canteenName}</td>
+              <td className="p-2">
+                <button
+                  onClick={() => handleDescriptionClick(order._id)}
+                  className="text-orange-400 hover:underline"
+                >
+                  View
+                </button>
+              </td>
+              <td className="p-2">
+                <button
+                  onClick={() => handleCancelClick(order)}
+                  className="px-2 py-1 text-white bg-red-500 rounded-xl"
+                >
+                  Cancel
+                </button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     );
@@ -157,28 +173,23 @@ const OrdersTable = () => {
           </Link>
         </div>
       </div>
-      {loading ? (
-        <p>Loading orders...</p>
-      ) : orders.length > 0 ? (
-        renderTable(orders)
-      ) : (
-        <p>No orders available</p>
-      )}
+      
+      {loading ? <p>Loading orders...</p> : renderOrdersTable()}
 
-      <DescriptionModel
+      <DescriptionModal
         isOpen={isDescriptionModalOpen}
-        onClose={() => setIsDescriptionModalOpen(false)}
+        onClose={closeDescriptionModal}
         description={selectedDescription}
         orderId={selectedOrderId}
       />
+      
       <UpdateStatusModal
         isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={() => updateStatus(selectedOrder._id, "Drop")} // Pass the updateStatus function here
+        onClose={closeDeleteModal}
+        onConfirm={() => updateStatus(selectedOrder?._id, "Drop")}
       />
     </div>
   );
 };
 
 export default OrdersTable;
-
