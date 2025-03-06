@@ -45,13 +45,13 @@ const OrderTable = () => {
   // Status styling helper
   const getStatusClasses = (status) => {
     const statusStyles = {
-      "Accepted":   "inline-block text-white w-[70%] border border-green-300 rounded-xl bg-green-500  ",
-      "Picked":     "inline-block text-black w-[70%] border border-yellow-300 rounded-xl bg-yellow-400 ",
-      "Cancelled":  "inline-block text-white w-[70%] border border-red-300 rounded-xl bg-red-500  ",
-      "Ready":    "  inline-block text-white w-[70%] border border-blue-300 rounded-xl bg-blue-500  "
+      "Accepted":   "inline-block text-white w-[70%] rounded-xl bg-green-500  ",
+      "Picked":     "inline-block text-black w-[70%] rounded-xl bg-yellow-400 ",
+      "Cancelled":  "inline-block text-white w-[70%] rounded-xl bg-red-500  ",
+      "Ready":    "  inline-block text-white w-[70%] rounded-xl bg-blue-500  "
     };
     
-    return statusStyles[status] || "bg-gray-500 border border-gray-300 inline-block w-[70%] rounded-xl text-white";
+    return statusStyles[status] || "bg-gray-500 inline-block w-[70%] rounded-xl text-white";
   };
 
   // Date formatting helper
