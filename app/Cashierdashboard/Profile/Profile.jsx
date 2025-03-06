@@ -95,7 +95,7 @@ export default function Profile() {
           <div className="flex justify-end mt-6 space-x-4">
             <Link
               href="/Cashierdashboard/Profile/Edit"
-              className="px-4 py-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
+              className="px-4 py-2 font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
             >
               Edit
             </Link>
