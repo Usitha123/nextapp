@@ -50,6 +50,7 @@ const OrdersTable = () => {
       const updatedOrder = await response.json();
       alert(`Status updated to ${status}`);
       
+      // Update orders locally to reflect the change
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order._id === orderId 
@@ -64,8 +65,13 @@ const OrdersTable = () => {
   };
 
   const formatDate = (dateString) => {
-    const createdAt = new Date(dateString);
-    return createdAt.toLocaleString();
+    try {
+      const createdAt = new Date(dateString);
+      return createdAt.toLocaleString();
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Invalid date";
+    }
   };
 
   const handleDescriptionClick = (orderId) => {
@@ -89,24 +95,25 @@ const OrdersTable = () => {
   const closeDescriptionModal = () => setIsDescriptionModalOpen(false);
 
   const getFilteredOrders = () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
+    if (!orders || !orders.length || !session?.user?.email) {
+      return [];
+    }
+
+    // Only apply status filter - don't filter by date as it's causing issues
     return orders
-      .filter((order) => {
-        const orderDate = new Date(order.meals?.[0]?.timestamp || 0);
-        orderDate.setHours(0, 0, 0, 0);
-        return orderDate.getTime() === today.getTime();
-      })
-      .filter((order) => session?.user?.email === order.userEmail)
-      .filter((order) => ["Pending", "Ready", "Accepted"].includes(order.orderStatus));
+      .filter((order) => session.user.email === order.userEmail)
+      .filter((order) => 
+        Array.isArray(order.meals) && 
+        order.meals.length > 0 && 
+        ["Pending", "Ready", "Accepted"].includes(order.orderStatus)
+      );
   };
 
   const renderOrdersTable = () => {
     const filteredOrders = getFilteredOrders();
     
     if (filteredOrders.length === 0) {
-      return <p>No active orders today</p>;
+      return <p>No active orders available</p>;
     }
 
     return (
@@ -130,8 +137,12 @@ const OrdersTable = () => {
                   {order.orderStatus}
                 </span>
               </td>
-              <td className="p-2">{formatDate(order.meals[0].timestamp)}</td>
-              <td className="p-2">{order.canteenName}</td>
+              <td className="p-2">
+                {order.meals && order.meals[0] && order.meals[0].timestamp
+                  ? formatDate(order.meals[0].timestamp)
+                  : "N/A"}
+              </td>
+              <td className="p-2">{order.canteenName || "N/A"}</td>
               <td className="p-2">
                 <button
                   onClick={() => handleDescriptionClick(order._id)}
@@ -186,7 +197,7 @@ const OrdersTable = () => {
       <UpdateStatusModal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
-        onConfirm={() => updateStatus(selectedOrder?._id, "Drop")}
+        onConfirm={() => selectedOrder?._id && updateStatus(selectedOrder._id, "Drop")}
       />
     </div>
   );
