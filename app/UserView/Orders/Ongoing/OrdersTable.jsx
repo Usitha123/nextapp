@@ -13,15 +13,18 @@ const OrdersTable = () => {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { data: session } = useSession();
   const pathname = usePathname();
 
+  // Add refreshTrigger as a dependency to refetch when it changes
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [refreshTrigger]);
 
   const fetchOrders = async () => {
     try {
+      setLoading(true);
       const res = await fetch("/api/vieworders");
       if (!res.ok) throw new Error("Failed to fetch orders");
       const data = await res.json();
@@ -47,17 +50,12 @@ const OrdersTable = () => {
         return;
       }
       
-      const updatedOrder = await response.json();
+      // Successful status update
       alert(`Status updated to ${status}`);
       
-      // Update orders locally to reflect the change
-      setOrders((prevOrders) =>
-        prevOrders.map((order) =>
-          order._id === orderId 
-            ? { ...order, orderStatus: updatedOrder.orderStatus } 
-            : order
-        )
-      );
+      // Force a fresh fetch instead of modifying state locally
+      setRefreshTrigger(prev => prev + 1);
+      setIsDeleteModalOpen(false);
     } catch (error) {
       console.error("Error updating status:", error);
       alert("An error occurred while updating status");
@@ -94,12 +92,17 @@ const OrdersTable = () => {
   const closeDeleteModal = () => setIsDeleteModalOpen(false);
   const closeDescriptionModal = () => setIsDescriptionModalOpen(false);
 
+  const handleConfirmCancel = async () => {
+    if (selectedOrder?._id) {
+      await updateStatus(selectedOrder._id, "Drop");
+    }
+  };
+
   const getFilteredOrders = () => {
     if (!orders || !orders.length || !session?.user?.email) {
       return [];
     }
 
-    // Only apply status filter - don't filter by date as it's causing issues
     return orders
       .filter((order) => session.user.email === order.userEmail)
       .filter((order) => 
@@ -197,7 +200,7 @@ const OrdersTable = () => {
       <UpdateStatusModal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
-        onConfirm={() => selectedOrder?._id && updateStatus(selectedOrder._id, "Drop")}
+        onConfirm={handleConfirmCancel}
       />
     </div>
   );
