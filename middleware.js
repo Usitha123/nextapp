@@ -2,16 +2,15 @@ import { NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
 export async function middleware(req) {
-  // Middleware completely disabled temporarily
+ 
   return NextResponse.next();
   
-  /*
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const { pathname } = req.nextUrl;
   // Debugging: Log path being processed
   console.log("Middleware processing path:", pathname);
   
-  // ✅ Allow unauthenticated access to authentication and registration routes
+  //  Allow unauthenticated access to authentication and registration routes
   if (
     pathname.startsWith('/api/auth') ||
     pathname.startsWith('/register') ||
@@ -68,14 +67,13 @@ export async function middleware(req) {
   
   // ✅ Allow users to continue to the requested page if role matches or path is not protected
   return NextResponse.next();
-  */
+  
 }
 
-// Comment out the matcher config as well to fully disable middleware
-/*
+
+
 export const config = {
   matcher: [
     '/((?!api/register|api/auth|api/userExists|_next/static|_next/image|favicon.ico).*)',
   ],
 };
-*/

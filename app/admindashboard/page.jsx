@@ -1,4 +1,3 @@
-// CanteenDashboard/page.js
 "use client";
 
 import React from 'react';
@@ -7,7 +6,7 @@ import Topbar from '@/app/admindashboard/Topbar/page';
 import Header from '@/app/admindashboard/Header/page';
 import Dashboardcards from './Dashboardcards';
 
-const CanteenDashboard = () => {
+const AdminDashboard = () => {
   return (
     <div className="flex bg-black">
       <Sidebar />
@@ -22,4 +21,4 @@ const CanteenDashboard = () => {
   );
 };
 
-export default CanteenDashboard;
+export default AdminDashboard;

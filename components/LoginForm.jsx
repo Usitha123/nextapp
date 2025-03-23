@@ -131,11 +131,8 @@ export default function LoginForm() {
           
 <Link href="/register" className="font-semibold text-orange-500 cursor-pointer hover:text-orange-600">
   Register
-</Link>
-            
-          </div>
-
-          
+</Link>     
+          </div>   
         </form>
       </div>
     </div>

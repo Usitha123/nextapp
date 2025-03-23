@@ -6,13 +6,13 @@ const userSchema = new mongoose.Schema(
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    faculty: { type: String, required: true },  // New field for faculty
-    phoneNumber: { type: String, required: true }, // New field for phone number
+    faculty: { type: String, required: true },  
+    phoneNumber: { type: String, required: true }, 
     nicNumber: { type: String, required: true },
-    status: { type: String, default: 'active' },  // Default status as active
+    status: { type: String, default: 'active' },  
    
   },
-  { timestamps: true } // This will add createdAt and updatedAt
+  { timestamps: true } 
 );
 
 export default mongoose.models.User || mongoose.model('User', userSchema);
