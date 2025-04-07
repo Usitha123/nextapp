@@ -9,11 +9,11 @@ import Dashboard from './Dashboard';
 
 const CanteenDashboard = () => {
   return (
-    <div className="flex">
+    <div className="flex bg-black">
       <Sidebar />
       <div className="flex-1">
         <Topbar />
-        <Header title="Canteen Dashboard" /> {/* Pass route-specific title */}
+        <Header title="Dashboard" /> {/* Pass route-specific title */}
         <div className="p-4">
           <Dashboard/>
         </div>
