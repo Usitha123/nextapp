@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from "react";
 import Reportdetails from './Reportdetails'
+import { FileOutput } from "lucide-react";
 
 export default function Dashboard() {
   const contentRef = useRef();
@@ -48,9 +49,9 @@ export default function Dashboard() {
 
         <button
           onClick={exportPDF}
-          className="px-4 py-2 text-white bg-blue-500 rounded"
+          className=" items-center flex gap-2 m-4 mx-auto px-3 py-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black"
         >
-          Export as PDF
+          Export as PDF <FileOutput className="w-5 h-5"/>
         </button>
       </div>
     </div>

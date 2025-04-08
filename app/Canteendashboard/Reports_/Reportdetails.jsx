@@ -28,14 +28,13 @@ const InvoiceTable = () => {
   const calculateTotalAmount = () => {
     return data.reduce((acc, item) => acc + item.total, 0);
   };
-
   return (
-    <div className="max-w-4xl p-6 mx-auto my-8 bg-white rounded-lg shadow-lg">
-      <h2 className="mb-4 text-2xl font-bold">Canteens Report</h2>
-      <table className="min-w-full border-collapse table-auto">
+    <div className="w-full p-2 mx-auto bg-gray-200 rounded-lg shadow-lg overflow-auto">
+      <h2 className="m-4 text-xl font-bold">Canteens Report</h2>
+      <table className="min-w-full bg-gray-100 border rounded-lg table-auto overflow-hidden">
         <thead>
-          <tr className="text-left bg-gray-200">
-            <th className="px-4 py-2 border-b">Item</th>
+          <tr className="text-left bg-orange-500 rounded-t-lg">
+            <th className="px-4 py-2 border-b first:rounded-tl-lg last:rounded-tr-lg">Item</th>
             <th className="px-4 py-2 border-b">Description</th>
             <th className="px-4 py-2 border-b">Quantity</th>
             <th className="px-4 py-2 border-b">Unit Price</th>
@@ -54,11 +53,11 @@ const InvoiceTable = () => {
           ))}
         </tbody>
       </table>
-      <div className="mt-6 text-right">
-        <span className="text-xl font-bold">Total Amount: ${calculateTotalAmount()}</span>
+      <div className="m-3 text-right">
+        <span className="text-lg font-bold">Total Amount: ${calculateTotalAmount()}</span>
       </div>
     </div>
-  );
+  );  
 };
 
 export default InvoiceTable;
