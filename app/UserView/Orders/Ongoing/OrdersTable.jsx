@@ -136,7 +136,7 @@ const OrdersTable = () => {
             <tr key={order._id} className="text-center">
               <td className="p-2">{order._id}</td>
               <td className="p-2">
-                <span className="inline-block w-full px-4 py-2 leading-none text-white bg-green-500 rounded-lg">
+                <span className="inline-block w-[60%] px-4 py-2 leading-none text-white bg-green-500 rounded-xl">
                   {order.orderStatus}
                 </span>
               </td>
@@ -157,7 +157,7 @@ const OrdersTable = () => {
               <td className="p-2">
                 <button
                   onClick={() => handleCancelClick(order)}
-                  className="px-2 py-1 text-white bg-red-500 rounded-xl"
+                  className="inline-block w-[60%] px-4 py-2 leading-none text-white bg-red-500 rounded-xl"
                 >
                   Cancel
                 </button>
