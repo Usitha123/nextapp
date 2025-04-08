@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import ChangePassword from "./Edit/ChangePassword";
+import { UserRound } from "lucide-react";
 
 export default function Profile() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,70 +40,51 @@ export default function Profile() {
   }
 
   return (
-    <div className="bg-[#1b1b1b] p-6 rounded-md shadow-lg w-full max-w-xl mx-auto">
-      <h2 className="mb-6 text-2xl font-semibold text-white">Profile</h2>
-      <div className="flex items-start space-x-6">
-        {/* Profile Picture */}
-        <div className="relative flex items-center justify-center w-24 h-24 text-white bg-gray-700 rounded-full">
-          <span className="text-3xl">👤</span>
-          <button
-            className="absolute bottom-0 right-0 p-1 text-xs text-white bg-orange-500 rounded-full"
-            onClick={() => setIsModalOpen(true)}
-          >
-            Edit
-          </button>
-        </div>
+    <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md mx-auto">
 
-        {/* Profile Form */}
-        <form className="flex-1 space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400">First Name</label>
-              <label className="block text-sm text-gray-400">
-                {targetStudent.firstName || "N/A"}
-              </label>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400">Last Name</label>
-              <label className="block text-sm text-gray-400">
-                {targetStudent.lastName || "N/A"}
-              </label>
-            </div>
-          </div>
+  {/* Profile Icon */}
+  <div className="relative flex items-center justify-center w-24 h-24 mx-auto text-orange-600 bg-orange-100 rounded-full">
+    <span className="text-3xl"><UserRound/></span>
+    
+  </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400">Phone</label>
-              <label className="block text-sm text-gray-400">
-                {targetStudent.phoneNumber || "N/A"}
-              </label>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-400">Email</label>
-              <label className="block text-sm text-gray-400">
-                {targetStudent.email || "N/A"}
-              </label>
-            </div>
-          </div>
+  {/* Profile Info */}
+  <div className="text-sm space-y-4 mt-6">
+    <div className="grid grid-cols-2 gap-4">
+      <label className="text-gray-600">First Name</label>
+      <span className="text-right">{targetStudent.firstName || "N/A"}</span>
+    </div>
+    <hr />
+    <div className="grid grid-cols-2 gap-4">
+      <label className="text-gray-600">Last Name</label>
+      <span className="text-right">{targetStudent.lastName || "N/A"}</span>
+    </div>
+    <hr />
+    <div className="grid grid-cols-2 gap-4">
+      <label className="text-gray-600">Phone</label>
+      <span className="text-right">{targetStudent.phoneNumber || "N/A"}</span>
+    </div>
+    <hr />
+    <div className="grid grid-cols-2 gap-4">
+      <label className="text-gray-600">Email</label>
+      <span className="text-right">{targetStudent.email || "N/A"}</span>
+    </div>
+    <hr />
+    <div className="grid grid-cols-2 gap-4">
+      <label className="text-gray-600">NIC Number</label>
+      <span className="text-right">{targetStudent.nicNumber || "N/A"}</span>
+    </div>
 
-          <div>
-            <label className="block text-sm text-gray-400">NIC Number</label>
-            <label className="block text-sm text-gray-400">
-              {targetStudent.nicNumber || "N/A"}
-            </label>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex justify-end mt-6 space-x-4">
-            <Link
-              href="/Canteendashboard/Profile/Edit"
-              className="px-4 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-400 focus:outline-none"
-            >
-              Edit
-            </Link>
-          </div>
-        </form>
-      </div>
+    {/* Edit Button */}
+    <div className="flex">
+      <Link
+        href={`/Canteendashboard/Profile/Edit`}
+        className="font-bold mx-auto mt-4 px-6 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-400 focus:outline-none"
+      >
+        Edit
+      </Link>
+    </div>
+  </div>
 
       {/* Change Password Modal */}
       <ChangePassword
