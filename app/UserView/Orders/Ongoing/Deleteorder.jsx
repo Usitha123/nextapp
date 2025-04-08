@@ -9,7 +9,7 @@ const UpdateStatusModal = ({ isOpen, onClose, onConfirm }) => {
         <div className="text-center">
           <h3 className="mb-4 text-lg font-semibold">Are you sure you want to delete?</h3>
         </div>
-        <div className="flex justify-end mt-6 space-x-4">
+        <div className="flex justify-end mt-6 space-x-2">
           <button
             onClick={() => {
               // Trigger the onConfirm callback passed as a prop
@@ -24,7 +24,7 @@ const UpdateStatusModal = ({ isOpen, onClose, onConfirm }) => {
           <button
             onClick={onClose}
             type="button"
-            className="px-4 py-2 text-gray-900 bg-white rounded-md hover:bg-orange-300 focus:outline-none"
+            className="px-4 py-2 text-white bg-black rounded-md hover:text-orange-500 focus:outline-none"
           >
             No
           </button>
