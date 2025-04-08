@@ -117,13 +117,13 @@ export default function RegisterForm() {
         draggable
         pauseOnHover
       />
-      <div className="w-full max-w-lg p-8 bg-white rounded-lg shadow-lg bg-opacity-90">
+      <div className="w-full max-w-xl p-8 bg-white rounded-lg shadow-lg bg-opacity-90">
         <h2 className="mb-8 text-2xl font-bold text-center text-orange-500">
           Jpura CMS
         </h2>
 
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             <div className="mb-4">
               <label
                 className="block mb-2 text-sm font-bold text-gray-700"
@@ -159,25 +159,25 @@ export default function RegisterForm() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
-          <div className="mb-4">
-            <label
-              className="block mb-2 text-sm font-bold text-gray-700"
-              htmlFor="email"
-            >
-              Email
-            </label>
-            <input
-              className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          {/* Phone Number */}
-          <div className="mb-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="mb-4">
+              <label
+                className="block mb-2 text-sm font-bold text-gray-700"
+                htmlFor="email"
+              >
+                Email
+              </label>
+              <input
+                className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            {/* Phone Number */}
+            <div className="mb-4">
               <label
                 className="block mb-2 text-sm font-bold text-gray-700"
                 htmlFor="phoneNumber"
@@ -196,11 +196,7 @@ export default function RegisterForm() {
             </div>
           </div>
 
-          
-
-          <div className="grid grid-cols-2 gap-2">
-            
-
+          <div className="grid grid-cols-2 gap-3">
             {/*Nic Number */}
             <div className="mb-4">
               <label
@@ -243,58 +239,55 @@ export default function RegisterForm() {
               </select>
             </div>
           </div>
-          
-          
-          <div className="grid grid-cols-2 gap-2">
-          <div className="mb-4">
-            <label
-              className="block mb-2 text-sm font-bold text-gray-700"
-              htmlFor="password"
-            >
-              Password
-            </label>
-            <div className="relative">
-              <input
-                className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <span
-                className="absolute inset-y-0 flex items-center text-gray-600 cursor-pointer right-3"
-                onClick={() => setShowPassword((prev) => !prev)}
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="mb-4">
+              <label
+                className="block mb-2 text-sm font-bold text-gray-700"
+                htmlFor="password"
               >
-                {showPassword ? <FaEye /> : <FaEyeSlash />}
-              </span>
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <span
+                  className="absolute inset-y-0 flex items-center text-gray-600 cursor-pointer right-3"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                >
+                  {showPassword ? <FaEye /> : <FaEyeSlash />}
+                </span>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label
+                className="block mb-2 text-sm font-bold text-gray-700"
+                htmlFor="confirmPassword"
+              >
+                Confirm Password
+              </label>
+              <div className="relative">
+                <input
+                  className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
+                  id="confirmPassword"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </div>
             </div>
           </div>
 
-          <div className="mb-4">
-            <label
-              className="block mb-2 text-sm font-bold text-gray-700"
-              htmlFor="confirmPassword"
-            >
-              Confirm Password
-            </label>
-            <div className="relative">
-              <input
-                className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
-                id="confirmPassword"
-                type={showPassword ? "text" : "password"}
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-
-          </div>
-
-          
           <div className="flex items-center justify-center">
             <button
               className="px-4 py-2 m-2 rounded-lg font-bold text-white bg-orange-500  hover:bg-orange-600 focus:outline-none focus:shadow-outline"
