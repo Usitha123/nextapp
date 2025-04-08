@@ -17,7 +17,7 @@ const Page = () => {
       <div className="flex-1">
         <Topbar />
         <Header title="Orders" />
-        <div className="p-4">
+        <div className="p-1">
         <OrdersTable />
         {/* Dashboard content */}
         </div>
