@@ -79,7 +79,7 @@ export default function Profile() {
     <div className="flex">
       <Link
         href={`/Canteendashboard/Profile/Edit`}
-        className="px-4 py-2 mx-auto text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
+        className="px-6 py-2 mx-auto text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
       >
         Edit
       </Link>
