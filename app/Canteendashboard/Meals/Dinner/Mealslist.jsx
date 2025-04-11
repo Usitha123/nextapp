@@ -7,6 +7,7 @@ import { FaRegTrashAlt, FaEdit } from 'react-icons/fa';
 import Deletemealmodel from './Deletemealmodel';
 import DescriptionModel from './Descriptionmodel';
 import { useSession } from "next-auth/react";
+import { ChevronLeft, ChevronRight, PlusCircle } from "lucide-react";
 
 const MealsTable = () => {
   const pathname = usePathname();
@@ -81,36 +82,45 @@ const MealsTable = () => {
   const currentMealType = pathname.split('/').pop();
 
   return (
-    <div className="p-6 bg-gray-800 rounded-lg shadow-lg">
-      <h2 className="mb-6 text-2xl font-bold text-white">Meals</h2>
-
+    <div className="p-4">
+  
       {/* Action Buttons */}
-      <div className="flex justify-between mb-4">
-        <Link href="#" className="px-4 py-2 text-gray-900 bg-orange-500 rounded">
+      <div className="mb-4 flex justify-between gap-2">
+        <Link
+          href="#"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
+        >
           Enable
         </Link>
-        <Link href="/Canteendashboard/Meals/Addmeal" className="px-4 py-2 text-gray-900 bg-orange-500 rounded">
+        <Link
+          href="/Canteendashboard/Meals/Addmeal"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
+        >
           Add Meal
         </Link>
       </div>
-
+  
       {/* Meal Type Tabs */}
-      <div className="flex mb-4 space-x-2">
+      <div className="flex mb-4 space-x-6">
         {tabs.map((tab) => (
           <Link
             key={tab.label}
             href={tab.href}
-            className={`px-4 py-2 text-sm ${pathname === tab.href ? 'text-white bg-orange-500' : 'text-gray-400 hover:text-white'}`}
+            className={`py-2 text-sm rounded-xl ${
+              pathname === tab.href
+                ? "text-orange-500"
+                : "text-gray-400 hover:text-white transition"
+            }`}
           >
             {tab.label}
           </Link>
         ))}
       </div>
-
+  
       {/* Meals Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left text-gray-400">
-          <thead className="text-gray-900 bg-orange-600">
+      <div className="overflow-auto justify-center max-w-[75vw] lg:max-w-full rounded-xl">
+        <table className="w-full text-sm text-left text-gray-400 rounded-xl bg-[#2B2623]">
+          <thead className="text-gray-900 bg-orange-500">
             <tr>
               <th className="px-4 py-2">Meal Name</th>
               <th className="px-4 py-2">Description</th>
@@ -121,15 +131,18 @@ const MealsTable = () => {
               <th className="px-4 py-2">Action</th>
             </tr>
           </thead>
-          <tbody className="bg-gray-700">
+          <tbody>
             {meals
               .filter((meal) => meal.mealType === currentMealType)
               .filter((meal) => session?.user?.canteenName === meal.selectCanteen)
               .map((meal) => (
-                <tr key={meal._id} className="border-b border-gray-600">
+                <tr key={meal._id} className="border-b-2 border-[#3B3737]">
                   <td className="px-4 py-2">{meal.mealName}</td>
                   <td className="px-4 py-2">
-                    <button onClick={() => handleDescriptionClick(meal._id)} className="text-orange-400 hover:underline">
+                    <button
+                      onClick={() => handleDescriptionClick(meal._id)}
+                      className="text-orange-400 hover:underline"
+                    >
                       View
                     </button>
                   </td>
@@ -137,28 +150,48 @@ const MealsTable = () => {
                   <td className="px-4 py-2">{meal.mealQuantity}</td>
                   <td className="px-4 py-2">{meal.mealstatus}</td>
                   <td className="px-4 py-2">
-                    <img src={meal.image} alt={`Image of ${meal.mealName}`} className="w-16 h-16 rounded" />
+                    <img
+                      src={meal.image}
+                      alt={`Image of ${meal.mealName}`}
+                      className="w-16 h-16 rounded"
+                    />
                   </td>
-                  <td className="flex items-center px-4 py-2 space-x-2">
-                    <button onClick={() => handleDeleteClick(meal._id)} className="text-gray-400 hover:text-red-500">
-                      <FaRegTrashAlt />
-                    </button>
-                    <Link href={`/Canteendashboard/Meals/Updatemeal?id=${meal._id}`} className="text-gray-400 hover:text-orange-500">
-                      <FaEdit />
-                    </Link>
+                  <td className="px-4 py-2 align-middle">
+                    <div className="flex items-center h-full space-x-2">
+                      <button
+                        onClick={() => handleDeleteClick(meal._id)}
+                        className="text-gray-400 hover:text-red-500"
+                        aria-label={`Delete ${meal.mealName}`}
+                      >
+                        <FaRegTrashAlt />
+                      </button>
+                      <Link
+                        href={`/Canteendashboard/Meals/Updatemeal?id=${meal._id}`}
+                        className="text-gray-400 hover:text-orange-500"
+                        aria-label={`Edit ${meal.mealName}`}
+                      >
+                        <FaEdit />
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))}
           </tbody>
         </table>
       </div>
-
+  
       {/* Pagination */}
-      <div className="flex items-center justify-between mt-4">
-        <button className="text-orange-400 hover:underline">Prev</button>
-        <button className="text-orange-400 hover:underline">Next</button>
+      <div className="flex text-sm items-center gap-2 justify-end mt-4">
+        <button className="flex items-center gap-1 px-3 py-1 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition">
+          <ChevronLeft />
+          Prev
+        </button>
+        <button className="flex items-center gap-1 px-3 py-1 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition">
+          Next
+          <ChevronRight />
+        </button>
       </div>
-
+  
       {/* Modals */}
       <DescriptionModel
         isOpen={isDescriptionModelOpen}
@@ -166,13 +199,14 @@ const MealsTable = () => {
         description={selectedDescription}
         orderId={selectedOrderId}
       />
-      
-      {/* Confirmation Modal for Deletion */}
+  
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="p-6 text-white bg-gray-800 rounded-lg w-80">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="p-6 text-white bg-[#2B2623] rounded-lg w-80 shadow-md">
             <div className="text-center">
-              <h3 className="mb-4 text-lg font-semibold">Are you sure you want to delete?</h3>
+              <h3 className="mb-4 text-lg font-semibold">
+                Are you sure you want to delete?
+              </h3>
             </div>
             <div className="flex justify-end mt-6 space-x-4">
               <button
@@ -195,6 +229,7 @@ const MealsTable = () => {
       )}
     </div>
   );
+  
 };
 
 export default MealsTable;

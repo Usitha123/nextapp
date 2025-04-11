@@ -10,7 +10,7 @@ import Mealslist from './Mealslist';
 
 const Meals = () => {
   return (
-    <div className="flex">
+    <div className="flex bg-black">
       <Sidebar />
       <div className="flex-1">
         <Topbar />
