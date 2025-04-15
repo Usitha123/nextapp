@@ -6,6 +6,7 @@ import Sidebar from './Sidebar/page';
 import Topbar from './Topbar/page';
 import Header from './Header/page';
 import { usePathname } from 'next/navigation';
+import Dashboardpage from './Dashboard/page'
 
 
 const Dashboard = () => {
@@ -18,8 +19,7 @@ const Dashboard = () => {
         <Topbar />
         <Header title="Dashboard" /> {/* Pass route-specific title */}
         <div className="p-4">
-          {/* Dashboard content */}
-          <h1>hello</h1>
+         <Dashboardpage />
         </div>
       </div>
     </div>

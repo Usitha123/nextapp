@@ -21,13 +21,20 @@ const CartItem = ({ item, onRemove }) => (
 );
 
 const Cart = ({ cartItems, onRemove, onClear, onPlaceOrder }) => {
-  const subtotal = cartItems.reduce((total, item) => total + Number(item.mealPrice) * item.quantity, 0);
+  const subtotal = cartItems.reduce(
+    (total, item) => total + Number(item.mealPrice) * item.quantity,
+    0
+  );
+
+  const isCartEmpty = cartItems.length === 0;
 
   return (
     <div className="p-4 bg-white border rounded-lg shadow-sm">
       <h3 className="mb-4 text-lg font-semibold">Your Cart</h3>
-      {cartItems.length > 0 ? (
-        cartItems.map((item) => <CartItem key={item.id} item={item} onRemove={onRemove} />)
+      {!isCartEmpty ? (
+        cartItems.map((item) => (
+          <CartItem key={item.id} item={item} onRemove={onRemove} />
+        ))
       ) : (
         <p className="text-gray-500">Your cart is empty.</p>
       )}
@@ -37,15 +44,25 @@ const Cart = ({ cartItems, onRemove, onClear, onPlaceOrder }) => {
           <span>Rs: {subtotal.toFixed(2)}</span>
         </div>
         <div className="flex mt-4 space-x-4">
-          <button 
+          <button
             onClick={onClear}
-            className="flex-1 py-2 text-gray-700 bg-gray-300 rounded hover:bg-gray-400"
+            disabled={isCartEmpty}
+            className={`flex-1 py-2 rounded ${
+              isCartEmpty
+                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+            }`}
           >
             Cancel
           </button>
-          <button 
+          <button
             onClick={onPlaceOrder}
-            className="flex-1 py-2 text-white bg-orange-500 rounded hover:bg-orange-600"
+            disabled={isCartEmpty}
+            className={`flex-1 py-2 rounded ${
+              isCartEmpty
+                ? "bg-orange-200 text-white cursor-not-allowed"
+                : "bg-orange-500 text-white hover:bg-orange-600"
+            }`}
           >
             Place Order
           </button>
@@ -54,6 +71,7 @@ const Cart = ({ cartItems, onRemove, onClear, onPlaceOrder }) => {
     </div>
   );
 };
+
 
 const FoodDisplay = ({ onAddToCart }) => {
   const [meals, setMeals] = useState([]);
@@ -151,7 +169,7 @@ const CombinedComponent = () => {
     userName: session?.user?.name,
     userEmail: session?.user?.email,
     canteenName: currentCanteen,
-    orderType: "Lunch",
+    orderType: "Breakfast",
     meals: [],
   });
   
