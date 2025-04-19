@@ -16,9 +16,9 @@ const Page = () => {
     const currentHour = now.getHours();
 
     let mealPath = "dinner"; // Default to dinner
-    if (currentHour >= 7 && currentHour < 11) {
+    if (currentHour >= 7 && currentHour < 12) {
       mealPath = "breakfast";
-    } else if (currentHour >= 11 && currentHour < 16) {
+    } else if (currentHour >= 12 && currentHour < 16) {
       mealPath = "lunch";
     } else if (currentHour >= 16 && currentHour < 21) {
       mealPath = "dinner";
