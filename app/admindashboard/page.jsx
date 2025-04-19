@@ -5,6 +5,7 @@ import Sidebar from '@/app/admindashboard/Sidebar/page';
 import Topbar from '@/app/admindashboard/Topbar/page';
 import Header from '@/app/admindashboard/Header/page';
 import Dashboardcards from './Dashboardcards';
+import RegistrationStatistics from './RegistrationStatistics';
 
 const AdminDashboard = () => {
   return (
@@ -13,8 +14,9 @@ const AdminDashboard = () => {
       <div className="flex-1">
         <Topbar />
         <Header title="Dashboard" /> {/* Pass route-specific title */}
-        <div className="p-4">
+        <div className="p-4 space-y-6">
           <Dashboardcards/>
+          <RegistrationStatistics />
         </div>
       </div>
     </div>
