@@ -112,7 +112,7 @@ const FoodDisplay = ({ onAddToCart }) => {
       const minute = now.getMinutes();
       setIsBreakfastTime(
         (hour > 7 || (hour === 7 && minute >= 0)) &&
-        (hour < 12 || (hour === 12 && minute === 0))
+        (hour < 11 || (hour === 11 && minute === 0))
       );
     };
 
