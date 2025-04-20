@@ -1,51 +1,60 @@
-import React from "react";
-import Link from 'next/link';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
 
+// Dummy popular items list
 const popularItems = [
   {
     name: "Chicken Fried Rice",
     canteen: "Open-Canteen",
-    image:
-      "https://example.com/chicken-fried-rice.jpg", // replace with actual image URL
+    image: "https://example.com/chicken-fried-rice.jpg",
   },
   {
     name: "Chicken Kottu",
     canteen: "GYM-Canteen",
-    image:
-      "https://example.com/chicken-kottu.jpg", // replace with actual image URL
+    image: "https://example.com/chicken-kottu.jpg",
   },
   {
     name: "Vegetable Pasta",
     canteen: "Rahula-Canteen",
-    image:
-      "https://example.com/vegetable-pasta.jpg", // replace with actual image URL
-  },
-];
-
-const canteens = [
-  {
-    name: "Open",
-    image: "https://example.com/open-canteen.jpg", // replace with actual image URL
-  },
-  {
-    name: "GYM",
-    image: "https://example.com/gym-canteen.jpg", // replace with actual image URL
-  },
-  {
-    name: "Rahula",
-    image: "https://example.com/rahula-canteen.jpg", // replace with actual image URL
-  },
-  {
-    name: "SkyCafe",
-    image: "https://example.com/skycafe.jpg", // replace with actual image URL
+    image: "https://example.com/vegetable-pasta.jpg",
   },
 ];
 
 export default function DashboardContent() {
+  const [canteens, setCanteens] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchCanteens = async () => {
+      try {
+        const res = await fetch("/api/allcanteenslist", {
+          headers: { "Content-Type": "application/json" },
+        });
+        if (!res.ok) throw new Error("Failed to fetch data");
+
+        const data = await res.json();
+        const activeCanteens = data.filter(
+          (canteen) =>
+            canteen.ownerstatus !== "Inactive" && canteen.status === "Active"
+        );
+        setCanteens(activeCanteens);
+      } catch (err) {
+        console.error("Error fetching canteens:", err);
+        setError("Failed to load canteens.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCanteens();
+  }, []);
+
   return (
     <div className="p-6 bg-gray-100 rounded-xl">
-     
-      <div>
+      {/* Popular Items */}
+      <section>
         <div className="flex mb-4 space-x-4 text-lg font-medium">
           <span className="text-orange-500 border-b-2 border-orange-500 cursor-pointer">
             Popular
@@ -59,7 +68,11 @@ export default function DashboardContent() {
               key={index}
               className="overflow-hidden bg-white shadow-md rounded-xl"
             >
-              <img src={item.image} alt={item.name} className="object-cover w-full h-40" />
+              <img
+                src={item.image}
+                alt={item.name}
+                className="object-cover w-full h-40"
+              />
               <div className="flex items-center justify-between p-4">
                 <div>
                   <h3 className="text-lg font-semibold">{item.name}</h3>
@@ -72,13 +85,22 @@ export default function DashboardContent() {
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      <div>
+      {/* Canteens */}
+      <section>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-semibold">Canteens</h3>
-          <Link href="../../UserView/Canteens" className="text-sm font-medium text-orange-500">View All</Link>
+          <Link
+            href="/UserView/Canteens"
+            className="text-sm font-medium text-orange-500"
+          >
+            View All
+          </Link>
         </div>
+
+        {loading && <p>Loading canteens...</p>}
+        {error && <p className="text-red-500">{error}</p>}
 
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {canteens.map((canteen, index) => (
@@ -91,13 +113,15 @@ export default function DashboardContent() {
                 alt={canteen.name}
                 className="object-cover w-full h-28"
               />
-              <div className="py-2 font-semibold text-white bg-orange-500">
-                {canteen.name}
-              </div>
+              <Link href={`/UserView/Canteens/${canteen.canteenName}`}>
+                <div className="py-2 font-semibold text-white bg-orange-500 cursor-pointer">
+                  {canteen.canteenName}
+                </div>
+              </Link>
             </div>
           ))}
         </div>
-      </div>
+      </section>
     </div>
   );
 }
