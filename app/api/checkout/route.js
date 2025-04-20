@@ -8,7 +8,7 @@ export async function POST(req) {
 
     const line_items = items.map(item => ({
       price_data: {
-        currency: 'usd',
+        currency: 'lkr',
         product_data: { name: item.mealName },
         unit_amount: item.mealPrice * 100,
       },
