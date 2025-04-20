@@ -51,6 +51,10 @@ const orderSchema = new Schema({
     default: 'Pending', 
     required: true, 
   },
+  paymentStatus: {
+    type: String,
+    required: true, 
+  },
   meals: [mealSchema],  
  
 });

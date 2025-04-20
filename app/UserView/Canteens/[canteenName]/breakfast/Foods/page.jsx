@@ -236,10 +236,11 @@ const CombinedComponent = () => {
       userEmail: session?.user?.email,
       canteenName: currentCanteen,
       orderType: "Breakfast",
+      paymentStatus: "by_Cash",
       meals,
     };
 
-    localStorage.setItem("orderData", JSON.stringify(orderData));
+  
 
     try {
       const res = await fetch("/api/addorders", {
@@ -267,6 +268,17 @@ const CombinedComponent = () => {
       mealPrice: item.mealPrice,
     }));
 
+    const orderData = {
+      userName: session?.user?.name,
+      userEmail: session?.user?.email,
+      canteenName: currentCanteen,
+      orderType: "Breakfast",
+      paymentStatus: "by_Card",
+      meals,
+    };
+
+    localStorage.setItem("orderData", JSON.stringify(orderData));
+    
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",

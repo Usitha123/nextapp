@@ -9,10 +9,10 @@ export async function POST(request) {
     const body = await request.json();
     
     // Destructure the body to get the user data
-    const { userName, userEmail, canteenName, orderType, meals } = body;
+    const { userName, userEmail, canteenName, orderType, meals, paymentStatus } = body;
 
     // Validate the required fields
-    if (!userName || !userEmail || !canteenName || !orderType) {
+    if (!userName || !userEmail || !canteenName || !orderType || !paymentStatus) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields: userName, userEmail, canteenName, or orderType.' }),
         { status: 400 }
@@ -37,6 +37,7 @@ export async function POST(request) {
       canteenName,
       orderType,
       orderStatus,
+      paymentStatus,
       meals, // an array of meal objects
     });
 
