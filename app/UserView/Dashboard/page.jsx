@@ -1,6 +1,7 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 
 // Dummy popular items list
 const popularItems = [
@@ -109,11 +110,15 @@ export default function DashboardContent() {
               className="overflow-hidden text-center bg-white shadow-md rounded-xl"
             >
               <img
-                src={canteen.image}
-                alt={canteen.name}
+                src={canteen.image || "/fallback.jpg"}
+                alt={canteen.name || "Canteen"}
                 className="object-cover w-full h-28"
               />
-              <Link href={`/UserView/Canteens/${canteen.canteenName}`}>
+              <Link
+                href={`/UserView/Canteens/${encodeURIComponent(
+                  canteen.canteenName || ""
+                )}`}
+              >
                 <div className="py-2 font-semibold text-white bg-orange-500 cursor-pointer">
                   {canteen.canteenName}
                 </div>
