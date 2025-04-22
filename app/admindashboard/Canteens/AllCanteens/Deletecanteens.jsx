@@ -11,15 +11,13 @@ const Deletecanteens = ({ isOpen, onClose, onDelete }) => {
         <div className="flex justify-around">
           <button 
             onClick={onDelete}
-            className=" px-4 py-2 text-sm font-medium bg-orange-500 text-black rounded-xl hover:bg-orange-600
-"
+            className=" px-4 py-2 text-sm font-medium bg-orange-500 text-black rounded-xl hover:bg-orange-600"
           >
             Yes
           </button>
           <button 
             onClick={onClose}
-            className=" px-4 py-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black
-"
+            className=" px-4 py-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black"
           >
             Cancel
           </button>

@@ -4,9 +4,9 @@ const DescriptionModel = ({ isOpen, onClose, description, orderId }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="p-6 text-white bg-gray-800 rounded-lg w-80">
-        <div className="text-center">
+    <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm">
+      <div className="w-1/3 p-6 bg-black text-gray-300 rounded-lg shadow-lg">
+      <div className="text-center">
           <h3 className="mb-4 text-lg font-semibold">Order Description</h3>
           <p className="mb-4">Order ID: {orderId}</p>
           <br/>
@@ -16,8 +16,8 @@ const DescriptionModel = ({ isOpen, onClose, description, orderId }) => {
             <button
               onClick={onClose}
               type="button"
-              className="px-4 py-2 text-white bg-gray-600 rounded-md hover:bg-gray-500 focus:outline-none"
-            >
+              className=" px-4 py-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black"
+              >
               Close
             </button>
           </div>
