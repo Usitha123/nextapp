@@ -2,9 +2,17 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { usePathname } from "next/navigation";
 import { signOut } from 'next-auth/react';
+import {
+  LayoutDashboard,
+  UtensilsCrossed,
+  Package,
+  BarChart3,
+  Wallet,
+  UserRoundPen,
+  LogOut
+} from 'lucide-react';
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -15,32 +23,85 @@ const Sidebar = () => {
 
   const isActive = (path) => pathname === path;
 
-  const menuItems = [
-    { href: "/Canteendashboard", label: "Canteen Dashboard" },
-    { href: "/Canteendashboard/Meals/Breakfast", label: "Meals", subPaths: ["/Canteendashboard/Meals/Breakfast", "/Canteendashboard/Meals/Lunch", "/Canteendashboard/Meals/Dinner"] },
-    { href: "/Canteendashboard/Orders", label: "Orders" },
-    { href: "/Canteendashboard/Reports_", label: "Reports" },
-    { href: "/Canteendashboard/Cashier", label: "Cashier" },
-    { href: "/Canteendashboard/Profile", label: "Profile" },
-  ];
-
   return (
-    <div className="w-64 h-screen p-4 text-white bg-gray-800">
-      <h1 className="mb-6 text-2xl font-bold text-orange-500">LOGO</h1>
+    <div className="w-20 h-[100vh] p-4 text-gray-300 bg-[#2B2623] md:w-60">
+      <h1 className="mb-10 hidden md:block text-center text-2xl font-bold text-[#ff842f]">LOGO</h1>
       <ul className="space-y-4">
-        {menuItems.map((item) => (
-          <li key={item.href}>
-            <Link
-              href={item.href}
-              className={`block p-2 rounded ${isActive(item.href) || (item.subPaths && item.subPaths.some((subPath) => isActive(subPath))) ? "bg-gray-700 text-white" : "hover:bg-gray-700"}`}
-            >
-              {item.label}
-            </Link>
-          </li>
-        ))}
         <li>
-          <button onClick={handleSignOut} className="block p-2 rounded hover:bg-gray-700">
-            Logout
+          <Link
+            href="/Canteendashboard"
+            className={`gap-3 flex p-2 rounded hover:bg-[#3d3632] hover:text-orange-500 ${isActive("/Canteendashboard") ? "text-orange-500 font-bold" : ""}`}
+          >
+            <LayoutDashboard />
+            <span className="hidden md:flex">Dashboard</span>
+          </Link>
+        </li>
+
+        <li>
+          <Link
+            href="/Canteendashboard/Meals/Breakfast"
+            className={`gap-3 flex p-2 rounded hover:bg-[#3d3632] hover:text-orange-500 ${
+              isActive("/Canteendashboard/Meals/Breakfast", [
+                "/Canteendashboard/Meals/Breakfast",
+                "/Canteendashboard/Meals/Lunch",
+                "/Canteendashboard/Meals/Dinner"
+              ])
+                ? "text-orange-500 font-bold"
+                : ""
+            }`}
+          >
+            <UtensilsCrossed />
+            <span className="hidden md:flex">Meals</span>
+          </Link>
+        </li>
+
+        <li>
+          <Link
+            href="/Canteendashboard/Orders"
+            className={`gap-3 flex p-2 rounded hover:bg-[#3d3632] hover:text-orange-500 ${isActive("/Canteendashboard/Orders") ? "text-orange-500 font-bold" : ""}`}
+          >
+            <Package />
+            <span className="hidden md:flex">Orders</span>
+          </Link>
+        </li>
+
+        <li>
+          <Link
+            href="/Canteendashboard/Reports_"
+            className={`gap-3 flex p-2 rounded hover:bg-[#3d3632] hover:text-orange-500 ${isActive("/Canteendashboard/Reports_") ? "text-orange-500 font-bold" : ""}`}
+          >
+            <BarChart3 />
+            <span className="hidden md:flex">Reports</span>
+          </Link>
+        </li>
+
+        <li>
+          <Link
+            href="/Canteendashboard/Cashier"
+            className={`gap-3 flex p-2 rounded hover:bg-[#3d3632] hover:text-orange-500 ${isActive("/Canteendashboard/Cashier") ? "text-orange-500 font-bold" : ""}`}
+          >
+            <Wallet />
+            <span className="hidden md:flex">Cashier</span>
+          </Link>
+        </li>
+
+        <li>
+          <Link
+            href="/Canteendashboard/Profile"
+            className={`gap-3 flex p-2 rounded hover:bg-[#3d3632] hover:text-orange-500 ${isActive("/Canteendashboard/Profile") ? "text-orange-500 font-bold" : ""}`}
+          >
+            <UserRoundPen />
+            <span className="hidden md:flex">Profile</span>
+          </Link>
+        </li>
+
+        <li>
+          <button
+            onClick={handleSignOut}
+            className="flex w-full gap-3 p-2 rounded hover:bg-[#3d3632] hover:text-orange-500"
+          >
+            <LogOut />
+            <span className="hidden md:flex">Logout</span>
           </button>
         </li>
       </ul>

@@ -49,7 +49,7 @@ const links = [
       { href: "/admindashboard/User/Cashier", label: "Cashier" }
     ]
   },
-  { href: "/admindashboard/Reports_", label: "Reports", icon: <ChartColumn /> },
+  
   { href: "/admindashboard/Profile", label: "Profile", icon: <UserRoundPen /> }
 ];
 
@@ -74,7 +74,7 @@ return (
               </button>
               {/* Submenu for larger screens */}
               {openMenu === link.label && (
-                <ul className="ml-4 mt-1 space-y-2 md:block hidden">
+                <ul className="hidden mt-1 ml-4 space-y-2 md:block">
                   {link.subMenu.map((subLink) => (
                     <li key={subLink.href}>
                       <Link

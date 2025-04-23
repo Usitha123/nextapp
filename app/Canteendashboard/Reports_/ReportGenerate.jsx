@@ -122,12 +122,12 @@ export default function Dashboard() {
                 max={maxDate}
                 value={dateRange.startDate}
                 onChange={handleDateChange}
-                className="pl-3 pr-10 py-2 border rounded hover:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="py-2 pl-3 pr-10 border rounded hover:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
               <button 
                 type="button"
                 onClick={() => handleIconClick(startDateRef)}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-orange-500 focus:outline-none"
+                className="absolute text-gray-500 transform -translate-y-1/2 right-2 top-1/2 hover:text-orange-500 focus:outline-none"
               >
                 <FaCalendarAlt className="w-5 h-5" />
               </button>
@@ -144,12 +144,12 @@ export default function Dashboard() {
                 max={maxDate}
                 value={dateRange.endDate}
                 onChange={handleDateChange}
-                className="pl-3 pr-10 py-2 border rounded hover:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="py-2 pl-3 pr-10 border rounded hover:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
               <button 
                 type="button"
                 onClick={() => handleIconClick(endDateRef)}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-orange-500 focus:outline-none"
+                className="absolute text-gray-500 transform -translate-y-1/2 right-2 top-1/2 hover:text-orange-500 focus:outline-none"
               >
                 <FaCalendarAlt className="w-5 h-5" />
               </button>
@@ -158,7 +158,7 @@ export default function Dashboard() {
           {hasOrders && (
             <button
               onClick={exportPDF}
-              className="px-4 py-2 text-white bg-orange-500 rounded hover:bg-orange-600 transition-colors duration-200"
+              className="px-4 py-2 text-white transition-colors duration-200 bg-orange-500 rounded hover:bg-orange-600"
             >
               Export as PDF
             </button>
@@ -171,7 +171,7 @@ export default function Dashboard() {
           <Reportdetails dateRange={dateRange} />
         </div>
       ) : (
-        <div className="p-8 text-center text-lg text-gray-600 bg-gray-100 rounded-lg">
+        <div className="p-8 text-lg text-center text-gray-600 bg-gray-100 rounded-lg">
           No orders placed in this duration
         </div>
       )}

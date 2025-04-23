@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 const PaymentComplete = () => {
   const [orderData, setOrderData] = useState(null);
@@ -67,6 +68,7 @@ const PaymentComplete = () => {
           ))}
         </ul>
       </div>
+      <Link href="/UserView/Canteens">Back to Dashboard</Link>
     </div>
   );
 };

@@ -1,14 +1,14 @@
-// app/Canteendashboard/Header/page.jsx
+// Header/page.js
 "use client";
 
 import React from 'react';
 
-const HeaderPage = () => {
+const Header = ({ title }) => {
   return (
-    <header className="p-4 text-xl font-bold text-white bg-gray-600">
-      Canteen Header
+    <header className="p-3 m-4 rounded-xl text-xl font-bold text-white bg-[#2B2623]">
+      {title}
     </header>
   );
 };
 
-export default HeaderPage;
+export default Header;
