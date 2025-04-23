@@ -2,7 +2,7 @@
 "use client";
 
 import React from 'react';
-import Sidebar from '../../Sidebar/page';
+import Sidebar from '../../Sidebar/Sidebar';
 import Topbar from '../../Topbar/page';
 import Header from '../../Header/page';
 import Userdetails from './Userdetails';

@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import Sidebar from '@/app/admindashboard/Sidebar/page';
+import Sidebar from '@/app/admindashboard/Sidebar/Sidebar';
 import Topbar from '@/app/admindashboard/Topbar/page';
 import Header from '@/app/admindashboard/Header/page';
 import Dashboardcards from './Dashboardcards';
