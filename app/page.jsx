@@ -9,15 +9,15 @@ export default async function Home() {
   if (session) {
     // Redirect based on user role
     if (session.user.role === "admin") {
-      redirect("/admindashboard");
+      return redirect("/admindashboard");
     } else if (session.user.role === "cashier") {
-      redirect("/Cashierdashboard");
+      return redirect("/Cashierdashboard");
     } else if (session.user.role === "canteenOwner") {
-      redirect("/Canteendashboard");
+      return redirect("/Canteendashboard");
     } else {
-      redirect("/UserView"); // Default redirect for other roles
+      return redirect("/UserView"); // Default redirect for other roles
     }
-  } 
+  }
 
   return (
     <>
