@@ -6,7 +6,7 @@ import { ObjectId } from 'mongodb';
 export async function DELETE(req) {
   // Get the ID from the URL query parameters
   const { searchParams } = new URL(req.url);
-  const id = searchParams.get('id');
+  const id = searchParams.get('id')?.trim(); // ✨ Added .trim() here
 
   // Check if ID is provided
   if (!id) {

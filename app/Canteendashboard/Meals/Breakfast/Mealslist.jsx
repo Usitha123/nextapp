@@ -100,13 +100,8 @@ const MealsTable = () => {
   return (
     <div className="p-4 ">
       {/* Action Buttons */}
-      <div className="mb-4 flex justify-between gap-2">
-        <Link
-          href="#"
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
-        >
-          Enable
-        </Link>
+      <div className="flex justify-between gap-2 mb-4">
+        
         <Link
           href="/Canteendashboard/Meals/Addmeal"
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
@@ -203,7 +198,7 @@ const MealsTable = () => {
 
       {/* Pagination */}
       {filteredMeals.length > 0 && (
-        <div className="flex text-sm items-center gap-2 justify-end mt-4">
+        <div className="flex items-center justify-end gap-2 mt-4 text-sm">
           <button
             // onClick={handlePrevPage}
             // disabled={currentPage === 1}

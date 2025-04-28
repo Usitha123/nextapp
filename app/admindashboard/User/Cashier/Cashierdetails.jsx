@@ -113,7 +113,6 @@ const StudentTable = () => {
 
   return (
     <div className="p-4 rounded-lg">
-
       <div className="overflow-auto justify-center max-w-[75vw] lg:max-w-full rounded-xl">
         <table className="w-full text-sm text-left text-gray-400 rounded-xl bg-[#2B2623]">
           <thead>
@@ -160,7 +159,7 @@ const StudentTable = () => {
           </tbody>
         </table>
       </div>
-  
+
       <div className="flex items-center justify-end gap-2 mt-4">
         <button
           onClick={() => handlePagination("prev")}
@@ -180,7 +179,7 @@ const StudentTable = () => {
           <ChevronRight />
         </button>
       </div>
-  
+
       {/* Modals */}
       <UpdateStatusModal
         isOpen={isEditModalOpen}
@@ -193,10 +192,11 @@ const StudentTable = () => {
       <Deletecashier
         isOpen={isDeleteCashierModalOpen}
         onClose={closeModals}
+        cashier={selectedCashier} 
         onDelete={handleDelete}
       />
     </div>
-  );  
+  );
 };
 
 export default StudentTable;

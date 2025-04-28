@@ -53,7 +53,7 @@ const orderSchema = new Schema({
   },
   paymentStatus: {
     type: String,
-    required: true, 
+    required: false, 
   },
   meals: [mealSchema],  
  
