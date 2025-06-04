@@ -130,7 +130,7 @@ const SalesStatistics = () => {
         <div className="flex gap-2">
           <button
             onClick={() => setTimeframe('daily')}
-            className={`px-4 py-2 rounded ${
+            className={`px-4 py-2 rounded-lg ${
               timeframe === 'daily'
                 ? 'bg-orange-500 text-white'
                 : 'bg-[#4D423E] text-gray-300'
@@ -140,7 +140,7 @@ const SalesStatistics = () => {
           </button>
           <button
             onClick={() => setTimeframe('weekly')}
-            className={`px-4 py-2 rounded ${
+            className={`px-4 py-2 rounded-lg ${
               timeframe === 'weekly'
                 ? 'bg-orange-500 text-white'
                 : 'bg-[#4D423E] text-gray-300'
@@ -150,7 +150,7 @@ const SalesStatistics = () => {
           </button>
           <button
             onClick={() => setTimeframe('monthly')}
-            className={`px-4 py-2 rounded ${
+            className={`px-4 py-2 rounded-lg ${
               timeframe === 'monthly'
                 ? 'bg-orange-500 text-white'
                 : 'bg-[#4D423E] text-gray-300'
@@ -161,7 +161,7 @@ const SalesStatistics = () => {
         </div>
       </div>
       
-      <div className="w-full h-[400px]">
+      <div className="w-full h-[180px] md:h-[300px]">
         <ResponsiveContainer>
           <BarChart
             data={getData()}
