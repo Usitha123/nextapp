@@ -99,7 +99,7 @@ const AddMealForm = () => {
   };
 
   return (
-    <div className="bg-gray-800 text-white p-8 rounded-lg shadow-lg w-[400px] mx-auto">
+    <div className="text-gray-200 bg-[#2B2623] p-6 rounded-lg shadow-lg w-[400px] mx-auto">
       {/* <h2 className="mb-6 text-2xl font-bold">Add Meal</h2> */}
       <form onSubmit={handleSubmit}>
         <InputField label="Meal Name" name="mealName" value={meal.mealName} onChange={handleInputChange} />
@@ -110,11 +110,11 @@ const AddMealForm = () => {
           <InputField label="Quantity" name="mealQuantity" type="number" value={meal.mealQuantity} onChange={handleInputChange} />
         </div>
         <FileInputField label="Image" onChange={handleFileChange} previewURL={localPreview} />
-        <div className="flex justify-between">
-          <button type="button" className="px-4 py-2 text-white bg-gray-600 rounded hover:bg-gray-700">
+        <div className="flex justify-between text-sm">
+          <button type="button" className="px-4 py-1 m-2 text-orange-500 border border-orange-500 rounded-xl bg-[#3B3737] hover:bg-black transition">
             Cancel
           </button>
-          <button type="submit" className="px-4 py-2 text-white bg-orange-500 rounded hover:bg-orange-600">
+          <button type="submit" className="px-4 py-1 m-2 text-white bg-orange-500 rounded-xl hover:bg-orange-400 transition">
             Add
           </button>
         </div>
