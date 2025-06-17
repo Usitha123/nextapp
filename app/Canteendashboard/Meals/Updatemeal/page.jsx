@@ -12,7 +12,7 @@ const Meals = () => {
   return (
     <div className="flex">
       <Sidebar />
-      <div className="flex-1 bg-black">
+      <div className="flex-1 bg-bla">
         <Topbar />
         <Header title="Update Meals" /> {/* Pass another route-specific title */}
         <div className="p-4">
