@@ -173,7 +173,7 @@ const FileInputField = ({ label, onChange, previewURL }) => (
     <input
       type="file"
       onChange={onChange}
-      className="w-full text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:bg-gray-700 file:text-white hover:file:bg-orange-500"
+      className="w-full h-11 p-2 text-gray-300 bg-[#3B3737]  rounded-md  file:cursor-pointer file:p-0.5 file:px-2   file:rounded-md file:border-0 file:text-white file:bg-[#5E5E63CF] hover:file:bg-orange-500"
     />
     {previewURL && (
       <div className="mt-4">
