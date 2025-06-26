@@ -14,7 +14,7 @@ const AdminDashboard = () => {
       <div className="flex-1">
         <Topbar />
         <Header title="Dashboard" /> {/* Pass route-specific title */}
-        <div className="p-4 space-y-6">
+        <div className="space-y-6">
           <Dashboardcards/>
           <RegistrationStatistics />
         </div>

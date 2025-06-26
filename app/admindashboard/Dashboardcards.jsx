@@ -78,7 +78,7 @@ const DashboardCards = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="flex flex-wrap justify-center gap-6 p-2 mt-2 rounded-lg xl:gap-16">
+    <div className="flex flex-wrap justify-between gap-6 p-2 m-10 rounded-lg">
       <DashboardCard count={activeCanteenCount} label="Active Canteens" Icon={Store} />
       <DashboardCard count={blockedCanteenCount} label="Blocked Canteens" Icon={ServerOff} />
       <DashboardCard count={activeStudentCount} label="Active Students" Icon={UsersRound} />

@@ -120,7 +120,7 @@ const RegistrationStatistics = () => {
   }
 
   return (
-    <div className="p-6 bg-[#2B2623] rounded-lg">
+    <div className="p-6 m-10 bg-[#2B2623] rounded-lg">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-medium text-orange-500">Student Registration Statistics</h3>
         <div className="flex gap-2">
@@ -157,7 +157,7 @@ const RegistrationStatistics = () => {
         </div>
       </div>
       
-      <div className="w-full h-[300px]">
+      <div className="w-full h-[150px] lg:h-[270px]">
         <ResponsiveContainer>
           <LineChart
             data={getData()}
