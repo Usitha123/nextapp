@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { vi, describe, test, expect } from 'vitest';
-import Header from '../../../../app/admindashboard/Header/page'
+import Header from '../../../../app/admindashboard/Header/Header'
 
 describe('Userview Header', () => {
     test('should render the title prop correctly', () => {

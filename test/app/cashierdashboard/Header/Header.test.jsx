@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { vi, describe, test, expect } from 'vitest';
-import Header from '../../../../app/Cashierdashboard/Header/page'
+import Header from '../../../../app/Cashierdashboard/Header/Header'
 
 describe('Cashierdashboard Header', () => {
 

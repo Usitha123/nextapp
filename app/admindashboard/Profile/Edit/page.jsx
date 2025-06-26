@@ -1,7 +1,7 @@
 import React from 'react'
 import Sidebar from '../../Sidebar/Sidebar';
 import Topbar from '../../Topbar/page';
-import Header from '../../Header/page';
+import Header from '../../Header/Header';
 import Profile from './Profile';
 
 function page() {
