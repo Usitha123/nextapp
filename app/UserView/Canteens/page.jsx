@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../Sidebar/page";
 import Topbar from "../Topbar/page";
-import Header from "../Header/page";
+import Header from "../Header/Header";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";

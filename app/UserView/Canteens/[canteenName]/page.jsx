@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation"; // Import Next.js navigation hooks
 import Sidebar from "../../Sidebar/page";
 import Topbar from "../../Topbar/page";
-import Header from "../../Header/page";
+import Header from "../../Header/Header";
 import Foods from "./lunch/Foods/page";
 
 const Page = () => {

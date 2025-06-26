@@ -4,7 +4,7 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import Sidebar from "../../../Sidebar/page";
 import Topbar from "../../../Topbar/page";
-import Header from "../../../Header/page";
+import Header from "../../../Header/Header";
 import Foods from "./Foods/page";
 import Link from "next/link";
 

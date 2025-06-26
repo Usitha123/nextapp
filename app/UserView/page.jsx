@@ -4,7 +4,7 @@
 import React from 'react';
 import Sidebar from './Sidebar/page';
 import Topbar from './Topbar/page';
-import Header from './Header/page';
+import Header from './Header/Header';
 import { usePathname } from 'next/navigation';
 import Dashboardpage from './Dashboard/page'
 
