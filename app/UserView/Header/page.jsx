@@ -1,14 +1,13 @@
-
 "use client";
 
 import React from 'react';
 
-const HeaderPage = () => {
+const Header = ({ title }) => {
   return (
-    <header className="p-4 text-xl font-bold text-white bg-gray-600">
-      Cashier Dashboard
+    <header className="p-4 text-2xl text-[#ff842f] font-bold m-4 bg-white border-[2px] border-[#ff842f] rounded-xl ">
+      {title}
     </header>
   );
 };
 
-export default HeaderPage;
+export default Header;
