@@ -1,11 +1,12 @@
-"use client"
+"use client";
+
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { FaCheckCircle, FaTimesCircle, FaArrowLeft } from 'react-icons/fa';
 
 const PaymentComplete = () => {
   const [orderData, setOrderData] = useState(null);
-  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [status, setStatus] = useState("loading"); // "loading", "success", "failed"
 
   useEffect(() => {
     const sessionId = new URLSearchParams(window.location.search).get('session_id');
@@ -18,36 +19,36 @@ const PaymentComplete = () => {
     const completePayment = async () => {
       if (sessionId) {
         try {
-          // Verify payment status with Stripe
           const res = await fetch(`/api/checkout/verify?session_id=${sessionId}`);
 
           if (res.ok) {
-            // If payment is successful, send orderData to the server
             const orderRes = await fetch('/api/addorders', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(storedOrderData), // Send orderData here
+              body: JSON.stringify(storedOrderData),
             });
 
             if (orderRes.ok) {
-              setOrderSuccess(true);
-              localStorage.removeItem('orderData'); // Clear the stored order data
+              setStatus("success");
+              localStorage.removeItem('orderData');
             } else {
-              alert("Failed to place order.");
+              setStatus("failed");
             }
           } else {
-            alert("Payment verification failed.");
+            setStatus("failed");
           }
         } catch (error) {
-          alert("An error occurred during payment verification.");
+          setStatus("failed");
         }
+      } else {
+        setStatus("failed");
       }
     };
 
     completePayment();
   }, []);
 
-  if (!orderData) {
+  if (!orderData || status === "loading") {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <div className="flex space-x-2">
@@ -62,20 +63,21 @@ const PaymentComplete = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="max-w-md w-full">
+      <div className="flex items-center justify-center flex-1 p-8">
+        <div className="w-full max-w-md">
           <div className="p-6 bg-white rounded-lg shadow-md">
+
             {/* Status Message */}
             <div className="flex flex-col items-center justify-center mb-8">
-              {orderSuccess ? (
+              {status === "success" ? (
                 <div className="flex flex-col items-center">
-                  <FaCheckCircle className="w-16 h-16 text-green-500 mb-4" />
+                  <FaCheckCircle className="w-16 h-16 mb-4 text-green-500" />
                   <h2 className="text-2xl font-bold text-gray-800">Order Placed Successfully!</h2>
                   <p className="mt-2 text-gray-600">Your order has been confirmed and is being processed.</p>
                 </div>
               ) : (
                 <div className="flex flex-col items-center">
-                  <FaTimesCircle className="w-16 h-16 text-red-500 mb-4" />
+                  <FaTimesCircle className="w-16 h-16 mb-4 text-red-500" />
                   <h2 className="text-2xl font-bold text-gray-800">Order Failed</h2>
                   <p className="mt-2 text-gray-600">There was an issue placing your order. Please try again.</p>
                 </div>
@@ -83,9 +85,14 @@ const PaymentComplete = () => {
             </div>
 
             {/* Order Details */}
-            <div className="p-6 mb-6 bg-gray-50 rounded-lg">
+            <div className="p-6 mb-6 rounded-lg bg-gray-50">
               <h3 className="mb-4 text-xl font-semibold text-gray-800">Order Details</h3>
               <div className="space-y-4">
+                 <div className="flex justify-between p-3 bg-white rounded-md">
+                  <span className="font-medium text-gray-600">Order Id:</span>
+                  <span className="text-gray-800">{orderData._id}</span>
+                </div>
+                <span className="text-gray-800">{orderData._id}</span>
                 <div className="flex justify-between p-3 bg-white rounded-md">
                   <span className="font-medium text-gray-600">Canteen:</span>
                   <span className="text-gray-800">{orderData.canteenName}</span>
@@ -108,8 +115,15 @@ const PaymentComplete = () => {
               </div>
             </div>
 
-            {/* Back Button */}
-            <div className="flex justify-center">
+            {/* Buttons */}
+            <div className="flex justify-center space-x-4">
+              <Link 
+                href="/UserView/Canteens" 
+                className="flex items-center px-6 py-3 text-white transition-colors duration-200 bg-orange-500 rounded-md hover:bg-orange-600"
+              >
+                <FaArrowLeft className="mr-2" />
+                Download Receipt
+              </Link>
               <Link 
                 href="/UserView/Canteens" 
                 className="flex items-center px-6 py-3 text-white transition-colors duration-200 bg-orange-500 rounded-md hover:bg-orange-600"
@@ -118,6 +132,7 @@ const PaymentComplete = () => {
                 Back to Dashboard
               </Link>
             </div>
+
           </div>
         </div>
       </div>
