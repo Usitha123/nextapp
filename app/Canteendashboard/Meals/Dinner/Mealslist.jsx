@@ -92,6 +92,7 @@ const MealsTable = () => {
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
         >
           Add Meal
+          <PlusCircle size={20} />
         </Link>
       </div>
   
@@ -207,14 +208,14 @@ const MealsTable = () => {
               <button
                 onClick={handleDeleteOrder}
                 type="button"
-                className="px-4 py-2 text-white bg-orange-500 rounded-md hover:bg-orange-400 focus:outline-none"
+              className="px-4 py-1 m-2 text-white bg-orange-500 rounded-xl hover:bg-orange-400 transition"
               >
                 Yes
               </button>
               <button
                 onClick={handleCloseModal}
                 type="button"
-                className="px-4 py-2 text-white bg-gray-600 rounded-md hover:bg-gray-500 focus:outline-none"
+              className="px-4 py-1 m-2 text-orange-500 border border-orange-500 rounded-xl bg-[#3B3737] hover:bg-black transition"
               >
                 No
               </button>

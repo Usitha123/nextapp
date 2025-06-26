@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import Reportdetails from './Reportdetails'
 import { useSession } from "next-auth/react";
 import { FaCalendarAlt } from 'react-icons/fa';
+import { FileOutput } from "lucide-react";
 
 export default function Dashboard() {
   const contentRef = useRef();
@@ -107,11 +108,11 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex flex-col p-4">
+    <div className="flex flex-col p-4 ">
       <div className="mb-6 space-y-4">
-        <h2 className="text-xl font-semibold">Generate Sales Report</h2>
-        <div className="flex items-center gap-4">
-          <div className="relative flex items-center gap-2">
+        <h2 className="text-xl text-white font-semibold">Generate Sales Report</h2>
+        <div className="flex items-center  gap-6">
+          <div className="relative text-white flex items-center gap-2">
             <label htmlFor="startDate" className="whitespace-nowrap">Start Date:</label>
             <div className="relative">
               <input
@@ -122,7 +123,7 @@ export default function Dashboard() {
                 max={maxDate}
                 value={dateRange.startDate}
                 onChange={handleDateChange}
-                className="py-2 pl-3 pr-10 border rounded hover:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="px-4 py-2 text-sm text-black border rounded hover:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
               <button 
                 type="button"
@@ -133,7 +134,7 @@ export default function Dashboard() {
               </button>
             </div>
           </div>
-          <div className="relative flex items-center gap-2">
+          <div className="relative text-white flex items-center  gap-2">
             <label htmlFor="endDate" className="whitespace-nowrap">End Date:</label>
             <div className="relative">
               <input
@@ -144,7 +145,7 @@ export default function Dashboard() {
                 max={maxDate}
                 value={dateRange.endDate}
                 onChange={handleDateChange}
-                className="py-2 pl-3 pr-10 border rounded hover:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="px-4 py-2 text-sm text-black  border rounded hover:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
               <button 
                 type="button"
@@ -158,10 +159,9 @@ export default function Dashboard() {
           {hasOrders && (
             <button
               onClick={exportPDF}
-              className="px-4 py-2 text-white transition-colors duration-200 bg-orange-500 rounded hover:bg-orange-600"
-            >
-              Export as PDF
-            </button>
+              className=" px-4 py-2 flex gap-2 text-sm font-medium bg-orange-500 text-black rounded-xl hover:bg-orange-600">               
+              Export as PDF <FileOutput/>
+            </button> 
           )}
         </div>
       </div>

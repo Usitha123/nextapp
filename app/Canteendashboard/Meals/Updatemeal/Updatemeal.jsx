@@ -1,18 +1,18 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { useRouter } from 'next/navigation';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 const UpdateCanteen = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+
   const [meal, setMeal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [file, setFile] = useState(null); // New state for the selected file
-  const [localPreview, setLocalPreview] = useState(null); // New state for the image preview
+  const [file, setFile] = useState(null);
+  const [localPreview, setLocalPreview] = useState(null);
 
   useEffect(() => {
     const id = searchParams.get('id');
@@ -25,7 +25,7 @@ const UpdateCanteen = () => {
     setLoading(true);
 
     fetch(`/api/allmeallist?id=${id}`)
-      .then((res) => res.ok ? res.json() : Promise.reject('Failed to fetch meal data'))
+      .then((res) => (res.ok ? res.json() : Promise.reject('Failed to fetch meal data')))
       .then(setMeal)
       .catch((err) => setError(err.message || 'Error fetching meal details'))
       .finally(() => setLoading(false));
@@ -40,11 +40,9 @@ const UpdateCanteen = () => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
-      const fileReader = new FileReader();
-      fileReader.onloadend = () => {
-        setLocalPreview(fileReader.result); // Set the preview URL
-      };
-      fileReader.readAsDataURL(selectedFile); // Read the file as data URL for preview
+      const reader = new FileReader();
+      reader.onloadend = () => setLocalPreview(reader.result);
+      reader.readAsDataURL(selectedFile);
     }
   };
 
@@ -54,20 +52,18 @@ const UpdateCanteen = () => {
     setError(null);
 
     try {
-      const response = await fetch(`/api/updatemeal?id=${meal._id}`, {
+      const res = await fetch(`/api/updatemeal?id=${meal._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(meal),
       });
 
-      if (!response.ok) throw new Error(await response.text());
+      if (!res.ok) throw new Error(await res.text());
 
-      const updatedMeal = await response.json();
-      console.log('Canteen updated:', updatedMeal);
-
+      await res.json();
       router.push('/Canteendashboard/Meals/Breakfast');
     } catch (err) {
-      setError(err.message || 'Failed to update canteen.');
+      setError(err.message || 'Failed to update meal.');
     } finally {
       setLoading(false);
     }
@@ -78,25 +74,67 @@ const UpdateCanteen = () => {
   if (!meal) return <div>No meal found to update.</div>;
 
   return (
-    <div className="w-full max-w-lg p-6 mx-auto text-white bg-gray-900 rounded-md">
+    <div className="w-[500px] p-6 mx-auto text-gray-200 bg-[#2B2623] rounded-md">
       <h2 className="mb-4 text-xl font-bold">Update Meal</h2>
-      <div className="bg-gray-800 text-white p-8 rounded-lg shadow-lg w-[400px] mx-auto">
+
+      <div className="text-sm bg-[#2B2623] rounded-lg shadow-lg  mx-auto">
         <form onSubmit={handleSubmit}>
-          <InputField label="Meal Name" name="mealName" value={meal.mealName} onChange={handleChange} />
-          <TextareaField label="Description" name="mealDescription" value={meal.mealDescription} onChange={handleChange} />
-          <SelectField label="Category" name="mealType" options={["Breakfast", "Lunch", "Dinner"]} value={meal.mealType} onChange={handleChange} />
-          <div className="grid grid-cols-[2fr_1fr] gap-2">
-            <InputField label="Price" name="mealPrice" type="text" value={meal.mealPrice} onChange={handleChange} />
-            <InputField label="Quantity" name="mealQuantity" type="number" value={meal.mealQuantity} onChange={handleChange} />
+          <InputField
+            label="Meal Name"
+            name="mealName"
+            value={meal.mealName}
+            onChange={handleChange}
+          />
+          <TextareaField
+            label="Description"
+            name="mealDescription"
+            value={meal.mealDescription}
+            onChange={handleChange}
+          />
+          <SelectField
+            label="Category"
+            name="mealType"
+            options={['Breakfast', 'Lunch', 'Dinner']}
+            value={meal.mealType}
+            onChange={handleChange}
+          />
+
+          <div className="grid grid-cols-[2fr_1fr] gap-3">
+            <InputField
+              label="Price"
+              name="mealPrice"
+              type="text"
+              value={meal.mealPrice}
+              onChange={handleChange}
+            />
+            <InputField
+              label="Quantity"
+              name="mealQuantity"
+              type="number"
+              value={meal.mealQuantity}
+              onChange={handleChange}
+            />
           </div>
-          <FileInputField label="Image" onChange={handleFileChange} previewURL={localPreview} />
-          <div className="flex justify-between">
-          <Link href="/Canteendashboard/Meals/Breakfast" className="px-4 py-2 text-white bg-gray-600 rounded hover:bg-gray-700">
-                      Cancel
-                    </Link>
-            <button type="submit" className="px-4 py-2 text-white bg-orange-500 rounded hover:bg-orange-600">Update</button>
-         
-            
+
+          <FileInputField
+            label="Image"
+            onChange={handleFileChange}
+            previewURL={localPreview}
+          />
+
+          <div className="flex justify-between text-sm">
+            <Link
+              href="/Canteendashboard/Meals/Breakfast"
+              className="px-4 py-1 m-2 text-orange-500 border border-orange-500 rounded-xl bg-[#3B3737] hover:bg-black transition"
+            >
+              Cancel
+            </Link>
+            <button
+              type="submit"
+              className="px-4 py-1 m-2 text-white bg-orange-500 rounded-xl hover:bg-orange-400 transition"
+            >
+              Update
+            </button>
           </div>
         </form>
       </div>
@@ -104,44 +142,44 @@ const UpdateCanteen = () => {
   );
 };
 
-// Reusable Input Components
-const InputField = ({ label, name, type = "text", value, onChange }) => (
+// ─── Reusable fields — styled to match AddMealForm ────────────────────────────
+const InputField = ({ label, name, type = 'text', value, onChange }) => (
   <div className="mb-4">
-    <label className="block mb-1 text-sm font-medium">{label}</label>
+    <label className="block p-1 text-orange-500">{label}</label>
     <input
       type={type}
       name={name}
       value={value}
       onChange={onChange}
-      className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
+      className="w-full p-2 text-gray-300 bg-[#3B3737] rounded-md"
     />
   </div>
 );
 
 const TextareaField = ({ label, name, value, onChange }) => (
   <div className="mb-4">
-    <label className="block mb-1 text-sm font-medium">{label}</label>
+    <label className="block p-1 text-orange-500">{label}</label>
     <textarea
       name={name}
       value={value}
       onChange={onChange}
-      className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
+      className="w-full p-2 text-gray-300 bg-[#3B3737] rounded-md resize-none"
     />
   </div>
 );
 
 const SelectField = ({ label, name, options, value, onChange }) => (
   <div className="mb-4">
-    <label className="block mb-1 text-sm font-medium">{label}</label>
+    <label className="block p-1 text-orange-500">{label}</label>
     <select
       name={name}
       value={value}
       onChange={onChange}
-      className="w-full p-1 text-gray-300 bg-[#3B3737]  rounded-md"
+      className="w-full p-2 text-gray-300 bg-[#3B3737] rounded-md"
     >
-      {options.map((option) => (
-        <option key={option} value={option}>
-          {option}
+      {options.map((opt) => (
+        <option key={opt} value={opt}>
+          {opt}
         </option>
       ))}
     </select>
@@ -150,11 +188,14 @@ const SelectField = ({ label, name, options, value, onChange }) => (
 
 const FileInputField = ({ label, onChange, previewURL }) => (
   <div className="mb-4">
-    <label className="block mb-1 text-sm font-medium">{label}</label>
+    <label className="block p-1 text-orange-500">{label}</label>
     <input
       type="file"
       onChange={onChange}
-      className="w-full text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:bg-gray-700 file:text-white hover:file:bg-orange-500"
+      className="w-full h-11 p-2 text-gray-300 bg-[#3B3737] rounded-md
+                 file:cursor-pointer file:p-0.5 file:px-2
+                 file:rounded-md file:border-0 file:text-white
+                 file:bg-[#5E5E63CF] hover:file:bg-gray-600"
     />
     {previewURL && (
       <div className="mt-4">

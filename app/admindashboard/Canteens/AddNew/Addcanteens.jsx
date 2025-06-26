@@ -199,7 +199,7 @@ export default function AddCanteens() {
 
           <input type="file"
             onChange={handleFileChange}
-            className="w-full h-11 p-2 text-gray-300 bg-[#3B3737]  rounded-md  file:cursor-pointer file:p-0.5 file:px-2   file:rounded-md file:border-0 file:text-white file:bg-[#5E5E63CF] hover:file:bg-gray-600 "
+            className="w-full h-11 p-2 text-gray-300 bg-[#3B3737]  rounded-md  file:cursor-pointer file:p-0.5 file:px-2   file:rounded-md file:border-0 file:text-white file:bg-[#5E5E63CF] hover:file:bg-orange-500 "
             required
           />
           {canteenProgress > 0 && <p>{canteenProgress}% Uploaded</p>}
