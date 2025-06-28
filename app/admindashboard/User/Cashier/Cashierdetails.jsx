@@ -17,24 +17,20 @@ const StudentTable = () => {
   const [selectedCashier, setSelectedCashier] = useState(null);
   const [selectedStudentId, setSelectedStudentId] = useState(null);
 
-  // ✅ Central fetch function to reuse
-  const fetchCashiers = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/allcashierlist", {
-        cache: "no-store", // prevent caching on Vercel
-      });
-      if (!res.ok) throw new Error("Failed to fetch cashiers");
-      const data = await res.json();
-      setCashiers(data);
-    } catch (error) {
-      console.error("Error fetching cashiers:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchCashiers = async () => {
+      try {
+        const res = await fetch("/api/allcashierlist");
+        if (!res.ok) throw new Error("Failed to fetch cashiers");
+        const data = await res.json();
+        setCashiers(data);
+      } catch (error) {
+        console.error("Error fetching cashiers:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchCashiers();
   }, []);
 
@@ -70,7 +66,7 @@ const StudentTable = () => {
         method: "DELETE",
       });
       if (response.ok) {
-        await fetchCashiers(); // ✅ re-fetch from DB
+        setCashiers(cashiers.filter((cashier) => cashier._id !== selectedCashier._id));
         closeModals();
       } else {
         alert("Failed to delete cashier");
@@ -96,7 +92,11 @@ const StudentTable = () => {
         alert(errorData.message || "Failed to update status");
       } else {
         alert(`Status updated to ${newStatus}`);
-        await fetchCashiers(); // ✅ refresh from backend
+        setCashiers((prev) =>
+          prev.map((cashier) =>
+            cashier._id === cashierId ? { ...cashier, status: newStatus } : cashier
+          )
+        );
       }
     } catch (error) {
       console.error("Error updating status:", error);
@@ -160,7 +160,6 @@ const StudentTable = () => {
         </table>
       </div>
 
-      {/* Pagination */}
       <div className="flex items-center justify-end gap-2 mt-4">
         <button
           onClick={() => handlePagination("prev")}
@@ -193,7 +192,7 @@ const StudentTable = () => {
       <Deletecashier
         isOpen={isDeleteCashierModalOpen}
         onClose={closeModals}
-        cashier={selectedCashier}
+        cashier={selectedCashier} 
         onDelete={handleDelete}
       />
     </div>
