@@ -15,6 +15,7 @@ const OwnerTable = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedOwner, setSelectedOwner] = useState(null);
+  const [updateTrigger, setUpdateTrigger] = useState(0); // Force re-render trigger
 
   // Fetch owners data
   const fetchOwners = useCallback(async () => {
@@ -50,7 +51,7 @@ const OwnerTable = () => {
   const currentOwners = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     return owners.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [owners, currentPage]);
+  }, [owners, currentPage, updateTrigger]); // Add updateTrigger as dependency
 
   // Pagination handlers
   const handlePagination = useCallback((direction) => {
@@ -114,6 +115,8 @@ const OwnerTable = () => {
     if (!selectedOwner?._id) return;
 
     try {
+      setLoading(true);
+      
       const response = await fetch(`/api/updatestatusowner?id=${selectedOwner._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -125,6 +128,7 @@ const OwnerTable = () => {
         throw new Error(errorData.message || "Failed to update status");
       }
 
+      // Update the owners list immediately
       setOwners(prev =>
         prev.map(owner =>
           owner._id === selectedOwner._id 
@@ -132,12 +136,24 @@ const OwnerTable = () => {
             : owner
         )
       );
+
+      // Update the selected owner to reflect the change in modals
+      setSelectedOwner(prev => prev ? { ...prev, status: newStatus } : null);
+      
+      // Force re-render to ensure UI updates
+      setUpdateTrigger(prev => prev + 1);
       
       alert(`Status updated to ${newStatus}`);
       closeModals();
+      
+      // Optional: Refetch data to ensure consistency
+      // await fetchOwners();
+      
     } catch (error) {
       console.error("Status update error:", error);
       alert(error.message || "An error occurred while updating status");
+    } finally {
+      setLoading(false);
     }
   }, [selectedOwner, closeModals]);
 
@@ -227,14 +243,17 @@ const OwnerTable = () => {
                   <td className="p-3 break-all">{owner.email}</td>
                   <td className="p-3">{owner.nicNumber}</td>
                   <td className="p-3">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      owner.status === 'active' 
-                        ? 'bg-green-900/50 text-green-400' 
-                        : owner.status === 'pending'
-                        ? 'bg-yellow-900/50 text-yellow-400'
-                        : 'bg-red-900/50 text-red-400'
-                    }`}>
-                      {owner.status}
+                    <span 
+                      key={`${owner._id}-${owner.status}-${updateTrigger}`} // Force re-render with key
+                      className={`px-2 py-1 rounded-full text-xs transition-colors ${
+                        owner.status?.toLowerCase() === 'active' 
+                          ? 'bg-green-900/50 text-green-400' 
+                          : owner.status?.toLowerCase() === 'pending'
+                          ? 'bg-yellow-900/50 text-yellow-400'
+                          : 'bg-red-900/50 text-red-400'
+                      }`}
+                    >
+                      {owner.status || 'inactive'}
                     </span>
                   </td>
                   <td className="p-3">{owner.selectcanteen}</td>
