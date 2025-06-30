@@ -161,7 +161,7 @@ const FoodDisplay = ({ onAddToCart }) => {
               }`}
             />
             {meal.mealstatus === "Inactive" && (
-              <div className="mt-2 text-sm font-semibold text-red-500">
+              <div className="flex justify-end mt-4 text-sm font-semibold text-red-500">
                 Not Available Now
               </div>
             )}

@@ -49,6 +49,33 @@ const MealsTable = () => {
     fetchMeals();
   }, [fetchMeals]);
 
+  const handleToggleStatus = async (id, currentStatus) => {
+  const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+
+  try {
+    const res = await fetch(`/api/updatemealstatus?id=${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ status: newStatus }),
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      alert(data.message);
+      // Optional: refresh data
+      // await fetchMeals(); or router.refresh() in Next.js App Router
+    } else {
+      alert(data.message);
+    }
+  } catch (error) {
+    console.error('Error toggling status:', error);
+    alert('Error toggling status');
+  }
+};
+
+
   const handleDeleteOrder = async () => {
     try {
       setLoading(true);
@@ -146,6 +173,7 @@ const MealsTable = () => {
                 <th className="px-4 py-2">Quantity</th>
                 <th className="px-4 py-2">Status</th>
                 <th className="px-4 py-2">Image</th>
+                <th className="px-4 py-2">Change Status</th>
                 <th className="px-4 py-2">Action</th>
               </tr>
             </thead>
@@ -171,6 +199,18 @@ const MealsTable = () => {
                       className="w-16 h-16 rounded"
                     />
                   </td>
+                  <td className="px-4 py-2">
+  <button
+    onClick={() => handleToggleStatus(meal._id, meal.mealstatus)}
+    className={`px-3 py-1 rounded text-white transition duration-200 ${
+      meal.mealstatus === 'Active' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
+    }`}
+  >
+    {meal.mealstatus === 'Active' ? 'Block' : 'Active'}
+  </button>
+</td>
+
+
                   <td className="px-4 py-2 align-middle">
                     <div className="flex items-center h-full space-x-2">
                       <button
@@ -242,7 +282,7 @@ const MealsTable = () => {
               <button
                 onClick={handleDeleteOrder}
                 type="button"
-              className="px-4 py-1 m-2 text-white bg-orange-500 rounded-xl hover:bg-orange-400 transition"
+              className="px-4 py-1 m-2 text-white transition bg-orange-500 rounded-xl hover:bg-orange-400"
                 disabled={loading}
               >
                 {loading ? "Deleting..." : "Yes"}
