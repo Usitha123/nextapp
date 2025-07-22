@@ -8,7 +8,7 @@ function page() {
   return (
     <div className="flex bg-black">
       <Sidebar/>
-      <div className="flex-1">
+<div className="ml-20 md:ml-60 min-h-screen w-full bg-black">
         <Topbar />
         <Header title="Add Cashier" />
         <div className="p-4">
