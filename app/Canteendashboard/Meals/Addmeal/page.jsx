@@ -9,14 +9,14 @@ import Addmeals from './Addmeals';
 
 const Meals = () => {
   return (
-    <div className="flex">
+    <div className="flex bg-black">
       <Sidebar />
-      <div className="flex-1 bg-black">
+      <div className="ml-20 md:ml-60 min-h-screen w-full bg-black">
         <Topbar />
         <Header title="Add Meals" /> {/* Pass another route-specific title */}
         <div className="p-4">
-          <Addmeals/>
-          
+          <Addmeals />
+
           {/* Meals content */}
         </div>
       </div>

@@ -204,7 +204,7 @@ const AddCashierForm = () => {
       {localPreview && (
         <div className="mt-4">
           <p className="mb-2 text-sm text-gray-400">Preview:</p>
-          <img src={localPreview} alt="Preview" className="w-full rounded-lg shadow" />
+          <img src={localPreview} alt="Preview" className="w-auto h-[200px] mx-auto rounded-lg shadow" />
         </div>
       )}
     </div>

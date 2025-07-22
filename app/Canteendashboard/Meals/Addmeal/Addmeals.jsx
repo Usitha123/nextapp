@@ -178,7 +178,7 @@ const FileInputField = ({ label, onChange, previewURL }) => (
     {previewURL && (
       <div className="mt-4">
         <p className="mb-2 text-sm text-gray-400">Preview:</p>
-        <img src={previewURL} alt="Preview" className="w-full rounded-lg shadow" />
+        <img src={previewURL} alt="Preview" className="w-auto h-[180px] mx-auto  rounded-lg shadow" />
       </div>
     )}
   </div>
