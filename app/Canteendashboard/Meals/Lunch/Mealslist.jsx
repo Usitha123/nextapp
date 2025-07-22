@@ -79,6 +79,35 @@ const MealsTable = () => {
     setIsDescriptionModelOpen(true);
   };
 
+  const handleToggleStatus = async (id, currentStatus) => {
+    const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+
+    try {
+      const res = await fetch(`/api/updatemealstatus?id=${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setMeals((prevMeals) =>
+          prevMeals.map((meal) =>
+            meal._id === id ? { ...meal, mealstatus: newStatus } : meal
+          )
+        );
+        // Optional: alert(data.message);
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('Error toggling status:', error);
+      alert('Error toggling status');
+    }
+  };
+
   const currentMealType = pathname.split('/').pop();
 
   return (
@@ -143,7 +172,25 @@ const MealsTable = () => {
                   </td>
                   <td className="px-4 py-2">Rs: {meal.mealPrice}</td>
                   <td className="px-4 py-2">{meal.mealQuantity}</td>
-                  <td className="px-4 py-2">{meal.mealstatus}</td>
+                  <td className="px-4 py-2">
+  <button
+    onClick={() => handleToggleStatus(meal._id, meal.mealstatus)}
+    className="focus:outline-none"
+    aria-label={meal.mealstatus === 'Active' ? 'Set Inactive' : 'Set Active'}
+  >
+    <span
+      className={`relative inline-block w-12 h-6 transition-colors duration-200 ease-in rounded-full ${
+        meal.mealstatus === 'Active' ? 'bg-orange-500' : 'bg-gray-400'
+      }`}
+    >
+      <span
+        className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-200 ease-in ${
+          meal.mealstatus === 'Active' ? 'translate-x-6' : ''
+        }`}
+      />
+    </span>
+  </button>
+</td>
                   <td className="px-4 py-2">
                     <img
                       src={meal.image}
