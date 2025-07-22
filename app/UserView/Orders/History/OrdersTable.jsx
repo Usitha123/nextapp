@@ -82,7 +82,7 @@ const OrdersTable = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return (
-      <table className="w-full p-3 bg-white rounded-2xl">
+      <table className="px-2 overflow-auto max-h-[80vh] w-full p-3 bg-white rounded-2xl">
         <thead>
           <tr className="text-white bg-orange-500 rounded">
             <th className="p-2 rounded-tl-2xl">Order ID</th>
