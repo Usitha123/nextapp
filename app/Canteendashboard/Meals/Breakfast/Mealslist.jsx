@@ -50,30 +50,32 @@ const MealsTable = () => {
   }, [fetchMeals]);
 
   const handleToggleStatus = async (id, currentStatus) => {
-  const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+    const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
 
-  try {
-    const res = await fetch(`/api/updatemealstatus?id=${id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ status: newStatus }),
-    });
+    try {
+      const res = await fetch(`/api/updatemealstatus?id=${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
 
-    const data = await res.json();
-    if (res.ok) {
-      alert(data.message);
-      // Optional: refresh data
-      // await fetchMeals(); or router.refresh() in Next.js App Router
-    } else {
-      alert(data.message);
+      const data = await res.json();
+      if (res.ok) {
+        setMeals((prevMeals) =>
+          prevMeals.map((meal) =>
+            meal._id === id ? { ...meal, mealstatus: newStatus } : meal
+          )
+        );
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('Error toggling status:', error);
+      alert('Error toggling status');
     }
-  } catch (error) {
-    console.error('Error toggling status:', error);
-    alert('Error toggling status');
-  }
-};
+  };
 
 
   const handleDeleteOrder = async () => {
@@ -173,7 +175,6 @@ const MealsTable = () => {
                 <th className="px-4 py-2">Quantity</th>
                 <th className="px-4 py-2">Status</th>
                 <th className="px-4 py-2">Image</th>
-                <th className="px-4 py-2">Change Status</th>
                 <th className="px-4 py-2">Action</th>
               </tr>
             </thead>
@@ -191,7 +192,27 @@ const MealsTable = () => {
                   </td>
                   <td className="px-4 py-2">Rs: {meal.mealPrice}</td>
                   <td className="px-4 py-2">{meal.mealQuantity}</td>
-                  <td className="px-4 py-2">{meal.mealstatus}</td>
+                  <td className="px-4 py-2">
+  <button
+    onClick={() => handleToggleStatus(meal._id, meal.mealstatus)}
+    className="focus:outline-none"
+    aria-label={meal.mealstatus === 'Active' ? 'Set Inactive' : 'Set Active'}
+  >
+    <span
+      className={`relative inline-block w-12 h-6 transition-colors duration-200 ease-in rounded-full ${
+        meal.mealstatus === 'Active' ? 'bg-orange-500' : 'bg-gray-400'
+      }`}
+    >
+      <span
+        className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-200 ease-in ${
+          meal.mealstatus === 'Active' ? 'translate-x-6' : ''
+        }`}
+      />
+    </span>
+  </button>
+</td>
+
+
                   <td className="px-4 py-2">
                     <img
                       src={meal.image}
@@ -199,18 +220,6 @@ const MealsTable = () => {
                       className="w-16 h-16 rounded"
                     />
                   </td>
-                  <td className="px-4 py-2">
-  <button
-    onClick={() => handleToggleStatus(meal._id, meal.mealstatus)}
-    className={`px-3 py-1 rounded text-white transition duration-200 ${
-      meal.mealstatus === 'Active' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
-    }`}
-  >
-    {meal.mealstatus === 'Active' ? 'Block' : 'Active'}
-  </button>
-</td>
-
-
                   <td className="px-4 py-2 align-middle">
                     <div className="flex items-center h-full space-x-2">
                       <button
