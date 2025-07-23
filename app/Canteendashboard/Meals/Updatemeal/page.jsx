@@ -10,9 +10,9 @@ import Updatemeal from './Updatemeal';
 
 const Meals = () => {
   return (
-    <div className="flex">
+    <div className="flex bg-black">
       <Sidebar />
-      <div className="flex-1 bg-black">
+      <div className="ml-20 md:ml-60 h-[100vh] w-[100vw]"> 
         <Topbar />
         <Header title="Update Meals" /> {/* Pass another route-specific title */}
         <div className="p-4">
