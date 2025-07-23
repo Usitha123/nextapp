@@ -158,124 +158,137 @@ export default function AddCanteens() {
   return (
     <div className="w-full md:w-[90%] p-6 mx-auto text-gray-400 bg-[#2B2623] rounded-md">
       {/* <h2 className="mb-4 text-xl font-bold">Add Canteens</h2> */}
-      <form onSubmit={handleSubmit}>
-        <div className="space-y-4">
-          <div className="flex items-center justify-center m-5">
-            <div className="flex items-center justify-center w-20 h-20 bg-[#3B3737] rounded-md">
+      <div className="grid grid-cols-2 gap-6">
+        {/* Left Column - Image Preview */}
+        <div>
+          <label className="block text-sm text-orange-500 mb-1">Image Preview</label>
+          <div className="w-full h-80 bg-[#3B3737] rounded-md flex items-center justify-center overflow-hidden">
+            {canteenImageSrc ? (
               <img
-                src={canteenDetails.image ? URL.createObjectURL(canteenDetails.image) : <Image/>}
-                alt="Canteen Upload" 
-                className="object-cover w-full h-full"
-              />
-            </div>
+                    src={canteenDetails.image ? URL.createObjectURL(canteenDetails.image) : <Image />}
+                    alt="Canteen Upload"
+                    className="object-cover w-full h-full"
+                  />
+            ) : (
+              <Image className="text-gray-500 w-20 h-20" />
+            )}
           </div>
+         
+        </div>
+        <div>
+          <form onSubmit={handleSubmit}>
+            <div className="space-y-4">
+              
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div><label htmlFor="canteenName" className="p-1 text-orange-500 "> Canteen Name </label>
-          <input
-            type="text"
-            name="canteenName"
-            // placeholder="Canteen Name"
-            value={canteenDetails.canteenName}
-            onChange={handleInputChange}
-            className="w-full p-2 text-gray-300 bg-[#3B3737]  rounded-md"
-            required
-          /></div>
-          <div>
-            <label htmlFor="businessEmail" className="p-1 text-orange-500 ">Business Email</label>
-            <input
-            type="email"
-            name="businessEmail"
-            // placeholder="Business Email"
-            value={canteenDetails.businessEmail}
-            onChange={handleInputChange}
-            className="w-full p-2 text-gray-300 bg-[#3B3737] rounded-md"
-            required
-          />
-          </div>
-          
-          <div>
-          <label htmlFor="image" className="p-1 text-orange-500 ">Image</label>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div><label htmlFor="canteenName" className="p-1 text-orange-500 "> Canteen Name </label>
+                  <input
+                    type="text"
+                    name="canteenName"
+                    // placeholder="Canteen Name"
+                    value={canteenDetails.canteenName}
+                    onChange={handleInputChange}
+                    className="w-full p-2 text-gray-300 bg-[#3B3737]  rounded-md"
+                    required
+                  /></div>
+                <div>
+                  <label htmlFor="businessEmail" className="p-1 text-orange-500 ">Business Email</label>
+                  <input
+                    type="email"
+                    name="businessEmail"
+                    // placeholder="Business Email"
+                    value={canteenDetails.businessEmail}
+                    onChange={handleInputChange}
+                    className="w-full p-2 text-gray-300 bg-[#3B3737] rounded-md"
+                    required
+                  />
+                </div>
 
-          <input type="file"
+                <div>
+                  <label htmlFor="image" className="p-1 text-orange-500 ">Image</label>
+
+                   <input
+            type="file"
             onChange={handleFileChange}
-            className="w-full h-11 p-2 text-gray-300 bg-[#3B3737]  rounded-md  file:cursor-pointer file:p-0.5 file:px-2   file:rounded-md file:border-0 file:text-white file:bg-[#5E5E63CF] hover:file:bg-orange-500 "
+            className="mt-4 w-full p-2 text-gray-300 bg-[#3B3737] rounded-md file:cursor-pointer file:p-1 file:px-3 file:rounded-md file:border-0 file:text-white file:bg-[#5E5E63CF] hover:file:bg-orange-500"
             required
           />
-          {canteenProgress > 0 && <p>{canteenProgress}% Uploaded</p>}
-          
-          </div>
-          <div>
-            <label htmlFor="openHour" className="p-1 text-orange-500 ">Open Hour</label>
-            <input
-            type="time"
-            name="openHour"
-            placeholder="HH:MM"
-            value={canteenDetails.openHour}
-            onChange={handleInputChange}
-            className="w-full p-2 text-gray-300 bg-[#3B3737]  rounded-md h-11"
-            required
-          /></div>
-         <div>
-          <label htmlFor="closedHour" className="p-1 text-orange-500 ">Closed Hour</label>
-          <input
-            type="time"
-            name="closedHour"
-            placeholder="HH:MM"
-            value={canteenDetails.closedHour}
-            onChange={handleInputChange}
-            className="w-full p-2 text-gray-300 bg-[#3B3737]  rounded-md"
-            required
-          />
-         </div>
-          <div>
-            <label htmlFor="phoneNumber" className="p-1 text-orange-500 ">Phone Number</label>
-            <input
-            type="text"
-            name="phoneNumber"
-            placeholder=" 10 digits"
-            value={canteenDetails.phoneNumber}
-            onChange={handleInputChange}
-            className="w-full p-2 text-gray-300 bg-[#3B3737]  rounded-md"
-            required
-            pattern="^[0-9]{10}$"
-          />
-          </div>
-          <div>
-            <label htmlFor="openingDate" className="p-1 text-orange-500 ">Opening Date</label>
-            <input
-            type="date"
-            name="openingDate"
-            value={canteenDetails.openingDate}
-            onChange={handleInputChange}
-            className="w-full p-2 text-gray-300 bg-[#3B3737] rounded-md"
-            required
-          />
-          </div>
-          <div>
-            <label htmlFor="status" className="p-1 text-orange-500 ">Status</label>
-          <select
-            name="status"
-            value={canteenDetails.status}
-            onChange={handleInputChange}
-            className="w-full p-2 text-gray-300 bg-[#3B3737] rounded-md"
-          >
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-            
-          </select>
-          </div>
-          
-        </div>
-          </div>
-          
+                  {canteenProgress > 0 && <p>{canteenProgress}% Uploaded</p>}
 
-        <div className="flex justify-between mt-4">
-          <button type="submit" className="px-4 py-2 my-3 text-white bg-orange-500 rounded-md hover:bg-orange-600">
-            Submit
-          </button>
+                </div>
+                <div>
+                  <label htmlFor="openHour" className="p-1 text-orange-500 ">Open Hour</label>
+                  <input
+                    type="time"
+                    name="openHour"
+                    placeholder="HH:MM"
+                    value={canteenDetails.openHour}
+                    onChange={handleInputChange}
+                    className="w-full p-2 text-gray-300 bg-[#3B3737]  rounded-md h-11"
+                    required
+                  /></div>
+                <div>
+                  <label htmlFor="closedHour" className="p-1 text-orange-500 ">Closed Hour</label>
+                  <input
+                    type="time"
+                    name="closedHour"
+                    placeholder="HH:MM"
+                    value={canteenDetails.closedHour}
+                    onChange={handleInputChange}
+                    className="w-full p-2 text-gray-300 bg-[#3B3737]  rounded-md"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="phoneNumber" className="p-1 text-orange-500 ">Phone Number</label>
+                  <input
+                    type="text"
+                    name="phoneNumber"
+                    placeholder=" 10 digits"
+                    value={canteenDetails.phoneNumber}
+                    onChange={handleInputChange}
+                    className="w-full p-2 text-gray-300 bg-[#3B3737]  rounded-md"
+                    required
+                    pattern="^[0-9]{10}$"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="openingDate" className="p-1 text-orange-500 ">Opening Date</label>
+                  <input
+                    type="date"
+                    name="openingDate"
+                    value={canteenDetails.openingDate}
+                    onChange={handleInputChange}
+                    className="w-full p-2 text-gray-300 bg-[#3B3737] rounded-md"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="status" className="p-1 text-orange-500 ">Status</label>
+                  <select
+                    name="status"
+                    value={canteenDetails.status}
+                    onChange={handleInputChange}
+                    className="w-full p-2 text-gray-300 bg-[#3B3737] rounded-md"
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+
+                  </select>
+                </div>
+
+              </div>
+            </div>
+
+
+            <div className="flex justify-between mt-4">
+              <button type="submit" className="px-4 py-2 my-3 text-white bg-orange-500 rounded-md hover:bg-orange-600">
+                Submit
+              </button>
+            </div>
+          </form>
         </div>
-      </form>
-    </div>
-  );
+      </div>
+      </div>
+      );
 }
