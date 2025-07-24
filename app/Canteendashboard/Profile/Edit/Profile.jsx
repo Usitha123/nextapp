@@ -38,7 +38,7 @@ export default function Profile() {
   }, [session?.user?.email]);
 
   if (loading) return <div>Loading...</div>;
-  if (!targetStudent) return <div>No student found with the current user's email.</div>;
+  if (!targetStudent) return <div>No student found with the current user&#39;s email.</div>;
 
   return (
     <div className="bg-[#2B2623] p-8 rounded-md shadow-lg w-full max-w-xl mx-auto">

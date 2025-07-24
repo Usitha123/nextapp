@@ -12,7 +12,7 @@ export default function Dashboard() {
   const endDateRef = useRef();
   const { data: session } = useSession();
   const [hasOrders, setHasOrders] = useState(true);
-  const [maxDate] = useState(new Date().toISOString().split('T')[0]); // Today's date
+  const [maxDate] = useState(new Date().toISOString().split('T')[0]); // Today&#39;s date
   const [dateRange, setDateRange] = useState({
     startDate: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0], // Yesterday
     endDate: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0] // Yesterday

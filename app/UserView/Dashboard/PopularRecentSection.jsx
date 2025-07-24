@@ -22,7 +22,7 @@ const popularItems = [
   },
 ];
 
-// Dummy recent items (you'll need to replace this with real data)
+// Dummy recent items (you&#39;ll need to replace this with real data)
 const recentItems = [
   {
     name: "Noodles",
