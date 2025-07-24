@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 
 const AddCashierForm = () => {
@@ -185,7 +186,7 @@ const AddCashierForm = () => {
           className="w-full p-1 text-gray-300 bg-[#3B3737] rounded-md"
         />
         <span
-          className="absolute inset-y-0 flex items-center text-gray-600 text-sm right-3 top-4 hover:text-orange-500 focus:outline-none"
+          className="absolute inset-y-0 flex items-center text-sm text-gray-600 right-3 top-4 hover:text-orange-500 focus:outline-none"
           onClick={() => setShowPassword((prev) => !prev)}
         >
           {showPassword ? <FaEye /> : <FaEyeSlash />}
@@ -211,16 +212,17 @@ const AddCashierForm = () => {
 
     {/* Buttons */}
     <div className="flex justify-end mt-6 space-x-4">
-      <button
-        type="button"
-        className="px-4 py-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
-        onClick={resetForm}
-      >
-        Cancel
-      </button>
+      <Link
+          href="/Canteendashboard/Cashier"
+          className="px-4 py-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
+          onClick={resetForm}   
+        >
+          Cancel
+          
+        </Link>
       <button
         type="submit"
-        className="px-4 py-2 text-sm font-medium bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition"
+        className="px-4 py-2 text-sm font-medium text-white transition bg-orange-500 rounded-xl hover:bg-orange-600"
       >
         Add
       </button>

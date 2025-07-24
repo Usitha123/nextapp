@@ -49,11 +49,7 @@ export default function RegisterForm() {
     }
 
     // Validate password match
-    if (password !== confirmPassword) {
-      //setError("Passwords do not match.");
-      toast.error("Passwords do not match.");
-      return;
-    }
+    
 
     try {
       const resUserExists = await fetch("/api/userExists", {

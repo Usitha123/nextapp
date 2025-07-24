@@ -1,19 +1,24 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import ChangePassword from "./ChangePassword";
 import { Pencil, User2Icon } from "lucide-react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Profile() {
   const { data: session } = useSession();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [students, setStudents] = useState([]);
-  const [loading, setLoading] = useState(true);
+
   const [targetStudent, setTargetStudent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchStudent = async () => {
       if (!session?.user?.email) return;
 
       try {
@@ -21,9 +26,7 @@ export default function Profile() {
         if (!res.ok) throw new Error("Failed to fetch students");
 
         const data = await res.json();
-        setStudents(data);
-
-        const student = data.find((s) => s.email === session?.user?.email);
+        const student = data.find((s) => s.email === session.user.email);
         setTargetStudent(student || null);
       } catch (error) {
         console.error("Error fetching students:", error);
@@ -32,7 +35,7 @@ export default function Profile() {
       }
     };
 
-    fetchStudents();
+    fetchStudent();
   }, [session?.user?.email]);
 
   const handleInputChange = ({ target: { name, value } }) => {
@@ -41,20 +44,27 @@ export default function Profile() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/updateuser?id=${targetStudent._id}`, {
+      const updatedData = { ...targetStudent, password };
+      const res = await fetch(`/api/updateuser?id=${targetStudent._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(targetStudent),
+        body: JSON.stringify(updatedData),
       });
 
-      if (!response.ok) throw new Error(await response.text());
+      if (!res.ok) throw new Error(await res.text());
 
-      const updatedStudent = await response.json();
+      const updatedStudent = await res.json();
       console.log("Student updated:", updatedStudent);
-      window.location.href = '/UserView/Profile';
+      window.location.href = "/UserView/Profile";
     } catch (err) {
       console.error("Error updating student:", err);
     } finally {
@@ -64,27 +74,27 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="w-full max-w-3xl p-8 mx-auto bg-white rounded-xl">
+      <Container>
         <p className="text-center">Loading profile...</p>
-      </div>
+      </Container>
     );
   }
 
   if (!targetStudent) {
     return (
-      <div className="w-full max-w-3xl p-8 mx-auto bg-white rounded-xl">
+      <Container>
         <p className="text-center">No student profile found</p>
-      </div>
+      </Container>
     );
   }
 
   return (
-    <div className="w-full max-w-3xl p-6 mx-auto bg-white rounded-xl">
+    <Container>
       <div className="relative flex items-center justify-center w-24 h-24 mx-auto text-orange-600 bg-orange-100 rounded-full">
         <User2Icon className="text-3xl font-bold" />
         <button
-          className="absolute bottom-0 right-0 p-1 text-white bg-orange-500 rounded-full"
           onClick={() => setIsModalOpen(true)}
+          className="absolute bottom-0 right-0 p-1 text-white bg-orange-500 rounded-full"
         >
           <Pencil className="p-1" />
         </button>
@@ -95,43 +105,40 @@ export default function Profile() {
           <InputField
             label="First Name"
             name="firstName"
-            value={targetStudent?.firstName}
+            value={targetStudent.firstName}
             onChange={handleInputChange}
             required
           />
           <InputField
             label="Last Name"
             name="lastName"
-            value={targetStudent?.lastName}
+            value={targetStudent.lastName}
             onChange={handleInputChange}
             required
           />
         </div>
 
-        <div className="w-full">
-          
-          <InputField
-            label="Email"
-            name="email"
-            type="email"
-            value={targetStudent?.email}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
+        <InputField
+          label="Email"
+          name="email"
+          type="email"
+          value={targetStudent.email}
+          onChange={handleInputChange}
+          required
+        />
 
         <div className="grid grid-cols-2 gap-4">
-        <InputField
+          <InputField
             label="Phone"
-            name="phone"
-            value={targetStudent?.phoneNumber}
+            name="phoneNumber"
+            value={targetStudent.phoneNumber}
             onChange={handleInputChange}
             required
           />
           <SelectField
             label="Faculty"
             name="faculty"
-            value={targetStudent?.faculty}
+            value={targetStudent.faculty}
             onChange={handleInputChange}
             options={["Computing", "Engineering", "Science", "Arts"]}
             required
@@ -139,48 +146,56 @@ export default function Profile() {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-
-        
-        <PasswordField
-          label="Password"
-          name="password"
-          onChange={handleInputChange}
-          required
-        />
-        <PasswordField
-          label="Confirm Password"
-          name="confirmpassword"
-          onChange={handleInputChange}
-          required
-        />
+          <PasswordField
+            label="Password"
+            name="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            show={showPassword}
+            toggleShow={() => setShowPassword((prev) => !prev)}
+          />
+          <PasswordField
+            label="Confirm Password"
+            name="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            show={showPassword}
+            toggleShow={() => setShowPassword((prev) => !prev)}
+          />
         </div>
 
         <div className="flex justify-end mt-6 space-x-4">
-          <Link href="/UserView/Profile" className="button bg-black text-white px-3 py-2  rounded-xl">
+          <Link href="/UserView/Profile" className="px-3 py-2 text-white bg-black rounded-xl">
             Cancel
           </Link>
-          <button type="submit" className="bg-orange-500 button px-3 py-2  rounded-xl ">
+          <button type="submit" className="px-3 py-2 text-white bg-orange-500 rounded-xl">
             Save
           </button>
         </div>
       </form>
 
       <ChangePassword isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-    </div>
+    </Container>
   );
 }
+
+const Container = ({ children }) => (
+  <div className="w-full max-w-3xl p-6 mx-auto bg-white rounded-xl">
+    {children}
+  </div>
+);
 
 const InputField = ({ label, name, value, onChange, type = "text", required }) => (
   <div>
     <label className="block text-sm text-gray-600">{label}</label>
     <input
-      className="w-full p-2 mt-1 text-black bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
       type={type}
       name={name}
-      value={value || ""}
+      value={value}
       onChange={onChange}
       placeholder={label}
       required={required}
+      className="w-full p-2 mt-1 text-black bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
     />
   </div>
 );
@@ -190,31 +205,40 @@ const SelectField = ({ label, name, value, onChange, options, required }) => (
     <label className="block text-sm text-gray-600">{label}</label>
     <select
       name={name}
-      value={value || ""}
+      value={value}
       onChange={onChange}
-      className="w-full p-2 mt-1 text-black bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
       required={required}
+      className="w-full p-2 mt-1 text-black bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
     >
       <option value="">Select {label}</option>
-      {options.map((option) => (
-        <option key={option} value={option}>
-          {option}
+      {options.map((opt) => (
+        <option key={opt} value={opt}>
+          {opt}
         </option>
       ))}
     </select>
   </div>
 );
 
-const PasswordField = ({ label, name, onChange, required }) => (
+const PasswordField = ({ label, name, value, onChange, show, toggleShow }) => (
   <div>
     <label className="block text-sm text-gray-600">{label}</label>
-    <input
-      className="w-full p-2 mt-1 text-black bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-      type="password"
-      name={name}
-      onChange={onChange}
-      placeholder={label}
-      required={required}
-    />
+    <div className="relative">
+      <input
+        type={show ? "text" : "password"}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={label}
+        required
+        className="w-full p-2 mt-1 text-black bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+      />
+      <span
+        onClick={toggleShow}
+        className="absolute text-gray-600 cursor-pointer top-3 right-3"
+      >
+        {show ? <FaEye /> : <FaEyeSlash />}
+      </span>
+    </div>
   </div>
 );

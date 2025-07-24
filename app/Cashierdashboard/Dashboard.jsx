@@ -117,7 +117,7 @@ const OrderTable = () => {
     <div className="space-y-2">
     {/* Dashboard Cards Section */}
     <div className="rounded-lg ">
-      <div className="flex flex-wrap justify-center gap-6   rounded-lg xl:gap-16">
+      <div className="flex flex-wrap justify-center gap-6 rounded-lg xl:gap-16">
         {stats.map(({ title, value, icon }, index) => (
           <div key={index} className="relative flex flex-col h-32 w-60 items-center justify-center  text-orange-500 bg-[#2B2623] rounded-lg">
             <div className="flex items-center gap-2 text-5xl bg-[#4D423E] px-8 py-4 rounded-lg font-thin">
@@ -133,7 +133,7 @@ const OrderTable = () => {
 
       {/* Orders Table */}
       <div className="px-6 overflow-auto max-h-[80vh]">
-        <h2 className="my-2 mx-1 text-orange-500">Pending Orders</h2>
+        <h2 className="mx-1 my-2 text-orange-500">Pending Orders</h2>
 
         {filteredOrders.length === 0 ? (
           <div className="text-white">No pending orders available</div>
@@ -147,6 +147,7 @@ const OrderTable = () => {
                   <th className="px-4 py-1">Status</th>
                   <th className="px-4 py-1">Description</th>
                   <th className="px-4 py-1">Date</th>
+                  <th className="px-4 py-1">Payment Method</th>
                   <th className="px-4 py-1">Action</th>
                 </tr>
               </thead>
@@ -163,6 +164,7 @@ const OrderTable = () => {
                     <td className="px-4 py-1">
                       {formatDate(order.meals?.[0]?.timestamp || new Date())}
                     </td>
+                    <td className="px-4 py-1">{order.paymentStatus}</td>
                     <td className="px-4 py-2">
                       <button 
                         onClick={() => handleDescriptionClick(order._id)} 
@@ -194,7 +196,7 @@ const OrderTable = () => {
 
         {/* Pagination */}
         {filteredOrders.length > 0 && (
-          <div className="flex items-center gap-2 justify-end mt-2">
+          <div className="flex items-center justify-end gap-2 mt-2">
             <button
               onClick={() => handlePagination("prev")}
               disabled={currentPage === 1}

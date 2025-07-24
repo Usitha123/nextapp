@@ -187,6 +187,7 @@ const OrderTable = () => {
                 <th className="px-4 py-1">Customer</th>
                 <th className="px-4 py-1">Status</th>
                 <th className="px-4 py-1">Date</th>
+                <th className="px-4 py-1">Payment Method</th>
                 <th className="px-4 py-1">Description</th>
                 <th className="px-4 py-1">Action</th>
               </tr>
@@ -204,6 +205,7 @@ const OrderTable = () => {
                   <td className="px-4 py-1">
                     {formatDate(order.meals?.[0]?.timestamp || new Date())}
                   </td>
+                  <td className="px-4 py-1">{order.paymentStatus}</td>
                   <td className="px-4 py-1">
                     <button
                       onClick={() => handleDescriptionClick(order._id)}
@@ -237,7 +239,7 @@ const OrderTable = () => {
 
       {/* Pagination */}
       {filteredOrders.length > 0 && (
-        <div className="flex text-sm items-center gap-2 justify-end mt-2">
+        <div className="flex items-center justify-end gap-2 mt-2 text-sm">
           <button
             onClick={handlePrevPage}
             disabled={currentPage === 1}

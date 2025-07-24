@@ -1,22 +1,25 @@
-import React from 'react'
+"use client";
+
+import React, { useState } from 'react';
 import Sidebar from '../Sidebar/page';
 import Topbar from '../Topbar/page';
 import Header from '../Header/Header';
-import Cashier from './Addowner';
+import Cashierdetails from './Cashierdetails';
 
 function page() {
   return (
     <div className="flex bg-black">
       <Sidebar/>
-<div className="ml-20 md:ml-60 min-h-screen w-full bg-black">
+<div className="w-full min-h-screen ml-20 bg-black md:ml-60">
         <Topbar />
-        <Header title="Add Cashier" />
+        <Header title="Cashiers" />
         <div className="p-4">
-            <Cashier/>
+            <Cashierdetails/>
         </div>
       </div>
     </div>
   )
+  
 }
 
 export default page

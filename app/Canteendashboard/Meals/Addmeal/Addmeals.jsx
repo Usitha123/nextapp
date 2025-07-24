@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 // Form Component
 const AddMealForm = () => {
   const { data: session, status } = useSession();
@@ -111,10 +112,14 @@ const AddMealForm = () => {
         </div>
         <FileInputField label="Image" onChange={handleFileChange} previewURL={localPreview} />
         <div className="flex justify-between text-sm">
-          <button type="button" className="px-4 py-1 m-2 text-orange-500 border border-orange-500 rounded-xl bg-[#3B3737] hover:bg-black transition">
+         <Link
+            href="/Canteendashboard/Meals/Breakfast"
+            className="px-4 py-1 m-2 text-orange-500 border border-orange-500 rounded-xl bg-[#3B3737] hover:bg-black transition"
+          >
             Cancel
-          </button>
-          <button type="submit" className="px-4 py-1 m-2 text-white bg-orange-500 rounded-xl hover:bg-orange-400 transition">
+          </Link>
+            
+          <button type="submit" className="px-4 py-1 m-2 text-white transition bg-orange-500 rounded-xl hover:bg-orange-400">
             Add
           </button>
         </div>
