@@ -82,7 +82,8 @@ const OrdersTable = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return (
-      <table className="px-2 overflow-auto max-h-[80vh] w-full p-3 bg-white rounded-2xl">
+        <div className="overflow-auto justify-center min-w-[0px] max-w-[75vw] lg:max-w-full rounded-xl">
+    <table className="min-w-[20px] w-full text-sm bg-white rounded-2xl">
         <thead>
           <tr className="text-white bg-orange-500 rounded">
             <th className="p-2 rounded-tl-2xl">Order ID</th>
@@ -137,6 +138,7 @@ const OrdersTable = () => {
             ))}
         </tbody>
       </table>
+      </div>
     );
   };
 
