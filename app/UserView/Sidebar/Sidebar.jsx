@@ -5,7 +5,11 @@ import Link from 'next/link';
 import { BoxIcon, LayoutDashboardIcon, LayoutGrid, LogOut, UserRound, Utensils } from 'lucide-react';
 import { signOut, useSession } from "next-auth/react";
 
-const Sidebar = ({ activePath }) => {
+import { usePathname } from "next/navigation";
+
+const Sidebar = () => {
+  const pathname = usePathname();
+
   const { data: session } = useSession();
 
   const links = [
@@ -24,7 +28,7 @@ const Sidebar = ({ activePath }) => {
       <h1 className="mb-10 hidden md:block text-center text-2xl font-bold text-[#ff842f]">LOGO</h1>
       <ul className="space-y-4">
         {links.map((link) => {
-          const isActive = activePath === link.href;
+          const isActive = pathname === link.href;
 
           return (
             <li key={link.href}>

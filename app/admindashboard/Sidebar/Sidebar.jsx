@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { ChartColumn, ChevronDown, ChevronUp, LayoutDashboard, LogOut, UserRoundPen, UsersRound, Utensils } from "lucide-react";
 
-const Sidebar = ({ activePath }) => {
+	const Sidebar = () => {
   const pathname = usePathname(); // Get the current path
   const [openUserMenu, setOpenUserMenu] = useState(false);
   const [openCanteensMenu, setOpenCanteensMenu] = useState(false);
@@ -35,6 +35,7 @@ const links = [
   {
     label: "Canteens",
     icon: <Utensils />,
+    matchPath: "/admindashboard/Canteens",
     subMenu: [
       { href: "/admindashboard/Canteens/AllCanteens", label: "All Canteens" },
       { href: "/admindashboard/Canteens/AddNew", label: "Add New" }
@@ -43,6 +44,7 @@ const links = [
   {
     label: "Users",
     icon: <UsersRound />,
+    matchPath: "/admindashboard/User",
     subMenu: [
       { href: "/admindashboard/User/Owner", label: "Owner" },
       { href: "/admindashboard/User/Student", label: "Student" },
@@ -61,10 +63,16 @@ return (
         if (link.subMenu) {
           return (
             <li key={link.label} className="relative">
-              <button
-                onClick={() => setOpenMenu(openMenu === link.label ? null : link.label)}
-                className="flex justify-between items-center gap-3 p-2 w-full rounded hover:bg-[#3d3632] hover:text-orange-500"
-              >
+              
+ <button
+  onClick={() => setOpenMenu(openMenu === link.label ? null : link.label)}
+  className={`flex justify-between items-center gap-3 p-2 w-full rounded hover:bg-[#3d3632] hover:text-orange-500 ${
+    pathname.startsWith(link.matchPath || "") ? "text-orange-500 font-bold" : ""
+  }`}
+>
+
+
+
                 <span className="flex gap-2">
                   {link.icon}
                   <span className="hidden md:flex">{link.label}</span>
@@ -78,13 +86,12 @@ return (
                   {link.subMenu.map((subLink) => (
                     <li key={subLink.href}>
                       <Link
-                        href={subLink.href}
-                        className={`block p-2 rounded hover:bg-[#3d3632] hover:text-orange-500 ${
-                          activePath === subLink.href ? "text-orange-500 font-bold" : ""
-                        }`}
-                      >
-                        {subLink.label}
-                      </Link>
+  href={subLink.href}
+  className="block p-2 rounded hover:bg-[#3d3632] hover:text-orange-500"
+>
+  {subLink.label}
+</Link>
+
                     </li>
                   ))}
                 </ul>
@@ -110,17 +117,21 @@ return (
           );
         }
         return (
-          <li key={link.href}>
-            <Link
-              href={link.href}
-              className={`gap-3 flex p-2 rounded hover:bg-[#3d3632] hover:text-orange-500 ${
-                activePath === link.href ? "text-orange-500 font-bold" : ""
-              }`}
-            >
-              <span>{link.icon}</span>
-              <span className="hidden md:flex">{link.label}</span>
-            </Link>
-          </li>
+<li key={link.href || link.label}>
+  <Link
+    href={link.href}
+    className={`gap-3 flex p-2 rounded hover:bg-[#3d3632] hover:text-orange-500 ${
+      (link.matchPath && pathname.startsWith(link.matchPath)) || pathname === link.href
+        ? "text-orange-500 font-bold"
+        : ""
+    }`}
+  >
+    <span>{link.icon}</span>
+    <span className="hidden md:flex">{link.label}</span>
+  </Link>
+</li>
+
+
         );
       })}
       <li>
