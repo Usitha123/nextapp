@@ -2,19 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useSession } from "next-auth/react";
+
 import UpdateStatusModal from "./Modal";
 import DeleteOrder from "./Deleteorder";
 import DescriptionModel from "./Descriptionmodel";
-import { useSession } from "next-auth/react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const OrderTable = () => {
-  // State management
   const [orders, setOrders] = useState([]);
-  const [pagination, setPagination] = useState({ 
-    currentPage: 1, 
-    rowsPerPage: 9 
-  });
+  const [pagination, setPagination] = useState({ currentPage: 1, rowsPerPage: 9 });
   const [modalState, setModalState] = useState({
     isModalOpen: false,
     isDescriptionModelOpen: false,
@@ -22,11 +19,10 @@ const OrderTable = () => {
     selectedDescription: [],
     selectedOrderId: null,
   });
-  
-  const { data: session, status } = useSession();
-  const { currentPage, rowsPerPage } = pagination;
 
-  // Fetch orders on component mount
+  const { currentPage, rowsPerPage } = pagination;
+  const { data: session } = useSession();
+
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -42,69 +38,52 @@ const OrderTable = () => {
     }
   };
 
-  // Status styling helper
   const getStatusClasses = (status) => {
-    const statusStyles = {
-      "Accepted":   "inline-block text-white w-[70%] rounded-xl bg-green-500  ",
-      "Picked":     "inline-block text-black w-[70%] rounded-xl bg-yellow-400 ",
-      "Cancelled":  "inline-block text-white w-[70%] rounded-xl bg-red-500  ",
-      "Pending":    "  inline-block text-white w-[70%] rounded-xl bg-blue-500  "
+    const styles = {
+      Accepted: "bg-green-500",
+      Picked: "bg-yellow-400 text-black",
+      Cancelled: "bg-red-500",
+      Pending: "bg-blue-500",
     };
-    
-    return statusStyles[status] || "bg-gray-500 inline-block w-[70%] rounded-xl text-white";
+    return `inline-block w-[70%] text-white rounded-xl px-2 py-1 ${styles[status] || "bg-gray-500"}`;
   };
 
-  // Date formatting helper
   const formatDate = (dateString) => {
-    const createdAt = new Date(dateString);
-    return createdAt.toLocaleString();
+    const date = new Date(dateString);
+    return date.toLocaleString();
   };
 
-  // Modal handlers
   const handleDescriptionClick = (orderId) => {
-    const selectedOrder = orders.find((order) => order._id === orderId);
-    if (selectedOrder) {
+    const selected = orders.find((o) => o._id === orderId);
+    if (selected) {
       setModalState((prev) => ({
         ...prev,
-        selectedDescription: selectedOrder.meals,
+        selectedDescription: selected.meals,
         selectedOrderId: orderId,
         isDescriptionModelOpen: true,
       }));
     }
   };
 
-  const openDeleteModal = (orderId) => {
-    setModalState((prev) => ({ 
-      ...prev, 
-      selectedOrderId: orderId, 
-      isDeleteOrderModalOpen: true 
-    }));
-  };
-
-  const openStatusModal = (orderId) => {
-    setModalState((prev) => ({ 
-      ...prev, 
-      selectedOrderId: orderId, 
-      isModalOpen: true 
+  const openModal = (modalType, orderId) => {
+    setModalState((prev) => ({
+      ...prev,
+      selectedOrderId: orderId,
+      [modalType]: true,
     }));
   };
 
   const closeModals = (modalType) => {
-    setModalState((prev) => ({ 
-      ...prev, 
-      [modalType]: false 
-    }));
+    setModalState((prev) => ({ ...prev, [modalType]: false }));
   };
 
-  // API interactions
   const handleDelete = async () => {
     try {
-      const response = await fetch(`/api/deleteorder?id=${modalState.selectedOrderId}`, {
+      const res = await fetch(`/api/deleteorder?id=${modalState.selectedOrderId}`, {
         method: "DELETE",
       });
-      
-      if (response.ok) {
-        setOrders(orders.filter((order) => order._id !== modalState.selectedOrderId));
+      if (res.ok) {
+        setOrders((prev) => prev.filter((o) => o._id !== modalState.selectedOrderId));
       } else {
         alert("Failed to delete order");
       }
@@ -118,64 +97,52 @@ const OrderTable = () => {
 
   const updateStatus = async (orderId, status) => {
     try {
-      const response = await fetch(`/api/updateorderstatus?id=${orderId}`, {
+      const res = await fetch(`/api/updateorderstatus?id=${orderId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderStatus: status }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
+      if (!res.ok) {
+        const errorData = await res.json();
         alert(errorData.message || "Failed to update status");
-      } else {
-        const updatedOrder = await response.json();
-        
-        // Update local state to avoid refetching
-        setOrders((prevOrders) =>
-          prevOrders.map((order) =>
-            order._id === orderId ? { ...order, orderStatus: status } : order
-          )
-        );
-        
-        alert(`Status updated to ${status}`);
+        return;
       }
+
+      setOrders((prev) =>
+        prev.map((order) =>
+          order._id === orderId ? { ...order, orderStatus: status } : order
+        )
+      );
+      alert(`Status updated to ${status}`);
     } catch (error) {
       console.error("Error updating status:", error);
       alert("An error occurred while updating status");
     }
   };
 
-  // Pagination handlers
-  const handlePrevPage = () => {
-    setPagination((prev) => ({ 
-      ...prev, 
-      currentPage: Math.max(prev.currentPage - 1, 1) 
+  const handlePageChange = (direction) => {
+    const totalPages = Math.ceil(orders.length / rowsPerPage);
+    setPagination((prev) => ({
+      ...prev,
+      currentPage:
+        direction === "prev"
+          ? Math.max(prev.currentPage - 1, 1)
+          : Math.min(prev.currentPage + 1, totalPages),
     }));
   };
 
-  const handleNextPage = () => {
-    const maxPage = Math.ceil(filteredOrders.length / rowsPerPage);
-    setPagination((prev) => ({ 
-      ...prev, 
-      currentPage: Math.min(prev.currentPage + 1, maxPage) 
-    }));
-  };
+  const paginatedOrders = orders
+    .sort((a, b) => new Date(b?.meals?.[0]?.timestamp || 0) - new Date(a?.meals?.[0]?.timestamp || 0))
+    .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
-  // Filter and pagination logic
-  const filteredOrders = orders;
-  const indexOfLastOrder = currentPage * rowsPerPage;
-  const indexOfFirstOrder = indexOfLastOrder - rowsPerPage;
-  const paginatedOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
-  const totalPages = Math.ceil(filteredOrders.length / rowsPerPage);
-
-  // Get current order status
-  const getCurrentStatus = () => {
-    return orders.find((order) => order._id === modalState.selectedOrderId)?.orderStatus || "";
-  };
+  const totalPages = Math.ceil(orders.length / rowsPerPage);
+  const getCurrentStatus = () =>
+    orders.find((order) => order._id === modalState.selectedOrderId)?.orderStatus || "";
 
   return (
     <div className="px-2 overflow-auto max-h-[80vh]">
-      {filteredOrders.length === 0 ? (
+      {orders.length === 0 ? (
         <div className="text-white">No processed orders available</div>
       ) : (
         <div className="overflow-auto justify-center max-w-[75vw] lg:max-w-full rounded-xl">
@@ -197,7 +164,7 @@ const OrderTable = () => {
                   <td className="px-4 py-1">{order._id}</td>
                   <td className="px-4 py-1">{order.userName}</td>
                   <td className="px-4 py-1">
-                    <span className={`px-2 py-1 rounded ${getStatusClasses(order.orderStatus)}`}>
+                    <span className={getStatusClasses(order.orderStatus)}>
                       {order.orderStatus}
                     </span>
                   </td>
@@ -215,14 +182,14 @@ const OrderTable = () => {
                   </td>
                   <td className="flex px-4 py-2 space-x-2">
                     <button
-                      onClick={() => openDeleteModal(order._id)}
+                      onClick={() => openModal("isDeleteOrderModalOpen", order._id)}
                       className="text-gray-400 hover:text-red-500"
                       aria-label="Delete order"
                     >
                       <FaRegTrashAlt />
                     </button>
                     <button
-                      onClick={() => openStatusModal(order._id)}
+                      onClick={() => openModal("isModalOpen", order._id)}
                       className="text-gray-400 hover:text-orange-500"
                       aria-label="Update order status"
                     >
@@ -235,41 +202,38 @@ const OrderTable = () => {
           </table>
         </div>
       )}
-  
+
       {/* Pagination */}
-      {filteredOrders.length > 0 && (
+      {orders.length > 0 && (
         <div className="flex items-center justify-end gap-2 mt-2 text-sm">
           <button
-            onClick={handlePrevPage}
+            onClick={() => handlePageChange("prev")}
             disabled={currentPage === 1}
-            className="flex items-center gap-0 px-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
+            className="flex items-center gap-0 px-2 font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
           >
             <ChevronLeft />
             Prev
           </button>
-  
           <span className="text-white">
             Page {currentPage} of {totalPages}
           </span>
-  
           <button
-            onClick={handleNextPage}
+            onClick={() => handlePageChange("next")}
             disabled={currentPage >= totalPages}
-            className="flex items-center gap-0 px-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
+            className="flex items-center gap-0 px-2 font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
           >
             Next
             <ChevronRight />
           </button>
         </div>
       )}
-  
+
       {/* Modals */}
       <DescriptionModel
         isOpen={modalState.isDescriptionModelOpen}
         onClose={() => closeModals("isDescriptionModelOpen")}
         description={modalState.selectedDescription}
       />
-  
       <UpdateStatusModal
         isOpen={modalState.isModalOpen}
         onClose={() => closeModals("isModalOpen")}
@@ -279,7 +243,6 @@ const OrderTable = () => {
         }}
         currentStatus={getCurrentStatus()}
       />
-  
       <DeleteOrder
         isOpen={modalState.isDeleteOrderModalOpen}
         onClose={() => closeModals("isDeleteOrderModalOpen")}
@@ -287,7 +250,6 @@ const OrderTable = () => {
       />
     </div>
   );
-  
 };
 
 export default OrderTable;
