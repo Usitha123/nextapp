@@ -136,39 +136,47 @@ const OrdersTable = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredOrders.map((order) => (
-            <tr key={order._id} className="text-center">
-              <td className="p-2">{order._id}</td>
-              <td className="p-2">
-                <span className="inline-block w-[60%] px-4 py-2 leading-none text-white bg-green-500 rounded-xl">
-                  {order.orderStatus}
-                </span>
-              </td>
-              <td className="p-2">
-                {order.meals && order.meals[0] && order.meals[0].timestamp
-                  ? formatDate(order.meals[0].timestamp)
-                  : "N/A"}
-              </td>
-              <td className="p-2">{order.canteenName || "N/A"}</td>
-              <td className="p-2">
-                <button
-                  onClick={() => handleDescriptionClick(order._id)}
-                  className="text-orange-400 hover:underline"
-                >
-                  View
-                </button>
-              </td>
-              <td className="p-2">
-                <button
-                  onClick={() => handleCancelClick(order)}
-                  className="inline-block w-[60%] px-4 py-2 leading-none text-white bg-red-500 rounded-xl"
-                >
-                  Cancel
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
+  {filteredOrders
+    .slice() // make a shallow copy to avoid mutating original state
+    .sort((a, b) => {
+      const timeA = a.meals?.[0]?.timestamp ? new Date(a.meals[0].timestamp) : new Date(0);
+      const timeB = b.meals?.[0]?.timestamp ? new Date(b.meals[0].timestamp) : new Date(0);
+      return timeB - timeA; // descending order (latest first)
+    })
+    .map((order) => (
+      <tr key={order._id} className="text-center">
+        <td className="p-2">{order._id}</td>
+        <td className="p-2">
+          <span className="inline-block w-[60%] px-4 py-2 leading-none text-white bg-green-500 rounded-xl">
+            {order.orderStatus}
+          </span>
+        </td>
+        <td className="p-2">
+          {order.meals && order.meals[0] && order.meals[0].timestamp
+            ? formatDate(order.meals[0].timestamp)
+            : "N/A"}
+        </td>
+        <td className="p-2">{order.canteenName || "N/A"}</td>
+        <td className="p-2">
+          <button
+            onClick={() => handleDescriptionClick(order._id)}
+            className="text-orange-400 hover:underline"
+          >
+            View
+          </button>
+        </td>
+        <td className="p-2">
+          <button
+            onClick={() => handleCancelClick(order)}
+            className="inline-block w-[60%] px-4 py-2 leading-none text-white bg-red-500 rounded-xl"
+          >
+            Cancel
+          </button>
+        </td>
+      </tr>
+    ))}
+</tbody>
+
       </table>
       </div>
     );

@@ -95,48 +95,52 @@ const OrdersTable = () => {
           </tr>
         </thead>
         <tbody>
-          {orders
-          .filter((order) => {
-            const orderDate = new Date(order.meals?.[0]?.timestamp || 0);
-            orderDate.setHours(0, 0, 0, 0);
-            return orderDate.getTime() === today.getTime();
-          })
-            .filter((order) => session?.user?.email === order.userEmail)
-            .filter((order) => ["Cancelled", "Picked"].includes(order.orderStatus))
-            .map((order) => (
-              <tr key={order._id} className="text-center">
-                <td className="p-2">{order._id}</td>
-                <td className="p-2">
-                  <span
-                    className={`inline-block w-full px-4 py-2 leading-none bg-green-500 text-white rounded-lg`}
-                  >
-                    {order.orderStatus}
-                  </span>
-                </td>
-                <td className="p-2">{formatDate(order.meals[0].timestamp)}</td>
-                <td className="p-2">{order.canteenName}</td>
-                <td className="p-2">
-                  <button
-                    onClick={() => handleDescriptionClick(order._id)}
-                    className="text-orange-400 hover:underline"
-                  >
-                    View
-                  </button>
-                </td>
-                <td className="p-2">
-                  <button
-                    onClick={() => {
-                      setSelectedOrder(order);
-                      setIsDeleteModalOpen(true);
-                    }}
-                    className="px-2 py-1 text-white bg-red-500 rounded-xl"
-                  >
-                    Cancel
-                  </button>
-                </td>
-              </tr>
-            ))}
-        </tbody>
+  {orders
+    .filter((order) => {
+      const orderDate = new Date(order.meals?.[0]?.timestamp || 0);
+      orderDate.setHours(0, 0, 0, 0);
+      return orderDate.getTime() === today.getTime();
+    })
+    .filter((order) => session?.user?.email === order.userEmail)
+    .filter((order) => ["Cancelled", "Picked"].includes(order.orderStatus))
+    .sort((a, b) => {
+      const timeA = new Date(a.meals?.[0]?.timestamp || 0);
+      const timeB = new Date(b.meals?.[0]?.timestamp || 0);
+      return timeB - timeA; // Descending: latest first
+    })
+    .map((order) => (
+      <tr key={order._id} className="text-center">
+        <td className="p-2">{order._id}</td>
+        <td className="p-2">
+          <span className="inline-block w-full px-4 py-2 leading-none text-white bg-green-500 rounded-lg">
+            {order.orderStatus}
+          </span>
+        </td>
+        <td className="p-2">{formatDate(order.meals[0].timestamp)}</td>
+        <td className="p-2">{order.canteenName}</td>
+        <td className="p-2">
+          <button
+            onClick={() => handleDescriptionClick(order._id)}
+            className="text-orange-400 hover:underline"
+          >
+            View
+          </button>
+        </td>
+        <td className="p-2">
+          <button
+            onClick={() => {
+              setSelectedOrder(order);
+              setIsDeleteModalOpen(true);
+            }}
+            className="px-2 py-1 text-white bg-red-500 rounded-xl"
+          >
+            Cancel
+          </button>
+        </td>
+      </tr>
+    ))}
+</tbody>
+
       </table>
       </div>
     );
