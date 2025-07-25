@@ -94,7 +94,7 @@ const OrdersTable = () => {
 
   const handleConfirmCancel = async () => {
     if (selectedOrder?._id) {
-      await updateStatus(selectedOrder._id, "Drop");
+      await updateStatus(selectedOrder._id, "Cancelled");
     }
   };
 
@@ -167,11 +167,14 @@ const OrdersTable = () => {
         </td>
         <td className="p-2">
           <button
-            onClick={() => handleCancelClick(order)}
-            className="inline-block w-[60%] px-4 py-2 leading-none text-white bg-red-500 rounded-xl"
-          >
-            Cancel
-          </button>
+  onClick={() => handleCancelClick(order)}
+  disabled={order.orderStatus !== "Pending"}
+  className={`inline-block w-[60%] px-4 py-2 leading-none text-white rounded-xl 
+    ${order.orderStatus === "Pending" ? "bg-red-500" : "bg-red-300 cursor-not-allowed opacity-50"}`}
+>
+  Cancel
+</button>
+
         </td>
       </tr>
     ))}
