@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { FaCheckCircle, FaTimesCircle, FaArrowLeft } from 'react-icons/fa';
 
 const PaymentComplete = () => {
   const [orderData, setOrderData] = useState(null);
   const [status, setStatus] = useState("loading"); // "loading", "success", "failed"
+  const html2pdfRef = useRef(null);
+  const [html2pdfLoaded, setHtml2pdfLoaded] = useState(false);
 
   useEffect(() => {
     const sessionId = new URLSearchParams(window.location.search).get('session_id');
@@ -46,7 +48,38 @@ const PaymentComplete = () => {
     };
 
     completePayment();
+
+    // Dynamically load html2pdf.js script
+    const script = document.createElement("script");
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js";
+    script.onload = () => {
+      setHtml2pdfLoaded(true);
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
   }, []);
+
+  // Handler to download PDF
+  const handleDownloadReceipt = () => {
+    if (!html2pdfLoaded) {
+      alert("PDF library is still loading, please wait.");
+      return;
+    }
+    if (html2pdfRef.current) {
+      const element = html2pdfRef.current;
+      // Use the global html2pdf function loaded by the script
+      window.html2pdf().from(element).set({
+        margin: 0.5,
+        filename: `Order_${orderData.orderId}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      }).save();
+    }
+  };
 
   if (!orderData || status === "loading") {
     return (
@@ -84,15 +117,18 @@ const PaymentComplete = () => {
               )}
             </div>
 
-            {/* Order Details */}
-            <div className="p-6 mb-6 rounded-lg bg-gray-50">
+            {/* Order Details to PDF */}
+            <div 
+              ref={html2pdfRef} 
+              className="p-6 mb-6 rounded-lg bg-gray-50"
+              style={{ backgroundColor: 'white' }} // Ensure white bg in PDF
+            >
               <h3 className="mb-4 text-xl font-semibold text-gray-800">Order Details</h3>
               <div className="space-y-4">
-                 <div className="flex justify-between p-3 bg-white rounded-md">
+                <div className="flex justify-between p-3 bg-white rounded-md">
                   <span className="font-medium text-gray-600">Order Id:</span>
                   <span className="text-gray-800">{orderData.orderId}</span>
                 </div>
-                <span className="text-gray-800">{orderData._id}</span>
                 <div className="flex justify-between p-3 bg-white rounded-md">
                   <span className="font-medium text-gray-600">Canteen:</span>
                   <span className="text-gray-800">{orderData.canteenName}</span>
@@ -117,13 +153,12 @@ const PaymentComplete = () => {
 
             {/* Buttons */}
             <div className="flex justify-center space-x-4">
-              <Link 
-                href="/UserView/Canteens" 
+              <button
+                onClick={handleDownloadReceipt}
                 className="flex items-center px-6 py-3 text-white transition-colors duration-200 bg-orange-500 rounded-md hover:bg-orange-600"
               >
-                
                 Download Receipt
-              </Link>
+              </button>
               <Link 
                 href="/UserView/Canteens" 
                 className="flex items-center px-6 py-3 text-white transition-colors duration-200 bg-orange-500 rounded-md hover:bg-orange-600"
