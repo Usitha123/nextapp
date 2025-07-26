@@ -193,9 +193,15 @@ const OrderTable = () => {
               </tr>
             </thead>
             <tbody>
-              {paginatedOrders.map((order) => (
+              {paginatedOrders
+              .sort(
+      (a, b) =>
+        new Date(b?.meals?.[0]?.timestamp || 0) -
+        new Date(a?.meals?.[0]?.timestamp || 0)
+    )
+              .map((order) => (
                 <tr key={order._id} className="border-b-2 border-[#3B3737]">
-                  <td className="px-4 py-1">{order._id}</td>
+                  <td className="px-4 py-1">{order.orderId}</td>
                   <td className="px-4 py-1">{order.userName}</td>
                   <td className="px-4 py-1">
                     <span className={`px-2 py-1 rounded ${getStatusClasses(order.orderStatus)}`}>

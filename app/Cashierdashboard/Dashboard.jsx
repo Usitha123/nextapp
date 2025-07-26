@@ -145,51 +145,62 @@ const OrderTable = () => {
                   <th className="px-4 py-1">Order ID</th>
                   <th className="px-4 py-1">Customer</th>
                   <th className="px-4 py-1">Status</th>
-                  <th className="px-4 py-1">Description</th>
                   <th className="px-4 py-1">Date</th>
                   <th className="px-4 py-1">Payment Method</th>
+                  <th className="px-4 py-1">Description</th>
                   <th className="px-4 py-1">Action</th>
                 </tr>
               </thead>
-              <tbody className="">
-                {paginatedOrders.map((order) => (
-                  <tr key={order._id} className="border-b-2 border-[#3B3737]">
-                    <td className="px-4 py-1">{order._id}</td>
-                    <td className="px-4 py-1">{order.userName}</td>
-                    <td className="px-4 py-1">
-                      <span className={`px-2 py-1 rounded ${getStatusClasses(order.orderStatus)}`}>
-                        {order.orderStatus}
-                      </span>
-                    </td>
-                    <td className="px-4 py-1">
-                      {formatDate(order.meals?.[0]?.timestamp || new Date())}
-                    </td>
-                    <td className="px-4 py-1">{order.paymentStatus}</td>
-                    <td className="px-4 py-2">
-                      <button 
-                        onClick={() => handleDescriptionClick(order._id)} 
-                        className="text-orange-500 hover:underline"
-                      >
-                        View
-                      </button>
-                    </td>
-                    <td className="flex px-4 py-1 space-x-2">
-                      <button 
-                        onClick={() => updateStatus(order._id, "Accepted")} 
-                        className="flex-1 text-green-400 hover:underline"
-                      >
-                        Accept
-                      </button>
-                      <button 
-                        onClick={() => updateStatus(order._id, "Cancelled")} 
-                        className="flex-1 text-red-400 hover:underline"
-                      >
-                        Cancel
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
+             <tbody>
+  {paginatedOrders
+    .sort(
+      (a, b) =>
+        new Date(b?.meals?.[0]?.timestamp || 0) -
+        new Date(a?.meals?.[0]?.timestamp || 0)
+    )
+    .map((order) => (
+      <tr key={order._id} className="border-b-2 border-[#3B3737]">
+        <td className="px-4 py-1">{order.orderId}</td>
+        <td className="px-4 py-1">{order.userName}</td>
+        <td className="px-4 py-1">
+          <span
+            className={`px-2 py-1 rounded ${getStatusClasses(order.orderStatus)}`}
+          >
+            {order.orderStatus}
+          </span>
+        </td>
+        <td className="px-4 py-1">
+          {formatDate(order.meals?.[0]?.timestamp || new Date())}
+        </td>
+        <td className="px-4 py-1">{order.paymentStatus}</td>
+        <td className="px-4 py-2">
+          <button
+            onClick={() => handleDescriptionClick(order._id)}
+            className="text-orange-500 hover:underline"
+          >
+            View
+          </button>
+        </td>
+        <td className="px-4 py-1">
+          <div className="flex space-x-2">
+            <button
+              onClick={() => updateStatus(order._id, "Accepted")}
+              className="flex-1 text-green-400 hover:underline"
+            >
+              Accept
+            </button>
+            <button
+              onClick={() => updateStatus(order._id, "Cancelled")}
+              className="flex-1 text-red-400 hover:underline"
+            >
+              Cancel
+            </button>
+          </div>
+        </td>
+      </tr>
+    ))}
+</tbody>
+
             </table>
           </div>
         )}
