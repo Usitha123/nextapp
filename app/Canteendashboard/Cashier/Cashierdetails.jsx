@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import UpdateStatusModal from "./Cashierstatus";
 import Deletecashier from "./Deletecashier";
 import Link from "next/link";
+import { useSession } from 'next-auth/react';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -17,6 +18,7 @@ const CashierTable = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedCashier, setSelectedCashier] = useState(null);
   const [error, setError] = useState(null);
+   const { data: session, status } = useSession();
 
   // Fetch cashiers data
   const fetchCashiers = useCallback(async () => {
@@ -208,55 +210,60 @@ const CashierTable = () => {
             </tr>
           </thead>
           <tbody>
-            {currentCashiers.length === 0 ? (
-              <tr>
-                <td colSpan="9" className="p-8 text-center text-gray-500">
-                  No cashiers found
-                </td>
-              </tr>
-            ) : (
-              currentCashiers.map((cashier) => (
-                <tr key={cashier._id} className="border-b border-[#3B3737] hover:bg-[#3B3737]/50 transition">
-                  <td className="p-3">{cashier.firstName}</td>
-                  <td className="p-3">{cashier.lastName}</td>
-                  <td className="p-3 break-all">{cashier.email}</td>
-                  <td className="p-3">{cashier.phoneNumber}</td>
-                  <td className="p-3">{cashier.nicNumber}</td>
-                  <td className="p-3">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      cashier.status === 'active' 
-                        ? 'bg-green-900/50 text-green-400' 
-                        : 'bg-red-900/50 text-red-400'
-                    }`}>
-                      {cashier.status}
-                    </span>
-                  </td>
-                  <td className="p-3">{cashier.selectCanteen}</td>
-                  <td className="p-3 text-xs">{formatDate(cashier.createdAt)}</td>
-                  <td className="p-3">
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => openEditModal(cashier)}
-                        className="p-1 text-blue-400 transition hover:text-blue-300"
-                        aria-label={`Edit ${cashier.firstName} ${cashier.lastName}`}
-                        disabled={loading}
-                      >
-                        <FaEdit size={14} />
-                      </button>
-                      <button
-                        onClick={() => openDeleteModal(cashier)}
-                        className="p-1 text-red-400 transition hover:text-red-300"
-                        aria-label={`Delete ${cashier.firstName} ${cashier.lastName}`}
-                        disabled={loading}
-                      >
-                        <FaRegTrashAlt size={14} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
+  {currentCashiers.length === 0 ? (
+    <tr>
+      <td colSpan="9" className="p-8 text-center text-gray-500">
+        No cashiers found
+      </td>
+    </tr>
+  ) : (
+    currentCashiers
+      .filter(cashier => session?.user?.canteenName === cashier.selectCanteen)
+      .map((cashier) => (
+        <tr key={cashier._id} className="border-b border-[#3B3737] hover:bg-[#3B3737]/50 transition">
+          <td className="p-3">{cashier.firstName}</td>
+          <td className="p-3">{cashier.lastName}</td>
+          <td className="p-3 break-all">{cashier.email}</td>
+          <td className="p-3">{cashier.phoneNumber}</td>
+          <td className="p-3">{cashier.nicNumber}</td>
+          <td className="p-3">
+            <span
+              className={`px-2 py-1 rounded-full text-xs ${
+                cashier.status === 'active'
+                  ? 'bg-green-900/50 text-green-400'
+                  : 'bg-red-900/50 text-red-400'
+              }`}
+            >
+              {cashier.status}
+            </span>
+          </td>
+          <td className="p-3">{cashier.selectCanteen}</td>
+          <td className="p-3 text-xs">{formatDate(cashier.createdAt)}</td>
+          <td className="p-3">
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => openEditModal(cashier)}
+                className="p-1 text-blue-400 transition hover:text-blue-300"
+                aria-label={`Edit ${cashier.firstName} ${cashier.lastName}`}
+                disabled={loading}
+              >
+                <FaEdit size={14} />
+              </button>
+              <button
+                onClick={() => openDeleteModal(cashier)}
+                className="p-1 text-red-400 transition hover:text-red-300"
+                aria-label={`Delete ${cashier.firstName} ${cashier.lastName}`}
+                disabled={loading}
+              >
+                <FaRegTrashAlt size={14} />
+              </button>
+            </div>
+          </td>
+        </tr>
+      ))
+  )}
+</tbody>
+
         </table>
       </div>
 
