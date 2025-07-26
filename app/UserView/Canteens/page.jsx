@@ -68,21 +68,23 @@ const Page = () => {
  
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-full bg-gray-100">
       <Sidebar activePath={currentPath} />
       <div className="flex-1">
         <Topbar />
         <Header title="Canteens" />
         <div className="max-h-[70%] m-5">
-          <div className="grid justify-between w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {/* <div className="grid justify-between w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"> */}
+          <div className="flex flex-wrap justify w-full gap-10 ">
+ 
             {canteens.map((canteen, index) => (
               <div key={index} className="flex flex-col my-auto text-xl font-medium leading-none text-center text-white">
                 <Link href={`/UserView/Canteens/${canteen.canteenName}`}>
-                  <div className="flex flex-col pt-3.5 h-[220px] rounded-t-3xl bg-white">
+                  <div className="flex flex-col h-[220px] rounded-t-3xl bg-white">
                     <Image
                       src={canteen.image}
                       alt={`${canteen.canteenName} canteen`}
-                      className="object-contain mx-auto"
+                      className="object-cover h-full rounded-t-xl mx-auto"
                       width={300} // Adjust as needed
                       height={300} // Adjust as needed
                       loading="lazy"
