@@ -7,7 +7,7 @@ const UpdateStatusModal = ({ isOpen, onClose, onSave, currentStatus }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm">
-      <div className="w-70 p-6 bg-black text-gray-300 rounded-lg shadow-lg">
+      <div className="p-6 text-gray-300 bg-black rounded-lg shadow-lg w-70">
         <div className="text-center">
           <h3 className="mb-4 text-lg font-semibold">Update Status</h3>
           <div className="flex flex-col items-start space-y-3">
@@ -62,7 +62,7 @@ const UpdateStatusModal = ({ isOpen, onClose, onSave, currentStatus }) => {
                 onSave(status);
               }}
               type="button"
-              className="px-4 py-1 m-2 text-white bg-orange-500 rounded-xl hover:bg-orange-400 transition"
+              className="px-4 py-1 m-2 text-white transition bg-orange-500 rounded-xl hover:bg-orange-400"
             >
               Save
             </button>

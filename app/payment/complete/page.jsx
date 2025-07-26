@@ -90,7 +90,7 @@ const PaymentComplete = () => {
               <div className="space-y-4">
                  <div className="flex justify-between p-3 bg-white rounded-md">
                   <span className="font-medium text-gray-600">Order Id:</span>
-                  <span className="text-gray-800">{orderData._id}</span>
+                  <span className="text-gray-800">{orderData.orderId}</span>
                 </div>
                 <span className="text-gray-800">{orderData._id}</span>
                 <div className="flex justify-between p-3 bg-white rounded-md">
@@ -121,7 +121,7 @@ const PaymentComplete = () => {
                 href="/UserView/Canteens" 
                 className="flex items-center px-6 py-3 text-white transition-colors duration-200 bg-orange-500 rounded-md hover:bg-orange-600"
               >
-                <FaArrowLeft className="mr-2" />
+                
                 Download Receipt
               </Link>
               <Link 

@@ -42,6 +42,10 @@ const orderSchema = new Schema({
     required: true,
     trim: true
   },
+  orderId: {
+    type: String,
+    required: true,
+  },
   orderType: {
     type: String,
     required: true,

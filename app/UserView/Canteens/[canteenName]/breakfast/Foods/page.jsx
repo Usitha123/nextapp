@@ -102,7 +102,6 @@ const FoodDisplay = ({ onAddToCart }) => {
   const [isBreakfastTime, setIsBreakfastTime] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const currentCanteen = usePathname()?.split("/")[3];
 
   useEffect(() => {
@@ -170,7 +169,6 @@ const FoodDisplay = ({ onAddToCart }) => {
             <div className="flex-col">
               <h3 className="mt-2 text-lg font-semibold">{meal.mealName}</h3>
               <p className="text-gray-500">Rs {Number(meal.mealPrice).toFixed(2)}</p>
-
             </div>
             <div className="relative">
               <button
@@ -193,6 +191,12 @@ const CombinedComponent = () => {
   const { data: session } = useSession();
   const currentCanteen = usePathname()?.split("/")[3];
   const [cartItems, setCartItems] = useState([]);
+
+  const generateOrderId = () => {
+    const randomPart = Math.floor(1000 + Math.random() * 9000); // 4-digit random
+    const timestampPart = Date.now().toString().slice(-4); // last 4 digits of timestamp
+    return `ORD${randomPart}${timestampPart}`;
+  };
 
   const handleAddToCart = (meal) => {
     setCartItems((prev) => {
@@ -235,12 +239,11 @@ const CombinedComponent = () => {
       userName: session?.user?.name,
       userEmail: session?.user?.email,
       canteenName: currentCanteen,
+      orderId: generateOrderId(),
       orderType: "Breakfast",
       paymentStatus: "by_Cash",
       meals,
     };
-
-  
 
     try {
       const res = await fetch("/api/addorders", {
@@ -272,13 +275,14 @@ const CombinedComponent = () => {
       userName: session?.user?.name,
       userEmail: session?.user?.email,
       canteenName: currentCanteen,
+      orderId: generateOrderId(),
       orderType: "Breakfast",
       paymentStatus: "by_Card",
       meals,
     };
 
     localStorage.setItem("orderData", JSON.stringify(orderData));
-    
+
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
