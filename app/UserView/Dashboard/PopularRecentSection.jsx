@@ -59,6 +59,78 @@ export default function PopularRecentSection() {
     return "Dinner"; // Default fallback
   };
 
+  // Function to fetch recent meals for currently logged in user
+  const fetchRecentMeals = async () => {
+    try {
+      // Get current meal type
+      const currentMealType = getCurrentMealType();
+      
+      // Calculate date 7 days ago
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      
+      // Fetch orders and meals
+      const ordersRes = await fetch('/api/vieworders');
+      const mealsRes = await fetch('/api/viewmeal');
+      
+      if (!ordersRes.ok || !mealsRes.ok) throw new Error('Failed to fetch data');
+      
+      const { orders } = await ordersRes.json();
+      const { meals } = await mealsRes.json();
+
+      // Step 1: Select all orders from last 7 days for currently logged in user
+      const userOrders = orders.filter(order => {
+        const orderDate = new Date(order.meals[0]?.timestamp);
+        return orderDate >= sevenDaysAgo;
+      });
+
+      // Step 2: Filter orders by current meal type
+      const filteredOrders = userOrders.filter(order => 
+        order.orderType === currentMealType
+      );
+
+      // Step 3: Get last 3 orders (ordered from latest to oldest)
+      const last3Orders = filteredOrders
+        .sort((a, b) => new Date(b.meals[0]?.timestamp) - new Date(a.meals[0]?.timestamp))
+        .slice(0, 3);
+
+      // Step 4: Filter meals following the pseudocode logic
+      const recentMeals = [];
+      const mealNamesSet = new Set();
+
+      for (const order of last3Orders) {
+        // Sort meals in the order by mealQuantity in descending order
+        const sortedMeals = order.meals.sort((a, b) => b.mealQuantity - a.mealQuantity);
+
+        for (const meal of sortedMeals) {
+          if (recentMeals.length < 3 && !mealNamesSet.has(meal.mealName)) {
+            // Get meal details from meals array
+            const mealDetails = meals.find(m => m._id === meal.mealId);
+            if (mealDetails) {
+              recentMeals.push({
+                name: mealDetails.mealName,
+                canteen: mealDetails.selectCanteen,
+                image: mealDetails.image,
+                price: mealDetails.mealPrice
+              });
+              mealNamesSet.add(meal.mealName);
+            }
+          }
+        }
+
+        // If we already have 3 meals, break out of the loop
+        if (recentMeals.length >= 3) {
+          break;
+        }
+      }
+
+      setRecentItems(recentMeals);
+    } catch (err) {
+      console.error("Error fetching recent meals:", err);
+      setError("Failed to load recent meals.");
+    }
+  };
+
   // Function to fetch popular items
   const fetchPopularItems = async () => {
     try {
@@ -123,6 +195,14 @@ export default function PopularRecentSection() {
     }
   };
 
+  // Function to handle tab changes
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    if (tab === "recent") {
+      fetchRecentMeals();
+    }
+  };
+
   useEffect(() => {
     fetchPopularItems();
 
@@ -142,7 +222,7 @@ export default function PopularRecentSection() {
               ? "text-orange-500 border-b-2 border-orange-500"
               : "text-gray-500"
           }`}
-          onClick={() => setActiveTab("popular")}
+          onClick={() => handleTabChange("popular")}
         >
           Popular
         </span>
@@ -152,7 +232,7 @@ export default function PopularRecentSection() {
               ? "text-orange-500 border-b-2 border-orange-500"
               : "text-gray-500"
           }`}
-          onClick={() => setActiveTab("recent")}
+          onClick={() => handleTabChange("recent")}
         >
           Recent
         </span>
