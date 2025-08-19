@@ -45,6 +45,7 @@ const OrderTable = () => {
   // Status styling helper
   const getStatusClasses = (status) => {
     const statusStyles = {
+      
       "Accepted":   "inline-block text-white w-[70%] rounded-xl bg-green-500  ",
       "Picked":     "inline-block text-black w-[70%] rounded-xl bg-yellow-400 ",
       "Cancelled":  "inline-block text-white w-[70%] rounded-xl bg-red-500  ",

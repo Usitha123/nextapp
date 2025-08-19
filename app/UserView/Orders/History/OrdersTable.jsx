@@ -36,6 +36,18 @@ const OrdersTable = () => {
     }
   };
 
+  const getStatusClasses = (status) => {
+  const statusStyles = {
+    "Accepted":   "inline-block text-white w-[70%] rounded-xl bg-green-500",
+    "Picked":     "inline-block text-black w-[70%] rounded-xl bg-yellow-400",
+    "Cancelled":  "inline-block text-white w-[70%] rounded-xl bg-red-500",
+    "Ready":      "inline-block text-white w-[70%] rounded-xl bg-blue-500",
+    "Drop":       "inline-block text-white w-[70%] rounded-xl bg-gray-500",
+  };
+  return statusStyles[status] || "bg-gray-400 text-white rounded-xl w-[70%] inline-block";
+};
+
+
   const updateStatus = async (orderId, status) => {
     try {
       const response = await fetch(`/api/updateorderstatus?id=${orderId}`, {
@@ -147,10 +159,13 @@ const OrdersTable = () => {
       <tr key={order._id} className="text-center">
         <td className="p-2">{order._id}</td>
         <td className="p-2">
-          <span className="block w-auto md:w-[70%] md:mx-auto px-3 py-2 leading-none text-white bg-green-500 rounded-xl">
-            {order.orderStatus}
-          </span>
-        </td>
+  <span
+    className={`block w-auto md:w-[70%] md:mx-auto px-3 py-2 leading-none text-center ${getStatusClasses(order.orderStatus)}`}
+  >
+    {order.orderStatus}
+  </span>
+</td>
+
         <td className="p-2">
           {order.meals && order.meals[0] && order.meals[0].timestamp
             ? formatDate(order.meals[0].timestamp)
