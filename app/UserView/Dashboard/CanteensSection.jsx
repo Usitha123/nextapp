@@ -57,7 +57,7 @@ export default function CanteensSection() {
             <img
               src={canteen.image || "/fallback.jpg"}
               alt={canteen.name || "Canteen"}
-              className="object-cover w-full h-28"
+              className="object-cover w-full h-36"
             />
             <Link
               href={`/UserView/Canteens/${encodeURIComponent(

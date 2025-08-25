@@ -21,7 +21,7 @@ export default function MealDetailCard({ name, canteen, image, price }) {
 
   return (
     <div className="overflow-hidden bg-white shadow-md rounded-xl">
-      <div className="relative h-40">
+      <div className="relative h-36">
         <Image
           src={image}
           alt={name}
@@ -37,12 +37,12 @@ export default function MealDetailCard({ name, canteen, image, price }) {
         </div>
         <button 
           onClick={handleAddClick}
-          className="w-10 h-10 flex items-center justify-center bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors"
+          className="w-8 h-8 rounded-full flex items-center justify-center bg-orange-500 hover:bg-orange-600 transition-colors"
           aria-label="Add item"
         >
           <svg 
-            width="24" 
-            height="24" 
+            width="18" 
+            height="18" 
             viewBox="0 0 24 24" 
             fill="none" 
             xmlns="http://www.w3.org/2000/svg"

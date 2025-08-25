@@ -215,7 +215,7 @@ export default function PopularRecentSection() {
 
   return (
     <section>
-      <div className="flex mb-4 space-x-4 text-lg font-medium">
+      <div className="flex mb-4 space-x-4  font-medium">
         <span
           className={`cursor-pointer ${
             activeTab === "popular"
