@@ -56,8 +56,8 @@ const DashboardCards = () => {
         const studentsData = await studentsRes.json();
 
         // Separate active and blocked students
-        const activeStudents = studentsData.filter((student) => student.status === 'Active');
-        const blockedStudents = studentsData.filter((student) => student.status !== 'Active');
+        const activeStudents = studentsData.filter((student) => student.status === 'active');
+        const blockedStudents = studentsData.filter((student) => student.status !== 'active');
 
         setStudents(activeStudents);
         setBlockedStudents(blockedStudents);

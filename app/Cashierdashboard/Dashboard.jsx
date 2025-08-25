@@ -13,8 +13,24 @@ const OrderTable = () => {
   const [selectedDescription, setSelectedDescription] = useState("");
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const { data: session } = useSession();
+  const [stats, setStats] = useState([
+    { title: "New Orders", value: 0, icon: <SquareArrowDown/> },
+    { title: "Orders Ready", value: 0, icon: <ArrowBigUpDash/>},
+    { title: "Orders Cancelled", value: 0, icon: <OctagonAlert/> },
+  ]);
   
   const ROWS_PER_PAGE = 4;
+
+  // Get current meal type based on time
+  const getCurrentMealType = () => {
+    const now = new Date();
+    const hour = now.getHours();
+    
+    if (hour >= 7 && hour < 11) return "Breakfast";
+    if (hour >= 11 && hour < 16) return "Lunch";
+    if (hour >= 16 && hour < 21) return "Dinner";
+    return "Dinner"; // Default fallback
+  };
 
   useEffect(() => {
     fetchOrders();
@@ -26,11 +42,48 @@ const OrderTable = () => {
       if (!res.ok) throw new Error("Failed to fetch orders");
       const data = await res.json();
       setOrders(data.orders);
+      
+      // Calculate stats based on the cashier's canteen
+      calculateStats(data.orders);
     } catch (error) {
       console.error("Error fetching orders:", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const calculateStats = (orders) => {
+    if (!session?.user?.canteenNamecashier) return;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const currentMealType = getCurrentMealType();
+
+    // Filter orders for current day and cashier's canteen
+    const todayOrders = orders.filter(order => {
+      const orderDate = new Date(order.meals[0]?.timestamp);
+      return orderDate.toDateString() === today.toDateString() && 
+             order.canteenName === session.user.canteenNamecashier;
+    });
+
+    // Calculate stats
+    const newOrders = todayOrders.filter(order => 
+      order.orderStatus === "Pending" && order.orderType === currentMealType
+    ).length;
+
+    const ordersReady = todayOrders.filter(order => 
+      order.orderStatus === "Ready" && order.orderType === currentMealType
+    ).length;
+
+    const ordersCancelled = todayOrders.filter(order => 
+      order.orderStatus === "Cancelled"
+    ).length;
+
+    setStats([
+      { title: "New Orders", value: newOrders, icon: <SquareArrowDown/> },
+      { title: "Orders Ready", value: ordersReady, icon: <ArrowBigUpDash/>},
+      { title: "Orders Cancelled", value: ordersCancelled, icon: <OctagonAlert/> },
+    ]);
   };
 
   const formatDate = (dateString) => {
@@ -85,12 +138,6 @@ const OrderTable = () => {
       alert("An error occurred while updating status");
     }
   };
-
-  const stats = [
-    { title: "New Orders", value: 3, icon: <SquareArrowDown/> },
-    { title: "Orders Ready", value: 5, icon: <ArrowBigUpDash/>},
-    { title: "Orders Cancelled", value: 2, icon: <OctagonAlert/> },
-  ];
 
   const handlePagination = (action) => {
     if (action === "prev" && currentPage > 1) {
