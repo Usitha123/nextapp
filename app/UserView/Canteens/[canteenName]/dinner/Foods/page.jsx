@@ -112,7 +112,7 @@ const FoodDisplay = ({ onAddToCart }) => {
       const minute = now.getMinutes();
       setIsDinnerTime(
         (hour > 16 || (hour === 16 && minute >= 0)) &&
-        (hour < 21 || (hour === 21 && minute === 0))
+        (hour < 23 || (hour === 23 && minute === 0))
       );
     };
 
@@ -194,6 +194,13 @@ const CombinedComponent = () => {
   const currentCanteen = usePathname()?.split("/")[3];
   const [cartItems, setCartItems] = useState([]);
 
+   const generateOrderId = () => {
+    const randomPart = Math.floor(1000 + Math.random() * 9000); // 4-digit random
+    const timestampPart = Date.now().toString().slice(-4); // last 4 digits of timestamp
+    return `ORD${randomPart}${timestampPart}`;
+  };
+
+
   const handleAddToCart = (meal) => {
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === meal._id);
@@ -235,6 +242,7 @@ const CombinedComponent = () => {
       userName: session?.user?.name,
       userEmail: session?.user?.email,
       canteenName: currentCanteen,
+      orderId: generateOrderId(),
       orderType: "Dinner",
       paymentStatus: "by_Cash",
       meals,
@@ -272,6 +280,7 @@ const CombinedComponent = () => {
       userName: session?.user?.name,
       userEmail: session?.user?.email,
       canteenName: currentCanteen,
+      orderId: generateOrderId(),
       orderType: "Dinner",
       paymentStatus: "by_Card",
       meals,

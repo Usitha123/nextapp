@@ -20,7 +20,7 @@ const Page = () => {
       mealPath = "breakfast";
     } else if (currentHour >= 11 && currentHour < 16) {
       mealPath = "lunch";
-    } else if (currentHour >= 16 && currentHour < 21) {
+    } else if (currentHour >= 16 && currentHour < 23) {
       mealPath = "dinner";
     }
 
