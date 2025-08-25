@@ -1,9 +1,12 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import UpdateStatusModal from "./Deleteorder";
 import DescriptionModal from "./Descriptionmodel";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const OrdersTable = () => {
   const [orders, setOrders] = useState([]);
@@ -14,10 +17,16 @@ const OrdersTable = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  // pagination state
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    rowsPerPage: 5,
+  });
+
   const { data: session } = useSession();
   const pathname = usePathname();
 
-  // Add refreshTrigger as a dependency to refetch when it changes
   useEffect(() => {
     fetchOrders();
   }, [refreshTrigger]);
@@ -38,13 +47,16 @@ const OrdersTable = () => {
 
   const getStatusClasses = (status) => {
     const statusStyles = {
-      "Accepted":   "inline-block text-white w-[70%] rounded-xl bg-green-500  ",
-      "Picked":     "inline-block text-black w-[70%] rounded-xl bg-yellow-400 ",
-      "Cancelled":  "inline-block text-white w-[70%] rounded-xl bg-red-500  ",
-      "Ready":    "  inline-block text-white w-[70%] rounded-xl bg-blue-500  "
+      Accepted: "inline-block text-white w-[70%] rounded-xl bg-green-500",
+      Picked: "inline-block text-black w-[70%] rounded-xl bg-yellow-400",
+      Cancelled: "inline-block text-white w-[70%] rounded-xl bg-red-500",
+      Ready: "inline-block text-white w-[70%] rounded-xl bg-blue-500",
     };
-    
-    return statusStyles[status] || "bg-gray-500 inline-block w-[70%] rounded-xl text-white";
+
+    return (
+      statusStyles[status] ||
+      "bg-gray-500 inline-block w-[70%] rounded-xl text-white"
+    );
   };
 
   const updateStatus = async (orderId, status) => {
@@ -54,18 +66,15 @@ const OrdersTable = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderStatus: status }),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         alert(errorData.message || "Failed to update status");
         return;
       }
-      
-      // Successful status update
+
       alert(`Status updated to ${status}`);
-      
-      // Force a fresh fetch instead of modifying state locally
-      setRefreshTrigger(prev => prev + 1);
+      setRefreshTrigger((prev) => prev + 1);
       setIsDeleteModalOpen(false);
     } catch (error) {
       console.error("Error updating status:", error);
@@ -78,7 +87,6 @@ const OrdersTable = () => {
       const createdAt = new Date(dateString);
       return createdAt.toLocaleString();
     } catch (error) {
-      console.error("Error formatting date:", error);
       return "Invalid date";
     }
   };
@@ -87,7 +95,10 @@ const OrdersTable = () => {
     const order = orders.find((order) => order._id === orderId);
     if (order) {
       const mealDescriptions = order.meals
-        .map((meal) => `${meal.mealName}: ${meal.mealQuantity} x ${meal.mealPrice}`)
+        .map(
+          (meal) =>
+            `${meal.mealName}: ${meal.mealQuantity} x ${meal.mealPrice}`
+        )
         .join(", <br/> ");
       setSelectedDescription(mealDescriptions);
       setSelectedOrderId(orderId);
@@ -116,85 +127,137 @@ const OrdersTable = () => {
 
     return orders
       .filter((order) => session.user.email === order.userEmail)
-      .filter((order) => 
-        Array.isArray(order.meals) && 
-        order.meals.length > 0 && 
-        ["Pending", "Ready", "Accepted"].includes(order.orderStatus)
+      .filter(
+        (order) =>
+          Array.isArray(order.meals) &&
+          order.meals.length > 0 &&
+          ["Pending", "Ready", "Accepted"].includes(order.orderStatus)
       );
   };
 
+  // Pagination
+  const filteredOrders = getFilteredOrders();
+  const { currentPage, rowsPerPage } = pagination;
+  const indexOfLastOrder = currentPage * rowsPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - rowsPerPage;
+  const paginatedOrders = filteredOrders
+    .slice()
+    .sort((a, b) => {
+      const timeA = a.meals?.[0]?.timestamp
+        ? new Date(a.meals[0].timestamp)
+        : new Date(0);
+      const timeB = b.meals?.[0]?.timestamp
+        ? new Date(b.meals[0].timestamp)
+        : new Date(0);
+      return timeB - timeA;
+    })
+    .slice(indexOfFirstOrder, indexOfLastOrder);
+  const totalPages = Math.ceil(filteredOrders.length / rowsPerPage);
+
+  const handlePrevPage = () => {
+    setPagination((prev) => ({
+      ...prev,
+      currentPage: Math.max(prev.currentPage - 1, 1),
+    }));
+  };
+
+  const handleNextPage = () => {
+    setPagination((prev) => ({
+      ...prev,
+      currentPage: Math.min(prev.currentPage + 1, totalPages),
+    }));
+  };
+
   const renderOrdersTable = () => {
-    const filteredOrders = getFilteredOrders();
-    
     if (filteredOrders.length === 0) {
       return <p>No active orders available</p>;
     }
 
     return (
-      
-        <div className="overflow-auto justify-center min-w-[0px] max-w-[75vw] lg:max-w-full rounded-xl">
-    <table className="min-w-[20px] w-full text-sm bg-white rounded-2xl">
-      
-      {/* <table className="px-2 overflow-auto max-h-[80vh] w-full p-3 bg-white rounded-2xl"> */}
-        <thead>
-          <tr className="text-white bg-orange-500 rounded">
-            <th className="p-2 rounded-tl-2xl">Order ID</th>
-            <th className="p-2">Status</th>
-            <th className="p-2">Date</th>
-            <th className="p-2">Canteen</th>
-            <th className="p-2">Description</th>
-            <th className="p-2 rounded-tr-2xl">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-  {filteredOrders
-    .slice() // make a shallow copy to avoid mutating original state
-    .sort((a, b) => {
-      const timeA = a.meals?.[0]?.timestamp ? new Date(a.meals[0].timestamp) : new Date(0);
-      const timeB = b.meals?.[0]?.timestamp ? new Date(b.meals[0].timestamp) : new Date(0);
-      return timeB - timeA; // descending order (latest first)
-    })
-    .map((order) => (
-      <tr key={order._id} className="text-center">
-        <td className="p-2">{order._id}</td>
-        <td className="p-2">
-  <span
-    className={`block w-auto md:w-[70%] md:mx-auto px-3 py-2 leading-none text-center ${getStatusClasses(order.orderStatus)}`}
-  >
-    {order.orderStatus}
-  </span>
-</td>
+      <div className="overflow-auto justify-center min-w-[0px] max-w-[75vw] lg:max-w-full rounded-xl">
+        <table className="w-full text-sm bg-white rounded-2xl">
+          <thead>
+            <tr className="text-white bg-orange-500 rounded">
+              <th className="p-2 rounded-tl-2xl">Order ID</th>
+              <th className="p-2">Status</th>
+              <th className="p-2">Date</th>
+              <th className="p-2">Canteen</th>
+              <th className="p-2">Description</th>
+              <th className="p-2 rounded-tr-2xl">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {paginatedOrders.map((order) => (
+              <tr key={order._id} className="text-center">
+                <td className="p-2">{order._id}</td>
+                <td className="p-2">
+                  <span
+                    className={`block w-auto md:w-[70%] md:mx-auto px-3 py-2 leading-none text-center ${getStatusClasses(
+                      order.orderStatus
+                    )}`}
+                  >
+                    {order.orderStatus}
+                  </span>
+                </td>
+                <td className="p-2">
+                  {order.meals && order.meals[0]?.timestamp
+                    ? formatDate(order.meals[0].timestamp)
+                    : "N/A"}
+                </td>
+                <td className="p-2">{order.canteenName || "N/A"}</td>
+                <td className="p-2">
+                  <button
+                    onClick={() => handleDescriptionClick(order._id)}
+                    className="text-orange-400 hover:underline"
+                  >
+                    View
+                  </button>
+                </td>
+                <td className="p-2">
+                  <button
+                    onClick={() => handleCancelClick(order)}
+                    disabled={order.orderStatus !== "Pending"}
+                    className={`block w-auto md:w-[70%] md:mx-auto px-3 py-2 leading-none text-white rounded-xl 
+                      ${
+                        order.orderStatus === "Pending"
+                          ? "bg-red-500"
+                          : "bg-red-300 cursor-not-allowed opacity-50"
+                      }`}
+                  >
+                    Cancel
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
-        <td className="p-2">
-          {order.meals && order.meals[0] && order.meals[0].timestamp
-            ? formatDate(order.meals[0].timestamp)
-            : "N/A"}
-        </td>
-        <td className="p-2">{order.canteenName || "N/A"}</td>
-        <td className="p-2">
-          <button
-            onClick={() => handleDescriptionClick(order._id)}
-            className="text-orange-400 hover:underline"
-          >
-            View
-          </button>
-        </td>
-        <td className="p-2">
-          <button
-  onClick={() => handleCancelClick(order)}
-  disabled={order.orderStatus !== "Pending"}
-  className={`block w-auto md:w-[70%] md:mx-auto px-3 py-2 leading-none text-white rounded-xl 
-    ${order.orderStatus === "Pending" ? "bg-red-500" : "bg-red-300 cursor-not-allowed opacity-50"}`}
->
-  Cancel
-</button>
+        {/* Pagination controls */}
+        {filteredOrders.length > 0 && (
+          <div className="flex items-center justify-end gap-2 mt-2 text-sm">
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              className="flex items-center gap-1 px-2 py-1 text-sm font-medium bg-white text-orange-500 border border-orange-500 rounded-xl hover:bg-gray-300 transition disabled:opacity-50"
+            >
+              <ChevronLeft size={16} />
+              Prev
+            </button>
 
-        </td>
-      </tr>
-    ))}
-</tbody>
+            <span className="text-gray-700">
+              Page {currentPage} of {totalPages}
+            </span>
 
-      </table>
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage >= totalPages}
+              className="flex items-center gap-1 px-2 py-1 text-sm font-medium bg-white text-orange-500 border border-orange-500 rounded-xl hover:bg-gray-300 transition disabled:opacity-50"
+            >
+              Next
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
       </div>
     );
   };
@@ -205,19 +268,23 @@ const OrdersTable = () => {
         <div className="flex space-x-4">
           <Link
             href="/UserView/Orders/Ongoing"
-            className={`text-orange-500 hover:underline ${pathname === "/UserView/Orders/Ongoing" ? "font-bold" : ""}`}
+            className={`text-orange-500 hover:underline ${
+              pathname === "/UserView/Orders/Ongoing" ? "font-bold" : ""
+            }`}
           >
             Ongoing
           </Link>
           <Link
             href="/UserView/Orders/History"
-            className={`text-orange-500 hover:underline ${pathname === "/UserView/Orders/History" ? "font-bold" : ""}`}
+            className={`text-orange-500 hover:underline ${
+              pathname === "/UserView/Orders/History" ? "font-bold" : ""
+            }`}
           >
             History
           </Link>
         </div>
       </div>
-      
+
       {loading ? <p>Loading orders...</p> : renderOrdersTable()}
 
       <DescriptionModal
@@ -226,7 +293,7 @@ const OrdersTable = () => {
         description={selectedDescription}
         orderId={selectedOrderId}
       />
-      
+
       <UpdateStatusModal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
