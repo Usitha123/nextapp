@@ -48,7 +48,9 @@ const links = [
     subMenu: [
       { href: "/admindashboard/User/Owner", label: "Owner" },
       { href: "/admindashboard/User/Student", label: "Student" },
-      { href: "/admindashboard/User/Cashier", label: "Cashier" }
+      { href: "/admindashboard/User/Cashier", label: "Cashier" },
+      { href: "/admindashboard/User/Admin", label: "Admin" }
+      
     ]
   },
   

@@ -112,7 +112,7 @@ const FoodDisplay = ({ onAddToCart }) => {
       const minute = now.getMinutes();
       setIsDinnerTime(
         (hour > 16 || (hour === 16 && minute >= 0)) &&
-        (hour < 21 || (hour === 21 && minute === 0))
+        (hour < 23 || (hour === 23 && minute === 0))
       );
     };
 
