@@ -238,7 +238,7 @@ const OrdersTable = () => {
             <button
               onClick={handlePrevPage}
               disabled={currentPage === 1}
-              className="flex items-center gap-1 px-2 py-1 text-sm font-medium bg-white text-orange-500 border border-orange-500 rounded-xl hover:bg-gray-300 transition disabled:opacity-50"
+              className="flex items-center gap-1 px-2 py-1 text-sm font-medium bg-white text-orange-500 border border-orange-500 rounded-xl hover:bg-gray-100 transition disabled:opacity-50"
             >
               <ChevronLeft size={16} />
               Prev
@@ -251,7 +251,7 @@ const OrdersTable = () => {
             <button
               onClick={handleNextPage}
               disabled={currentPage >= totalPages}
-              className="flex items-center gap-1 px-2 py-1 text-sm font-medium bg-white text-orange-500 border border-orange-500 rounded-xl hover:bg-gray-300 transition disabled:opacity-50"
+              className="flex items-center gap-1 px-2 py-1 text-sm font-medium bg-white text-orange-500 border border-orange-500 rounded-xl hover:bg-gray-100 transition disabled:opacity-50"
             >
               Next
               <ChevronRight size={16} />

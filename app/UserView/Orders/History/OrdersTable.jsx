@@ -21,7 +21,7 @@ const OrdersTable = () => {
   // pagination state
   const [pagination, setPagination] = useState({
     currentPage: 1,
-    rowsPerPage: 8, // 👈 max rows per page
+    rowsPerPage: 5, // match ongoing table
   });
 
   const { data: session } = useSession();
@@ -54,7 +54,10 @@ const OrdersTable = () => {
       Ready: "inline-block text-white w-[70%] rounded-xl bg-blue-500",
       Drop: "inline-block text-white w-[70%] rounded-xl bg-gray-500",
     };
-    return statusStyles[status] || "bg-gray-400 text-white rounded-xl w-[70%] inline-block";
+    return (
+      statusStyles[status] ||
+      "bg-gray-400 text-white rounded-xl w-[70%] inline-block"
+    );
   };
 
   const formatDate = (dateString) => {
@@ -70,7 +73,9 @@ const OrdersTable = () => {
     const order = orders.find((order) => order._id === orderId);
     if (order) {
       const mealDescriptions = order.meals
-        .map((meal) => `${meal.mealName}: ${meal.mealQuantity} x ${meal.mealPrice}`)
+        .map(
+          (meal) => `${meal.mealName}: ${meal.mealQuantity} x ${meal.mealPrice}`
+        )
         .join(", <br/> ");
       setSelectedDescription(mealDescriptions);
       setSelectedOrderId(orderId);
@@ -132,7 +137,19 @@ const OrdersTable = () => {
   const filteredOrders = getFilteredOrders();
   const indexOfLastOrder = currentPage * rowsPerPage;
   const indexOfFirstOrder = indexOfLastOrder - rowsPerPage;
-  const paginatedOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const paginatedOrders = filteredOrders
+    .slice()
+    .sort((a, b) => {
+      const timeA = a.meals?.[0]?.timestamp
+        ? new Date(a.meals[0].timestamp)
+        : new Date(0);
+      const timeB = b.meals?.[0]?.timestamp
+        ? new Date(b.meals[0].timestamp)
+        : new Date(0);
+      return timeB - timeA;
+    })
+    .slice(indexOfFirstOrder, indexOfLastOrder);
+
   const totalPages = Math.ceil(filteredOrders.length / rowsPerPage);
 
   const handlePrevPage = () => {
@@ -151,83 +168,89 @@ const OrdersTable = () => {
 
   const renderOrdersTable = () => {
     if (filteredOrders.length === 0) {
-      return <p>No active orders available</p>;
+      return <p>No past orders available</p>;
     }
 
     return (
-      <>
-        <div className="overflow-auto justify-center min-w-[0px] max-w-[75vw] lg:max-w-full rounded-xl">
-          <table className="w-full text-sm bg-white rounded-2xl">
-            <thead>
-              <tr className="text-white bg-orange-500 rounded">
-                <th className="p-2 rounded-tl-2xl">Order ID</th>
-                <th className="p-2">Status</th>
-                <th className="p-2">Date</th>
-                <th className="p-2">Canteen</th>
-                <th className="p-2">Description</th>
-                <th className="p-2 rounded-tr-2xl">Action</th>
+      <div className="overflow-auto justify-center min-w-[0px] max-w-[75vw] lg:max-w-full rounded-xl">
+        <table className="w-full text-sm bg-white rounded-2xl">
+          <thead>
+            <tr className="text-white bg-orange-500 rounded">
+              <th className="p-2 rounded-tl-2xl">Order ID</th>
+              <th className="p-2">Status</th>
+              <th className="p-2">Date</th>
+              <th className="p-2">Canteen</th>
+              <th className="p-2">Description</th>
+              <th className="p-2 rounded-tr-2xl">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {paginatedOrders.map((order) => (
+              <tr key={order._id} className="text-center">
+                <td className="p-2">{order._id}</td>
+                <td className="p-2">
+                  <span
+                    className={`block w-auto md:w-[70%] md:mx-auto px-3 py-2 leading-none text-center ${getStatusClasses(
+                      order.orderStatus
+                    )}`}
+                  >
+                    {order.orderStatus}
+                  </span>
+                </td>
+                <td className="p-2">
+                  {order.meals?.[0]?.timestamp
+                    ? formatDate(order.meals[0].timestamp)
+                    : "N/A"}
+                </td>
+                <td className="p-2">{order.canteenName || "N/A"}</td>
+                <td className="p-2">
+                  <button
+                    onClick={() => handleDescriptionClick(order._id)}
+                    className="text-orange-400 hover:underline"
+                  >
+                    View
+                  </button>
+                </td>
+                <td className="p-2">
+                  <button
+                    onClick={() => handleCancelClick(order)}
+                    className="block w-auto md:w-[70%] md:mx-auto px-3 py-2 leading-none text-white rounded-xl bg-red-500 opacity-50"
+                  >
+                    Clear
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {paginatedOrders
-                .slice()
-                .sort((a, b) => {
-                  const timeA = a.meals?.[0]?.timestamp ? new Date(a.meals[0].timestamp) : new Date(0);
-                  const timeB = b.meals?.[0]?.timestamp ? new Date(b.meals[0].timestamp) : new Date(0);
-                  return timeB - timeA;
-                })
-                .map((order) => (
-                  <tr key={order._id} className="text-center">
-                    <td className="p-2">{order._id}</td>
-                    <td className="p-2">
-                      <span className={`block w-auto md:w-[70%] md:mx-auto px-3 py-2 ${getStatusClasses(order.orderStatus)}`}>
-                        {order.orderStatus}
-                      </span>
-                    </td>
-                    <td className="p-2">
-                      {order.meals?.[0]?.timestamp ? formatDate(order.meals[0].timestamp) : "N/A"}
-                    </td>
-                    <td className="p-2">{order.canteenName || "N/A"}</td>
-                    <td className="p-2">
-                      <button onClick={() => handleDescriptionClick(order._id)} className="text-orange-400 hover:underline">
-                        View
-                      </button>
-                    </td>
-                    <td className="p-2">
-                      <button
-                        onClick={() => handleCancelClick(order)}
-                        className="block w-auto md:w-[70%] md:mx-auto px-3 py-2 leading-none text-white rounded-xl bg-red-500 opacity-50"
-                      >
-                        Clear
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
 
-        {/* ✅ Pagination Controls */}
-        <div className="flex items-center justify-end gap-2 mt-3 text-sm">
-          <button
-            onClick={handlePrevPage}
-            disabled={currentPage === 1}
-            className="flex items-center gap-1 px-2 py-1 bg-gray-200 rounded disabled:opacity-50"
-          >
-            <ChevronLeft size={16} /> Prev
-          </button>
-          <span>
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-            className="flex items-center gap-1 px-2 py-1 bg-gray-200 rounded disabled:opacity-50"
-          >
-            Next <ChevronRight size={16} />
-          </button>
-        </div>
-      </>
+        {/* Pagination controls */}
+        {filteredOrders.length > 0 && (
+          <div className="flex items-center justify-end gap-2 mt-2 text-sm">
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              className="flex items-center gap-1 px-2 py-1 text-sm font-medium bg-white text-orange-500 border border-orange-500 rounded-xl hover:bg-gray-100 transition disabled:opacity-50"
+            >
+              <ChevronLeft size={16} />
+              Prev
+            </button>
+
+            <span className="text-gray-700">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage >= totalPages}
+              className="flex items-center gap-1 px-2 py-1 text-sm font-medium bg-white text-orange-500 border border-orange-500 rounded-xl hover:bg-gray-100 transition disabled:opacity-50"
+            >
+              Next
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -237,13 +260,17 @@ const OrdersTable = () => {
         <div className="flex space-x-4">
           <Link
             href="/UserView/Orders/Ongoing"
-            className={`text-orange-500 hover:underline ${pathname === "/UserView/Orders/Ongoing" ? "font-bold" : ""}`}
+            className={`text-orange-500 hover:underline ${
+              pathname === "/UserView/Orders/Ongoing" ? "font-bold" : ""
+            }`}
           >
             Ongoing
           </Link>
           <Link
             href="/UserView/Orders/History"
-            className={`text-orange-500 hover:underline ${pathname === "/UserView/Orders/History" ? "font-bold" : ""}`}
+            className={`text-orange-500 hover:underline ${
+              pathname === "/UserView/Orders/History" ? "font-bold" : ""
+            }`}
           >
             History
           </Link>
@@ -259,7 +286,11 @@ const OrdersTable = () => {
         orderId={selectedOrderId}
       />
 
-      <UpdateStatusModal isOpen={isDeleteModalOpen} onClose={closeDeleteModal} onConfirm={handleConfirmCancel} />
+      <UpdateStatusModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={handleConfirmCancel}
+      />
     </div>
   );
 };
