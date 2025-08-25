@@ -73,14 +73,14 @@ const Page = () => {
       <div className="flex-1">
         <Topbar />
         <Header title="Canteens" />
-        <div className="max-h-[70%] m-5">
+        <div className="max-h-[70%] m-8">
           {/* <div className="grid justify-between w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"> */}
           <div className="flex flex-wrap justify w-full gap-10 ">
  
             {canteens.map((canteen, index) => (
               <div key={index} className="flex flex-col my-auto text-xl font-medium leading-none text-center text-white">
                 <Link href={`/UserView/Canteens/${canteen.canteenName}`}>
-                  <div className="flex flex-col h-[220px] rounded-t-3xl bg-white">
+                  <div className="flex flex-col h-40 rounded-t-3xl bg-white">
                     <Image
                       src={canteen.image}
                       alt={`${canteen.canteenName} canteen`}
