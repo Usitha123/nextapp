@@ -144,24 +144,23 @@ const FoodDisplay = ({ onAddToCart }) => {
   );
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-4">
+    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:flex lg:flex-wrap ">
       {filteredMeals.map((meal) => (
-        <div key={meal._id} className="w-full bg-white border rounded-3xl">
-          <div className="relative">
+        <div key={meal._id} className="bg-white border rounded-3xl lg:flex-shrink-0 lg:w-80">
+          <div className="relative h-48 overflow-hidden rounded-t-3xl">
             <Image
               src={meal.image}
               alt={meal.mealName}
-              width={800}
-              height={800}
+              fill
               quality={100}
-              className={`object-cover w-full rounded-3xl ${
+              className={`object-cover ${
                 !isLunchfastTime || meal.mealstatus === "Inactive"
                   ? "opacity-50 blur-sm pointer-events-none"
                   : ""
               }`}
             />
             {meal.mealstatus === "Inactive" && (
-              <div className="mt-2 text-sm font-semibold text-red-500">
+              <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-sm font-semibold">
                 Not Available Now
               </div>
             )}
@@ -170,7 +169,6 @@ const FoodDisplay = ({ onAddToCart }) => {
             <div className="flex-col">
               <h3 className="mt-2 text-lg font-semibold">{meal.mealName}</h3>
               <p className="text-gray-500">Rs {Number(meal.mealPrice).toFixed(2)}</p>
-
             </div>
             <div className="relative">
               <button
@@ -307,15 +305,19 @@ const CombinedComponent = () => {
   };
 
   return (
-    <div className="grid gap-8 p-4 md:grid-cols-[2fr_1fr]">
-      <FoodDisplay onAddToCart={handleAddToCart} />
-      <Cart
-        cartItems={cartItems}
-        onRemove={handleRemoveFromCart}
-        onClear={handleClearCart}
-        onPlaceOrder={handlePlaceOrder}
-        onPlaceOrderStripe={handlePlaceOrderStripe}
-      />
+    <div className="flex flex-col lg:flex-row gap-8 p-4">
+      <div className="lg:flex-1 lg:min-w-0">
+        <FoodDisplay onAddToCart={handleAddToCart} />
+      </div>
+      <div className="lg:w-80 lg:flex-shrink-0">
+        <Cart
+          cartItems={cartItems}
+          onRemove={handleRemoveFromCart}
+          onClear={handleClearCart}
+          onPlaceOrder={handlePlaceOrder}
+          onPlaceOrderStripe={handlePlaceOrderStripe}
+        />
+      </div>
     </div>
   );
 };

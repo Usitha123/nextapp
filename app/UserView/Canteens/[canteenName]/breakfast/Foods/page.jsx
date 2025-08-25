@@ -16,7 +16,10 @@ const CartItem = ({ item, onRemove }) => (
         Rs: {(item.mealPrice * item.quantity).toFixed(2)}
       </span>
     </div>
-    <button onClick={() => onRemove(item.id)} className="text-red-500 hover:text-red-700">
+    <button
+      onClick={() => onRemove(item.id)}
+      className="text-red-500 hover:text-red-700"
+    >
       <Trash2 />
     </button>
   </div>
@@ -111,7 +114,7 @@ const FoodDisplay = ({ onAddToCart }) => {
       const minute = now.getMinutes();
       setIsBreakfastTime(
         (hour > 7 || (hour === 7 && minute >= 0)) &&
-        (hour < 11 || (hour === 11 && minute === 0))
+          (hour < 11 || (hour === 11 && minute === 0))
       );
     };
 
@@ -143,24 +146,26 @@ const FoodDisplay = ({ onAddToCart }) => {
   );
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-4">
+    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:flex lg:flex-wrap ">
       {filteredMeals.map((meal) => (
-        <div key={meal._id} className="w-full bg-white border rounded-3xl">
-          <div className="relative">
+        <div
+          key={meal._id}
+          className="bg-white border rounded-3xl lg:flex-shrink-0 lg:w-80"
+        >
+          <div className="relative h-48 overflow-hidden rounded-t-3xl">
             <Image
               src={meal.image}
               alt={meal.mealName}
-              width={800}
-              height={800}
+              fill
               quality={100}
-              className={`object-cover w-full rounded-3xl ${
+              className={`object-cover ${
                 !isBreakfastTime || meal.mealstatus === "Inactive"
                   ? "opacity-50 blur-sm pointer-events-none"
                   : ""
               }`}
             />
             {meal.mealstatus === "Inactive" && (
-              <div className="flex justify-end mt-4 text-sm font-semibold text-red-500">
+              <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-sm font-semibold">
                 Not Available Now
               </div>
             )}
@@ -168,7 +173,9 @@ const FoodDisplay = ({ onAddToCart }) => {
           <div className="p-4 grid grid-cols-[auto_40px]">
             <div className="flex-col">
               <h3 className="mt-2 text-lg font-semibold">{meal.mealName}</h3>
-              <p className="text-gray-500">Rs {Number(meal.mealPrice).toFixed(2)}</p>
+              <p className="text-gray-500">
+                Rs {Number(meal.mealPrice).toFixed(2)}
+              </p>
             </div>
             <div className="relative">
               <button
@@ -193,8 +200,8 @@ const CombinedComponent = () => {
   const [cartItems, setCartItems] = useState([]);
 
   const generateOrderId = () => {
-    const randomPart = Math.floor(1000 + Math.random() * 9000); // 4-digit random
-    const timestampPart = Date.now().toString().slice(-4); // last 4 digits of timestamp
+    const randomPart = Math.floor(1000 + Math.random() * 9000);
+    const timestampPart = Date.now().toString().slice(-4);
     return `ORD${randomPart}${timestampPart}`;
   };
 
@@ -203,15 +210,20 @@ const CombinedComponent = () => {
       const existing = prev.find((item) => item.id === meal._id);
       if (existing) {
         return prev.map((item) =>
-          item.id === meal._id ? { ...item, quantity: item.quantity + 1 } : item
+          item.id === meal._id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
         );
       }
-      return [...prev, {
-        id: meal._id,
-        mealName: meal.mealName,
-        mealPrice: Number(meal.mealPrice),
-        quantity: 1,
-      }];
+      return [
+        ...prev,
+        {
+          id: meal._id,
+          mealName: meal.mealName,
+          mealPrice: Number(meal.mealPrice),
+          quantity: 1,
+        },
+      ];
     });
   };
 
@@ -302,15 +314,19 @@ const CombinedComponent = () => {
   };
 
   return (
-    <div className="grid gap-8 p-4 md:grid-cols-[2fr_1fr]">
-      <FoodDisplay onAddToCart={handleAddToCart} />
-      <Cart
-        cartItems={cartItems}
-        onRemove={handleRemoveFromCart}
-        onClear={handleClearCart}
-        onPlaceOrder={handlePlaceOrder}
-        onPlaceOrderStripe={handlePlaceOrderStripe}
-      />
+    <div className="flex flex-col lg:flex-row gap-8 p-4">
+      <div className="lg:flex-1 lg:min-w-0">
+        <FoodDisplay onAddToCart={handleAddToCart} />
+      </div>
+      <div className="lg:w-80 lg:flex-shrink-0">
+        <Cart
+          cartItems={cartItems}
+          onRemove={handleRemoveFromCart}
+          onClear={handleClearCart}
+          onPlaceOrder={handlePlaceOrder}
+          onPlaceOrderStripe={handlePlaceOrderStripe}
+        />
+      </div>
     </div>
   );
 };

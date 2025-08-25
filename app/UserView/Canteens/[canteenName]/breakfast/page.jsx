@@ -11,10 +11,10 @@ import Link from "next/link";
 const Page = () => {
   // Get the current path from the router
   const fullPath = usePathname();
-const currentPath = fullPath 
-  ? fullPath.replace("/UserView/Canteens/", "").split("/")[0] 
-  : "";
-console.log(currentPath);
+  const currentPath = fullPath
+    ? fullPath.replace("/UserView/Canteens/", "").split("/")[0]
+    : "";
+  console.log(currentPath);
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -30,48 +30,41 @@ console.log(currentPath);
 
         {/* Meal category tabs */}
         <div className="flex px-3 m-2 space-x-4 font-semibold">
-  <Link href={`/UserView/Canteens/${currentPath}/breakfast`}>
-    <button
-      className={`hover:underline ${
-        fullPath?.endsWith("breakfast") ? "text-orange-500 font-bold" : ""
-      }`}
-    >
-      Breakfast
-    </button>
-  </Link>
-  <Link href={`/UserView/Canteens/${currentPath}/lunch`}>
-    <button
-      className={`hover:underline ${
-        fullPath?.endsWith("lunch") ? "text-orange-500" : ""
-      }`}
-    >
-      Lunch
-    </button>
-  </Link>
-  <Link href={`/UserView/Canteens/${currentPath}/dinner`}>
-    <button
-      className={`hover:underline ${
-        fullPath?.endsWith("dinner") ? "text-orange-500" : ""
-      }`}
-    >
-      Dinner
-    </button>
-  </Link>
-</div>
+          <Link href={`/UserView/Canteens/${currentPath}/breakfast`}>
+            <button
+              className={`hover:underline ${fullPath?.endsWith("breakfast") ? "text-orange-500 font-bold" : ""
+                }`}
+            >
+              Breakfast
+            </button>
+          </Link>
+          <Link href={`/UserView/Canteens/${currentPath}/lunch`}>
+            <button
+              className={`hover:underline ${fullPath?.endsWith("lunch") ? "text-orange-500" : ""
+                }`}
+            >
+              Lunch
+            </button>
+          </Link>
+          <Link href={`/UserView/Canteens/${currentPath}/dinner`}>
+            <button
+              className={`hover:underline ${fullPath?.endsWith("dinner") ? "text-orange-500" : ""
+                }`}
+            >
+              Dinner
+            </button>
+          </Link>
+        </div>
 
 
 
 
         {/* Content Area */}
-        <div className="flex p-4 space-x-8">
+        <div className="flex flex-col lg:flex-row gap-8 p-4">
           {/* Food Display Section */}
-          <div >
-            <Foods/>
-            
+          <div className="flex-1">
+            <Foods />
           </div>
-
-          {/* Cart Section */}
-          
         </div>
       </div>
     </div>

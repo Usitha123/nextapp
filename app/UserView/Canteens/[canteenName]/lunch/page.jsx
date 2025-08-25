@@ -61,15 +61,12 @@ console.log(currentPath);
 
 
         {/* Content Area */}
-        <div className="flex p-4 space-x-8">
-          {/* Food Display Section */}
-          <div>
-            <Foods />
-          </div>
-
-          {/* Cart Section */}
-          
-        </div>
+        <div className="flex flex-col lg:flex-row gap-8 p-4">
+  {/* Food Display Section */}
+  <div className="flex-1">
+    <Foods />
+  </div>
+</div>
       </div>
     </div>
   );
