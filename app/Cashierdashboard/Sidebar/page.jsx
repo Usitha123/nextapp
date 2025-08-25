@@ -19,7 +19,7 @@ const Sidebar = () => {
 
   return (
     <div className="w-20 h-[100vh] p-4 text-gray-300 bg-[#2B2623] md:w-60">
-      <h1 className="mb-10 hidden md:block text-center text-2xl font-bold text-[#ff842f]">LOGO</h1>
+      <h1 className="mb-10 hidden md:block text-center text-2xl font-bold text-[#ff842f]">MealMate</h1>
       <ul className="space-y-4">
         <li>
           <Link href="/Cashierdashboard" className={`gap-3 flex p-2 rounded hover:bg-[#3d3632] hover:text-orange-500 ${isActive("/Cashierdashboard") ? "text-orange-500 font-bold" : ""}`}>
