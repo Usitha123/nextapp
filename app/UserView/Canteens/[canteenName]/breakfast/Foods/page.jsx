@@ -56,15 +56,18 @@ const Cart = ({ cartItems, onRemove, onClear, onPlaceOrder, onPlaceOrderStripe }
         <div className="my-4">
           <h3>Choose Payment Option:</h3>
           {["by_Cash", "by_Card"].map((option) => (
-            <label key={option} className="block">
+            <label key={option} className="relative flex items-center cursor-pointer ">
               <input
                 type="radio"
                 value={option}
+                className="peer h-4 w-4 m-1 cursor-pointer appearance-none rounded-full border border-orange-300 checked:border-orange-400 transition-all"
                 checked={selectedOption === option}
                 onChange={(e) => setSelectedOption(e.target.value)}
               />{" "}
+               <span class="absolute m-1 bg-orange-500 w-3 h-3 rounded-full opacity-0 peer-checked:opacity-100 transition-opacity duration-200 top-0.5 left-0.5 "></span>
               {option === "by_Cash" ? "By Cash" : "By Card"}
             </label>
+            
           ))}
         </div>
 
@@ -146,14 +149,10 @@ const FoodDisplay = ({ onAddToCart }) => {
   );
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:flex lg:flex-wrap ">
+    <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-2 lg:flex lg:flex-wrap ">
       {filteredMeals.map((meal) => (
-        <div
-          key={meal._id}
-          className="bg-white border rounded-3xl lg:flex-shrink-0 lg:w-80"
-        >
-          <div className="relative h-48 overflow-hidden rounded-t-3xl">
-            <Image
+        <div key={meal._id} className="bg-white border rounded-3xl lg:flex-shrink-0 lg:w-[280px]">
+          <div className="relative h-52 overflow-hidden rounded-t-3xl"> <Image
               src={meal.image}
               alt={meal.mealName}
               fill
