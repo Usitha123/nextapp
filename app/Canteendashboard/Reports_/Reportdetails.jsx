@@ -120,7 +120,7 @@ const Reportdetails = ({ dateRange }) => {
   };
 
   return (
-    <div className="p-6 max-h-[400px] overflow-y-auto">
+    <div className="p-6 ">
       <h1 className="mb-8 text-2xl font-bold text-center">Sales and Performance Report</h1>
       
       {/* Section 1: Report Details */}
