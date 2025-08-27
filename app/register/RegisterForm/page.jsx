@@ -13,11 +13,10 @@ export default function RegisterForm() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [nicNumber, setnicNumber] = useState("");
+  const [nicNumber, setNicNumber] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [faculty, setFaculty] = useState(""); // New state for faculty
-  const [phoneNumber, setPhoneNumber] = useState(""); // New state for phone number
-  const [error, setError] = useState("");
+  const [faculty, setFaculty] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
@@ -36,20 +35,27 @@ export default function RegisterForm() {
       !phoneNumber ||
       !nicNumber
     ) {
-      //setError("All fields are required.");
       toast.error("All fields are required.");
       return;
     }
 
-    // Validate that phone number is 10 digits
+    // Validate phone number is 10 digits
     if (!/^\d{10}$/.test(phoneNumber)) {
-      //setError("Phone number must be 10 digits.");
       toast.error("Phone number must be 10 digits.");
       return;
     }
 
+    // Validate email domain
+    if (!/^[a-zA-Z0-9._%+-]+@sjp\.ac\.lk$/.test(email)) {
+      toast.error("Email must end with @sjp.ac.lk");
+      return;
+    }
+
     // Validate password match
-    
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
 
     try {
       const resUserExists = await fetch("/api/userExists", {
@@ -60,7 +66,6 @@ export default function RegisterForm() {
 
       const { user } = await resUserExists.json();
       if (user) {
-        //setError("User already exists.");
         toast.error("User already exists.");
         return;
       }
@@ -86,12 +91,10 @@ export default function RegisterForm() {
           router.push("/");
         }, 1000);
       } else {
-        //setError("User registration failed.");
         toast.error("User registration failed.");
       }
     } catch (error) {
       console.error("Error during registration:", error);
-      //setError("An error occurred. Please try again.");
       toast.error("An error occurred. Please try again.");
     }
   };
@@ -119,12 +122,10 @@ export default function RegisterForm() {
         </h2>
 
         <form onSubmit={handleSubmit}>
+          {/* Name fields */}
           <div className="grid grid-cols-2 gap-3">
             <div className="mb-4">
-              <label
-                className="block mb-2 text-sm font-bold text-gray-700"
-                htmlFor="firstName"
-              >
+              <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="firstName">
                 First Name
               </label>
               <input
@@ -138,10 +139,7 @@ export default function RegisterForm() {
             </div>
 
             <div className="mb-4">
-              <label
-                className="block mb-2 text-sm font-bold text-gray-700"
-                htmlFor="lastName"
-              >
+              <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="lastName">
                 Last Name
               </label>
               <input
@@ -155,12 +153,10 @@ export default function RegisterForm() {
             </div>
           </div>
 
+          {/* Email & Phone */}
           <div className="grid grid-cols-2 gap-3">
             <div className="mb-4">
-              <label
-                className="block mb-2 text-sm font-bold text-gray-700"
-                htmlFor="email"
-              >
+              <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
                 Email
               </label>
               <input
@@ -172,12 +168,9 @@ export default function RegisterForm() {
                 required
               />
             </div>
-            {/* Phone Number */}
+
             <div className="mb-4">
-              <label
-                className="block mb-2 text-sm font-bold text-gray-700"
-                htmlFor="phoneNumber"
-              >
+              <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="phoneNumber">
                 Phone Number
               </label>
               <input
@@ -187,37 +180,30 @@ export default function RegisterForm() {
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 required
-                maxLength={10} // Limit input to 10 characters
+                maxLength={10}
               />
             </div>
           </div>
 
+          {/* NIC & Faculty */}
           <div className="grid grid-cols-2 gap-3">
-            {/*Nic Number */}
             <div className="mb-4">
-              <label
-                className="block mb-2 text-sm font-bold text-gray-700"
-                htmlFor="phoneNumber"
-              >
-                Nic Number
+              <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="nicNumber">
+                NIC Number
               </label>
               <input
                 className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
                 type="text"
-                placeholder="Nic number"
+                placeholder="NIC Number"
                 value={nicNumber}
-                onChange={(e) => setnicNumber(e.target.value)}
+                onChange={(e) => setNicNumber(e.target.value)}
                 required
-                maxLength={12} // Limit input to 12 characters
+                maxLength={12}
               />
             </div>
 
-            {/* Faculty Dropdown */}
             <div className="mb-4">
-              <label
-                className="block mb-2 text-sm font-bold text-gray-700"
-                htmlFor="faculty"
-              >
+              <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="faculty">
                 Faculty
               </label>
               <select
@@ -231,17 +217,14 @@ export default function RegisterForm() {
                 <option value="Engineering">Engineering</option>
                 <option value="Science">Science</option>
                 <option value="Arts">Arts</option>
-                {/* Add more faculties as needed */}
               </select>
             </div>
           </div>
 
+          {/* Password & Confirm */}
           <div className="grid grid-cols-2 gap-3">
             <div className="mb-4">
-              <label
-                className="block mb-2 text-sm font-bold text-gray-700"
-                htmlFor="password"
-              >
+              <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">
                 Password
               </label>
               <div className="relative">
@@ -264,10 +247,7 @@ export default function RegisterForm() {
             </div>
 
             <div className="mb-4">
-              <label
-                className="block mb-2 text-sm font-bold text-gray-700"
-                htmlFor="confirmPassword"
-              >
+              <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="confirmPassword">
                 Confirm Password
               </label>
               <div className="relative">
@@ -286,21 +266,16 @@ export default function RegisterForm() {
 
           <div className="flex items-center justify-center">
             <button
-              className="px-4 py-2 m-2 rounded-lg font-bold text-white bg-orange-500  hover:bg-orange-600 focus:outline-none focus:shadow-outline"
+              className="px-4 py-2 m-2 font-bold text-white bg-orange-500 rounded-lg hover:bg-orange-600 focus:outline-none focus:shadow-outline"
               type="submit"
             >
               Register
             </button>
           </div>
 
-          {/*{error && <p className="mt-4 text-center text-red-500">{error}</p>}*/}
-
           <div className="mt-4 text-sm text-center text-gray-600">
             Already have an account?{" "}
-            <Link
-              href="/"
-              className="font-semibold text-orange-500 hover:text-orange-600"
-            >
+            <Link href="/" className="font-semibold text-orange-500 hover:text-orange-600">
               Login
             </Link>
           </div>

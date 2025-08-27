@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, PlusCircle } from "lucide-react";
 import UpdateStatusModal from "./Cashierstatus";
 import Deletecashier from "./Deletecashier";
 import Link from "next/link";
@@ -186,13 +186,15 @@ const CashierTable = () => {
         
       
     <div className="p-4 rounded-lg">
+      <div className="flex justify-between gap-2 mb-4">
       <Link
           href="/Canteendashboard/Cashier/Addcashier"
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
         >
           Add Cashier
-          
+          <PlusCircle size={20} />
         </Link>
+        </div>
       {/* Table */}
       <div className="overflow-auto max-w-[75vw] lg:max-w-full rounded-xl">
         <table className="w-full text-sm text-left text-gray-400 rounded-xl bg-[#2B2623]">

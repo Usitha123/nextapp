@@ -18,7 +18,6 @@ const OrdersTable = () => {
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // pagination state
   const [pagination, setPagination] = useState({
     currentPage: 1,
     rowsPerPage: 5,
@@ -27,36 +26,35 @@ const OrdersTable = () => {
   const { data: session } = useSession();
   const pathname = usePathname();
 
+  // Fetch orders
   useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("/api/vieworders");
+        if (!res.ok) throw new Error("Failed to fetch orders");
+        const data = await res.json();
+        setOrders(data.orders || data);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchOrders();
   }, [refreshTrigger]);
 
-  const fetchOrders = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch("/api/vieworders");
-      if (!res.ok) throw new Error("Failed to fetch orders");
-      const data = await res.json();
-      setOrders(data.orders || data);
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const getStatusClasses = (status) => {
-    const statusStyles = {
-      Accepted: "inline-block text-white w-[70%] rounded-xl bg-green-500",
-      Picked: "inline-block text-black w-[70%] rounded-xl bg-yellow-400",
-      Cancelled: "inline-block text-white w-[70%] rounded-xl bg-red-500",
-      Ready: "inline-block text-white w-[70%] rounded-xl bg-blue-500",
+    const styles = {
+      Accepted: "bg-green-500 text-white",
+      Picked: "bg-yellow-400 text-black",
+      Cancelled: "bg-red-500 text-white",
+      Ready: "bg-blue-500 text-white",
     };
-
-    return (
-      statusStyles[status] ||
-      "bg-gray-500 inline-block w-[70%] rounded-xl text-white"
-    );
+    return `inline-block w-[70%] rounded-xl px-3 py-2 text-center ${
+      styles[status] || "bg-gray-500 text-white"
+    }`;
   };
 
   const updateStatus = async (orderId, status) => {
@@ -84,22 +82,19 @@ const OrdersTable = () => {
 
   const formatDate = (dateString) => {
     try {
-      const createdAt = new Date(dateString);
-      return createdAt.toLocaleString();
-    } catch (error) {
+      return new Date(dateString).toLocaleString();
+    } catch {
       return "Invalid date";
     }
   };
 
+  // Handle clicking on meal description
   const handleDescriptionClick = (orderId) => {
-    const order = orders.find((order) => order._id === orderId);
+    const order = orders.find((o) => o._id === orderId);
     if (order) {
       const mealDescriptions = order.meals
-        .map(
-          (meal) =>
-            `${meal.mealName}: ${meal.mealQuantity} x ${meal.mealPrice}`
-        )
-        .join(", <br/> ");
+        .map((meal) => `${meal.mealName}: ${meal.mealQuantity} x ${meal.mealPrice}`)
+        .join("\n"); // keep line breaks
       setSelectedDescription(mealDescriptions);
       setSelectedOrderId(orderId);
       setIsDescriptionModalOpen(true);
@@ -121,60 +116,38 @@ const OrdersTable = () => {
   };
 
   const getFilteredOrders = () => {
-    if (!orders || !orders.length || !session?.user?.email) {
-      return [];
-    }
+    if (!orders.length || !session?.user?.email) return [];
 
     return orders
-      .filter((order) => session.user.email === order.userEmail)
+      .filter((order) => order.userEmail === session.user.email)
       .filter(
         (order) =>
           Array.isArray(order.meals) &&
-          order.meals.length > 0 &&
+          order.meals.length &&
           ["Pending", "Ready", "Accepted"].includes(order.orderStatus)
       );
   };
 
-  // Pagination
+  // Pagination logic
   const filteredOrders = getFilteredOrders();
   const { currentPage, rowsPerPage } = pagination;
-  const indexOfLastOrder = currentPage * rowsPerPage;
-  const indexOfFirstOrder = indexOfLastOrder - rowsPerPage;
-  const paginatedOrders = filteredOrders
-    .slice()
-    .sort((a, b) => {
-      const timeA = a.meals?.[0]?.timestamp
-        ? new Date(a.meals[0].timestamp)
-        : new Date(0);
-      const timeB = b.meals?.[0]?.timestamp
-        ? new Date(b.meals[0].timestamp)
-        : new Date(0);
-      return timeB - timeA;
-    })
-    .slice(indexOfFirstOrder, indexOfLastOrder);
   const totalPages = Math.ceil(filteredOrders.length / rowsPerPage);
 
-  const handlePrevPage = () => {
-    setPagination((prev) => ({
-      ...prev,
-      currentPage: Math.max(prev.currentPage - 1, 1),
-    }));
-  };
+  const paginatedOrders = filteredOrders
+    .slice()
+    .sort((a, b) => new Date(b.meals?.[0]?.timestamp || 0) - new Date(a.meals?.[0]?.timestamp || 0))
+    .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
-  const handleNextPage = () => {
-    setPagination((prev) => ({
-      ...prev,
-      currentPage: Math.min(prev.currentPage + 1, totalPages),
-    }));
-  };
+  const handlePrevPage = () =>
+    setPagination((prev) => ({ ...prev, currentPage: Math.max(prev.currentPage - 1, 1) }));
+  const handleNextPage = () =>
+    setPagination((prev) => ({ ...prev, currentPage: Math.min(prev.currentPage + 1, totalPages) }));
 
   const renderOrdersTable = () => {
-    if (filteredOrders.length === 0) {
-      return <p>No active orders available</p>;
-    }
+    if (!filteredOrders.length) return <p>No active orders available</p>;
 
     return (
-      <div className="overflow-auto justify-center min-w-[0px] max-w-[75vw] lg:max-w-full rounded-xl">
+      <div className="overflow-auto min-w-[0px] max-w-[75vw] lg:max-w-full rounded-xl">
         <table className="w-full text-sm bg-white rounded-2xl">
           <thead>
             <tr className="text-white bg-orange-500 rounded">
@@ -191,18 +164,10 @@ const OrdersTable = () => {
               <tr key={order._id} className="text-center">
                 <td className="p-2">{order._id}</td>
                 <td className="p-2">
-                  <span
-                    className={`block w-auto md:w-[70%] md:mx-auto px-3 py-2 leading-none text-center ${getStatusClasses(
-                      order.orderStatus
-                    )}`}
-                  >
-                    {order.orderStatus}
-                  </span>
+                  <span className={getStatusClasses(order.orderStatus)}>{order.orderStatus}</span>
                 </td>
                 <td className="p-2">
-                  {order.meals && order.meals[0]?.timestamp
-                    ? formatDate(order.meals[0].timestamp)
-                    : "N/A"}
+                  {order.meals?.[0]?.timestamp ? formatDate(order.meals[0].timestamp) : "N/A"}
                 </td>
                 <td className="p-2">{order.canteenName || "N/A"}</td>
                 <td className="p-2">
@@ -217,12 +182,11 @@ const OrdersTable = () => {
                   <button
                     onClick={() => handleCancelClick(order)}
                     disabled={order.orderStatus !== "Pending"}
-                    className={`block w-auto md:w-[70%] md:mx-auto px-3 py-2 leading-none text-white rounded-xl 
-                      ${
-                        order.orderStatus === "Pending"
-                          ? "bg-red-500"
-                          : "bg-red-300 cursor-not-allowed opacity-50"
-                      }`}
+                    className={`block w-auto md:w-[70%] md:mx-auto px-3 py-2 leading-none text-white rounded-xl ${
+                      order.orderStatus === "Pending"
+                        ? "bg-red-500"
+                        : "bg-red-300 cursor-not-allowed opacity-50"
+                    }`}
                   >
                     Cancel
                   </button>
@@ -233,31 +197,27 @@ const OrdersTable = () => {
         </table>
 
         {/* Pagination controls */}
-        {filteredOrders.length > 0 && (
-          <div className="flex items-center justify-end gap-2 mt-2 text-sm">
-            <button
-              onClick={handlePrevPage}
-              disabled={currentPage === 1}
-              className="flex items-center gap-1 px-2 py-1 text-sm font-medium bg-white text-orange-500 border border-orange-500 rounded-xl hover:bg-gray-100 transition disabled:opacity-50"
-            >
-              <ChevronLeft size={16} />
-              Prev
-            </button>
-
-            <span className="text-gray-700">
-              Page {currentPage} of {totalPages}
-            </span>
-
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage >= totalPages}
-              className="flex items-center gap-1 px-2 py-1 text-sm font-medium bg-white text-orange-500 border border-orange-500 rounded-xl hover:bg-gray-100 transition disabled:opacity-50"
-            >
-              Next
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        )}
+        <div className="flex items-center justify-end gap-2 mt-2 text-sm">
+          <button
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+            className="flex items-center gap-1 px-2 py-1 text-sm font-medium text-orange-500 transition bg-white border border-orange-500 rounded-xl hover:bg-gray-100 disabled:opacity-50"
+          >
+            <ChevronLeft size={16} />
+            Prev
+          </button>
+          <span className="text-gray-700">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage >= totalPages}
+            className="flex items-center gap-1 px-2 py-1 text-sm font-medium text-orange-500 transition bg-white border border-orange-500 rounded-xl hover:bg-gray-100 disabled:opacity-50"
+          >
+            Next
+            <ChevronRight size={16} />
+          </button>
+        </div>
       </div>
     );
   };

@@ -11,7 +11,7 @@ import {
   SquareArrowDown,
 } from "lucide-react";
 
-const ROWS_PER_PAGE = 4;
+const ROWS_PER_PAGE = 7;
 
 const OrderTable = () => {
   const [orders, setOrders] = useState([]);

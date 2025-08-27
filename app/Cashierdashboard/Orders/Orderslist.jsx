@@ -10,7 +10,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const OrderTable = () => {
   const [orders, setOrders] = useState([]);
-  const [pagination, setPagination] = useState({ currentPage: 1, rowsPerPage: 9 });
+  const [pagination, setPagination] = useState({ currentPage: 1, rowsPerPage: 11 });
   const [modalState, setModalState] = useState({
     isModalOpen: false,
     isDescriptionModelOpen: false,

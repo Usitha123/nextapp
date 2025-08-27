@@ -11,7 +11,7 @@ import DescriptionModel from "./Descriptionmodel";
 
 const OrderTable = () => {
   const [orders, setOrders] = useState([]);
-  const [pagination, setPagination] = useState({ currentPage: 1, rowsPerPage: 9 });
+  const [pagination, setPagination] = useState({ currentPage: 1, rowsPerPage: 12 });
   const [modalState, setModalState] = useState({
     isModalOpen: false,
     isDescriptionModelOpen: false,
