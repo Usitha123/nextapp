@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSession } from "next-auth/react";
 import {
   BarChart,
   Bar,
@@ -11,20 +12,27 @@ import {
 } from 'recharts';
 
 const SalesStatistics = () => {
+  const { data: session } = useSession();
   const [timeframe, setTimeframe] = useState('daily');
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    if (session?.user?.canteenName) {
+      fetchOrders();
+    }
+  }, [session]);
 
   const fetchOrders = async () => {
     try {
       const res = await fetch("/api/vieworders");
       if (!res.ok) throw new Error("Failed to fetch orders");
       const { orders } = await res.json();
-      processOrderData(orders);
+      const canteenName = session?.user?.canteenName;
+      const scopedOrders = canteenName
+        ? orders.filter(o => o.canteenName === canteenName)
+        : orders;
+      processOrderData(scopedOrders);
     } catch (error) {
       console.error("Error fetching orders:", error);
     } finally {

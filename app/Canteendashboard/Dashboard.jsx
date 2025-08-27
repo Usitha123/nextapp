@@ -63,10 +63,12 @@ const DashboardCards = () => {
         const currentMealType = getCurrentMealType();
 
         // Filter orders for current day
-        const todayOrders = orders.filter(order => {
-          const orderDate = new Date(order.meals[0]?.timestamp);
-          return orderDate.toDateString() === today.toDateString();
-        });
+        const todayOrders = orders
+          .filter(order => {
+            const orderDate = new Date(order.meals[0]?.timestamp);
+            return orderDate.toDateString() === today.toDateString();
+          })
+          .filter(order => order.canteenName === session?.user?.canteenName);
 
         // Calculate card values
         const newOrders = todayOrders.filter(order => 
@@ -82,7 +84,7 @@ const DashboardCards = () => {
         ).length;
 
         const totalOrders = todayOrders.filter(order => 
-          order.orderStatus !== "Cancelled"
+          order.orderStatus !== "Cancelled" && order.orderType === currentMealType
         ).length;
 
         // Calculate total revenue (same logic as SalesStatistics.jsx)
