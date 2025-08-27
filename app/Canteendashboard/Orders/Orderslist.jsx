@@ -48,9 +48,18 @@ const OrderTable = () => {
     return `inline-block w-[70%] text-white rounded-xl px-2 py-1 ${styles[status] || "bg-gray-500"}`;
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleString();
+  const formatDate = (dateString) => new Date(dateString).toLocaleString();
+
+  const openModal = (modalType, orderId) => {
+    setModalState((prev) => ({
+      ...prev,
+      selectedOrderId: orderId,
+      [modalType]: true,
+    }));
+  };
+
+  const closeModals = (modalType) => {
+    setModalState((prev) => ({ ...prev, [modalType]: false }));
   };
 
   const handleDescriptionClick = (orderId) => {
@@ -63,18 +72,6 @@ const OrderTable = () => {
         isDescriptionModelOpen: true,
       }));
     }
-  };
-
-  const openModal = (modalType, orderId) => {
-    setModalState((prev) => ({
-      ...prev,
-      selectedOrderId: orderId,
-      [modalType]: true,
-    }));
-  };
-
-  const closeModals = (modalType) => {
-    setModalState((prev) => ({ ...prev, [modalType]: false }));
   };
 
   const handleDelete = async () => {
@@ -159,45 +156,45 @@ const OrderTable = () => {
               </tr>
             </thead>
             <tbody>
-              {paginatedOrders.map((order) => (
-                <tr key={order._id} className="border-b-2 border-[#3B3737]">
-                  <td className="px-4 py-1">{order.orderId}</td>
-                  <td className="px-4 py-1">{order.userName}</td>
-                  <td className="px-4 py-1">
-                    <span className={getStatusClasses(order.orderStatus)}>
-                      {order.orderStatus}
-                    </span>
-                  </td>
-                  <td className="px-4 py-1">
-                    {formatDate(order.meals?.[0]?.timestamp || new Date())}
-                  </td>
-                  <td className="px-4 py-1">{order.paymentStatus}</td>
-                  <td className="px-4 py-1">
-                    <button
-                      onClick={() => handleDescriptionClick(order._id)}
-                      className="text-orange-400 hover:underline"
-                    >
-                      View
-                    </button>
-                  </td>
-                  <td className="flex px-4 py-2 space-x-2">
-                    <button
-                      onClick={() => openModal("isDeleteOrderModalOpen", order._id)}
-                      className="text-gray-400 hover:text-red-500"
-                      aria-label="Delete order"
-                    >
-                      <FaRegTrashAlt />
-                    </button>
-                    <button
-                      onClick={() => openModal("isModalOpen", order._id)}
-                      className="text-gray-400 hover:text-orange-500"
-                      aria-label="Update order status"
-                    >
-                      <FaEdit />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {paginatedOrders
+                .filter((order) => session?.user?.canteenName === order.canteenName)
+                .map((order) => (
+                  <tr key={order._id} className="border-b-2 border-[#3B3737]">
+                    <td className="px-4 py-1">{order.orderId}</td>
+                    <td className="px-4 py-1">{order.userName}</td>
+                    <td className="px-4 py-1">
+                      <span className={getStatusClasses(order.orderStatus)}>
+                        {order.orderStatus}
+                      </span>
+                    </td>
+                    <td className="px-4 py-1">{formatDate(order.meals?.[0]?.timestamp || new Date())}</td>
+                    <td className="px-4 py-1">{order.paymentStatus}</td>
+                    <td className="px-4 py-1">
+                      <button
+                        onClick={() => handleDescriptionClick(order._id)}
+                        className="text-orange-400 hover:underline"
+                      >
+                        View
+                      </button>
+                    </td>
+                    <td className="flex px-4 py-2 space-x-2">
+                      <button
+                        onClick={() => openModal("isDeleteOrderModalOpen", order._id)}
+                        className="text-gray-400 hover:text-red-500"
+                        aria-label="Delete order"
+                      >
+                        <FaRegTrashAlt />
+                      </button>
+                      <button
+                        onClick={() => openModal("isModalOpen", order._id)}
+                        className="text-gray-400 hover:text-orange-500"
+                        aria-label="Update order status"
+                      >
+                        <FaEdit />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

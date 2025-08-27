@@ -60,7 +60,7 @@ const Cart = ({ cartItems, onRemove, onClear, onPlaceOrder, onPlaceOrderStripe }
               <input
                 type="radio"
                 value={option}
-                className="peer h-4 w-4 m-1 cursor-pointer appearance-none rounded-full border border-orange-300 checked:border-orange-400 transition-all"
+                className="w-4 h-4 m-1 transition-all border border-orange-300 rounded-full appearance-none cursor-pointer peer checked:border-orange-400"
                 checked={selectedOption === option}
                 onChange={(e) => setSelectedOption(e.target.value)}
               />{" "}
@@ -108,7 +108,9 @@ const FoodDisplay = ({ onAddToCart }) => {
   const [isBreakfastTime, setIsBreakfastTime] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const currentCanteen = usePathname()?.split("/")[3];
+  
+  const nowCanteen = usePathname()?.split("/")[3];
+  const currentCanteen = decodeURIComponent(nowCanteen)
 
   useEffect(() => {
     const updateTime = () => {
@@ -152,7 +154,7 @@ const FoodDisplay = ({ onAddToCart }) => {
     <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-2 lg:flex lg:flex-wrap ">
       {filteredMeals.map((meal) => (
         <div key={meal._id} className="bg-white border rounded-3xl lg:flex-shrink-0 lg:w-[280px]">
-          <div className="relative h-52 overflow-hidden rounded-t-3xl"> <Image
+          <div className="relative overflow-hidden h-52 rounded-t-3xl"> <Image
               src={meal.image}
               alt={meal.mealName}
               fill
@@ -164,7 +166,7 @@ const FoodDisplay = ({ onAddToCart }) => {
               }`}
             />
             {meal.mealstatus === "Inactive" && (
-              <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-sm font-semibold">
+              <div className="absolute px-2 py-1 text-sm font-semibold text-white bg-red-500 rounded top-2 left-2">
                 Not Available Now
               </div>
             )}
@@ -195,7 +197,8 @@ const FoodDisplay = ({ onAddToCart }) => {
 // Main Combined Component
 const CombinedComponent = () => {
   const { data: session } = useSession();
-  const currentCanteen = usePathname()?.split("/")[3];
+  const nowCanteen = usePathname()?.split("/")[3];
+  const currentCanteen = decodeURIComponent(nowCanteen)
   const [cartItems, setCartItems] = useState([]);
 
   const generateOrderId = () => {
@@ -313,7 +316,7 @@ const CombinedComponent = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8 p-4">
+    <div className="flex flex-col gap-8 p-4 lg:flex-row">
       <div className="lg:flex-1 lg:min-w-0">
         <FoodDisplay onAddToCart={handleAddToCart} />
       </div>

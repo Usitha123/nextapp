@@ -157,16 +157,19 @@ const OrderTable = () => {
     }
   };
 
-  // Filter + sort pending orders
+  // Filter, sort, and paginate
   const filteredOrders = orders
-    .filter((o) => o.orderStatus === "Pending")
+    .filter(
+      (o) =>
+        o.orderStatus === "Pending" &&
+        session?.user?.canteenNamecashier === o.selectCanteen
+    )
     .sort(
       (a, b) =>
         new Date(b?.meals?.[0]?.timestamp || 0) -
         new Date(a?.meals?.[0]?.timestamp || 0)
     );
 
-  // Paginate
   const paginatedOrders = filteredOrders.slice(
     (currentPage - 1) * ROWS_PER_PAGE,
     currentPage * ROWS_PER_PAGE
@@ -281,10 +284,7 @@ const OrderTable = () => {
 
             <button
               onClick={() => handlePagination("next")}
-              disabled={
-                currentPage >=
-                Math.ceil(filteredOrders.length / ROWS_PER_PAGE)
-              }
+              disabled={currentPage >= Math.ceil(filteredOrders.length / ROWS_PER_PAGE)}
               className="flex items-center gap-0 px-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
             >
               Next <ChevronRight />

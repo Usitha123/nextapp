@@ -2,67 +2,64 @@
 
 import React, { useState, useEffect } from "react";
 import { FaRegTrashAlt, FaEdit } from "react-icons/fa";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useSession } from "next-auth/react";
+
 import UpdateStatusModal from "./Modal";
 import DeleteOrder from "./Deleteorder";
 import DescriptionModel from "./Descriptionmodel";
-import { useSession } from "next-auth/react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const OrderTable = () => {
   const [orders, setOrders] = useState([]);
   const [pagination, setPagination] = useState({ currentPage: 1, rowsPerPage: 11 });
   const [modalState, setModalState] = useState({
-    isModalOpen: false,
-    isDescriptionModelOpen: false,
-    isDeleteOrderModalOpen: false,
+    isStatusModalOpen: false,
+    isDescriptionModalOpen: false,
+    isDeleteModalOpen: false,
     selectedDescription: [],
     selectedOrderId: null,
   });
 
   const { currentPage, rowsPerPage } = pagination;
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   // Fetch orders
   useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const res = await fetch("/api/vieworders");
+        if (!res.ok) throw new Error("Failed to fetch orders");
+        const data = await res.json();
+        setOrders(data.orders);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
+    };
     fetchOrders();
   }, []);
 
-  const fetchOrders = async () => {
-    try {
-      const res = await fetch("/api/vieworders");
-      if (!res.ok) throw new Error("Failed to fetch orders");
-      const data = await res.json();
-      setOrders(data.orders);
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-    }
-  };
-
   // Helpers
   const getStatusClasses = (status) => {
-    const statusStyles = {
+    const styles = {
       Accepted: "inline-block text-white w-[70%] rounded-xl bg-green-500",
       Picked: "inline-block text-black w-[70%] rounded-xl bg-yellow-400",
       Cancelled: "inline-block text-white w-[70%] rounded-xl bg-red-500",
       Ready: "inline-block text-white w-[70%] rounded-xl bg-blue-500",
     };
-    return statusStyles[status] || "bg-gray-500 inline-block w-[70%] rounded-xl text-white";
+    return styles[status] || "inline-block text-white w-[70%] rounded-xl bg-gray-500";
   };
 
-  const formatDate = (dateString) => {
-    const createdAt = new Date(dateString);
-    return createdAt.toLocaleString();
-  };
+  const formatDate = (dateString) => new Date(dateString).toLocaleString();
 
   // Modal handlers
-  const handleDescriptionClick = (orderId) => {
-    const selectedOrder = orders.find((order) => order._id === orderId);
-    if (selectedOrder) {
+  const openDescriptionModal = (orderId) => {
+    const order = orders.find((o) => o._id === orderId);
+    if (order) {
       setModalState((prev) => ({
         ...prev,
-        selectedDescription: selectedOrder.meals,
         selectedOrderId: orderId,
-        isDescriptionModelOpen: true,
+        selectedDescription: order.meals,
+        isDescriptionModalOpen: true,
       }));
     }
   };
@@ -71,7 +68,7 @@ const OrderTable = () => {
     setModalState((prev) => ({
       ...prev,
       selectedOrderId: orderId,
-      isDeleteOrderModalOpen: true,
+      isDeleteModalOpen: true,
     }));
   };
 
@@ -79,14 +76,14 @@ const OrderTable = () => {
     setModalState((prev) => ({
       ...prev,
       selectedOrderId: orderId,
-      isModalOpen: true,
+      isStatusModalOpen: true,
     }));
   };
 
-  const closeModals = (modalType) => {
+  const closeModal = (modalName) => {
     setModalState((prev) => ({
       ...prev,
-      [modalType]: false,
+      [modalName]: false,
     }));
   };
 
@@ -98,7 +95,7 @@ const OrderTable = () => {
       });
 
       if (response.ok) {
-        setOrders((prev) => prev.filter((order) => order._id !== modalState.selectedOrderId));
+        setOrders((prev) => prev.filter((o) => o._id !== modalState.selectedOrderId));
       } else {
         alert("Failed to delete order");
       }
@@ -106,7 +103,7 @@ const OrderTable = () => {
       console.error("Error deleting order:", error);
       alert("An error occurred while deleting the order");
     } finally {
-      closeModals("isDeleteOrderModalOpen");
+      closeModal("isDeleteModalOpen");
     }
   };
 
@@ -123,9 +120,7 @@ const OrderTable = () => {
         alert(errorData.message || "Failed to update status");
       } else {
         setOrders((prev) =>
-          prev.map((order) =>
-            order._id === orderId ? { ...order, orderStatus: status } : order
-          )
+          prev.map((o) => (o._id === orderId ? { ...o, orderStatus: status } : o))
         );
         alert(`Status updated to ${status}`);
       }
@@ -135,13 +130,13 @@ const OrderTable = () => {
     }
   };
 
-  // Pagination logic
-  const filteredOrders = orders.filter((order) => order.orderStatus !== "Pending");
+  // Pagination
+  const filteredOrders = orders.filter(
+    (order) => order.orderStatus !== "Pending" && session?.user?.canteenNamecashier === order.selectCanteen
+  );
 
   const sortedOrders = [...filteredOrders].sort(
-    (a, b) =>
-      new Date(b?.meals?.[0]?.timestamp || 0) -
-      new Date(a?.meals?.[0]?.timestamp || 0)
+    (a, b) => new Date(b?.meals?.[0]?.timestamp || 0) - new Date(a?.meals?.[0]?.timestamp || 0)
   );
 
   const indexOfLastOrder = currentPage * rowsPerPage;
@@ -149,22 +144,14 @@ const OrderTable = () => {
   const paginatedOrders = sortedOrders.slice(indexOfFirstOrder, indexOfLastOrder);
   const totalPages = Math.ceil(filteredOrders.length / rowsPerPage);
 
-  const handlePrevPage = () => {
-    setPagination((prev) => ({
-      ...prev,
-      currentPage: Math.max(prev.currentPage - 1, 1),
-    }));
-  };
+  const handlePrevPage = () =>
+    setPagination((prev) => ({ ...prev, currentPage: Math.max(prev.currentPage - 1, 1) }));
 
-  const handleNextPage = () => {
-    setPagination((prev) => ({
-      ...prev,
-      currentPage: Math.min(prev.currentPage + 1, totalPages),
-    }));
-  };
+  const handleNextPage = () =>
+    setPagination((prev) => ({ ...prev, currentPage: Math.min(prev.currentPage + 1, totalPages) }));
 
   const getCurrentStatus = () =>
-    orders.find((order) => order._id === modalState.selectedOrderId)?.orderStatus || "";
+    orders.find((o) => o._id === modalState.selectedOrderId)?.orderStatus || "";
 
   return (
     <div className="px-2 overflow-auto max-h-[80vh]">
@@ -194,13 +181,11 @@ const OrderTable = () => {
                       {order.orderStatus}
                     </span>
                   </td>
-                  <td className="px-4 py-1">
-                    {formatDate(order.meals?.[0]?.timestamp || new Date())}
-                  </td>
+                  <td className="px-4 py-1">{formatDate(order.meals?.[0]?.timestamp || new Date())}</td>
                   <td className="px-4 py-1">{order.paymentStatus}</td>
                   <td className="px-4 py-1">
                     <button
-                      onClick={() => handleDescriptionClick(order._id)}
+                      onClick={() => openDescriptionModal(order._id)}
                       className="text-orange-400 hover:underline"
                     >
                       View
@@ -237,8 +222,7 @@ const OrderTable = () => {
             disabled={currentPage === 1}
             className="flex items-center gap-0 px-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
           >
-            <ChevronLeft />
-            Prev
+            <ChevronLeft /> Prev
           </button>
           <span className="text-white">
             Page {currentPage} of {totalPages}
@@ -248,32 +232,29 @@ const OrderTable = () => {
             disabled={currentPage >= totalPages}
             className="flex items-center gap-0 px-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
           >
-            Next
-            <ChevronRight />
+            Next <ChevronRight />
           </button>
         </div>
       )}
 
       {/* Modals */}
       <DescriptionModel
-        isOpen={modalState.isDescriptionModelOpen}
-        onClose={() => closeModals("isDescriptionModelOpen")}
+        isOpen={modalState.isDescriptionModalOpen}
+        onClose={() => closeModal("isDescriptionModalOpen")}
         description={modalState.selectedDescription}
       />
-
       <UpdateStatusModal
-        isOpen={modalState.isModalOpen}
-        onClose={() => closeModals("isModalOpen")}
+        isOpen={modalState.isStatusModalOpen}
+        onClose={() => closeModal("isStatusModalOpen")}
         onSave={(newStatus) => {
           updateStatus(modalState.selectedOrderId, newStatus);
-          closeModals("isModalOpen");
+          closeModal("isStatusModalOpen");
         }}
         currentStatus={getCurrentStatus()}
       />
-
       <DeleteOrder
-        isOpen={modalState.isDeleteOrderModalOpen}
-        onClose={() => closeModals("isDeleteOrderModalOpen")}
+        isOpen={modalState.isDeleteModalOpen}
+        onClose={() => closeModal("isDeleteModalOpen")}
         onDelete={handleDelete}
       />
     </div>

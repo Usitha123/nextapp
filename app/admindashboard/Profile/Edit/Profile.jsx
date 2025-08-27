@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useSession } from "next-auth/react";
 
 const UpdateAdminProfile = () => {
   const router = useRouter();
@@ -18,6 +19,7 @@ const UpdateAdminProfile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const { data: session } = useSession();
 
   // Fetch admin profile data on component mount
   useEffect(() => {

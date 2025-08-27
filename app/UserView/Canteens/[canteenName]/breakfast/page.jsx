@@ -11,10 +11,11 @@ import Link from "next/link";
 const Page = () => {
   // Get the current path from the router
   const fullPath = usePathname();
-  const currentPath = fullPath
-    ? fullPath.replace("/UserView/Canteens/", "").split("/")[0]
-    : "";
-  console.log(currentPath);
+  const nowPath = fullPath 
+  ? fullPath.replace("/UserView/Canteens/", "").split("/")[0] 
+  : "";
+console.log(nowPath);
+const currentPath = decodeURIComponent(nowPath)
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -60,7 +61,7 @@ const Page = () => {
 
 
         {/* Content Area */}
-        <div className="flex flex-col lg:flex-row gap-8 p-4">
+        <div className="flex flex-col gap-8 p-4 lg:flex-row">
           {/* Food Display Section */}
           <div className="flex-1">
             <Foods />
