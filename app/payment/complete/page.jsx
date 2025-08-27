@@ -9,6 +9,7 @@ const PaymentComplete = () => {
   const [status, setStatus] = useState("loading"); // "loading", "success", "failed"
   const html2pdfRef = useRef(null);
   const [html2pdfLoaded, setHtml2pdfLoaded] = useState(false);
+  const hasRunRef = useRef(false);
 
   useEffect(() => {
     const sessionId = new URLSearchParams(window.location.search).get('session_id');
@@ -19,31 +20,42 @@ const PaymentComplete = () => {
     }
 
     const completePayment = async () => {
-      if (sessionId) {
-        try {
-          const res = await fetch(`/api/checkout/verify?session_id=${sessionId}`);
+      if (!sessionId) {
+        setStatus("failed");
+        return;
+      }
 
-          if (res.ok) {
-            const orderRes = await fetch('/api/addorders', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(storedOrderData),
-            });
+      // Prevent double submission on refresh/strict mode
+      const processedKey = `order_processed_${sessionId}`;
+      if (hasRunRef.current || sessionStorage.getItem(processedKey)) {
+        setStatus("success");
+        return;
+      }
 
-            if (orderRes.ok) {
-              setStatus("success");
-              localStorage.removeItem('orderData');
-            } else {
-              setStatus("failed");
-            }
+      try {
+        const res = await fetch(`/api/checkout/verify?session_id=${sessionId}`);
+
+        if (res.ok) {
+          const orderRes = await fetch('/api/addorders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(storedOrderData),
+          });
+
+          if (orderRes.ok) {
+            setStatus("success");
+            sessionStorage.setItem(processedKey, '1');
+            localStorage.removeItem('orderData');
           } else {
             setStatus("failed");
           }
-        } catch (error) {
+        } else {
           setStatus("failed");
         }
-      } else {
+      } catch (error) {
         setStatus("failed");
+      } finally {
+        hasRunRef.current = true;
       }
     };
 

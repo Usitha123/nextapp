@@ -1,28 +1,28 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 // Meal schema definition
 const mealSchema = new Schema({
   mealId: {
     type: String,
-    required: true
+    required: true,
   },
   mealName: {
     type: String,
-    required: true
+    required: true,
   },
   mealQuantity: {
     type: Number,
-    required: true
+    required: true,
   },
   mealPrice: {
     type: Number,
-    required: true
+    required: true,
   },
   timestamp: {
     type: Date,
-    default: Date.now  // Automatically sets the timestamp when the meal is created
-  }
+    default: Date.now, // Automatically sets the timestamp when the meal is created
+  },
 });
 
 // Order schema definition
@@ -30,21 +30,22 @@ const orderSchema = new Schema({
   userName: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
   },
   userEmail: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
   },
   canteenName: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
   },
   orderId: {
     type: String,
     required: true,
+    unique: true,
   },
   orderType: {
     type: String,
@@ -52,18 +53,17 @@ const orderSchema = new Schema({
   },
   orderStatus: {
     type: String,
-    default: 'Pending', 
-    required: true, 
+    default: "Pending",
+    required: true,
   },
   paymentStatus: {
     type: String,
-    required: false, 
+    required: false,
   },
-  meals: [mealSchema],  
- 
+  meals: [mealSchema],
 });
 
 // Check if the model already exists
-const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);
+const Order = mongoose.models.Order || mongoose.model("Order", orderSchema);
 
 export default Order;
