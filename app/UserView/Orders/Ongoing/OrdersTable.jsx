@@ -20,7 +20,7 @@ const OrdersTable = () => {
 
   const [pagination, setPagination] = useState({
     currentPage: 1,
-    rowsPerPage: 5,
+    rowsPerPage: 7,
   });
 
   const { data: session } = useSession();

@@ -1,17 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import DescriptionModel from "./Descriptionmodel";
-import {
-  ArrowBigUpDash,
-  ChevronLeft,
-  ChevronRight,
-  OctagonAlert,
-  SquareArrowDown,
-} from "lucide-react";
+import { ArrowBigUpDash, ChevronLeft, ChevronRight, OctagonAlert, SquareArrowDown } from "lucide-react";
 
-const ROWS_PER_PAGE = 7;
+const ROWS_PER_PAGE = 4;
 
 const OrderTable = () => {
   const [orders, setOrders] = useState([]);
@@ -22,20 +16,6 @@ const OrderTable = () => {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const { data: session } = useSession();
 
-  const [stats, setStats] = useState([
-    { title: "New Orders", value: 0, icon: <SquareArrowDown /> },
-    { title: "Orders Ready", value: 0, icon: <ArrowBigUpDash /> },
-    { title: "Orders Cancelled", value: 0, icon: <OctagonAlert /> },
-  ]);
-
-  // Detect meal type by time
-  const getCurrentMealType = () => {
-    const hour = new Date().getHours();
-    if (hour >= 7 && hour < 11) return "Breakfast";
-    if (hour >= 11 && hour < 16) return "Lunch";
-    return "Dinner";
-  };
-
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -44,10 +24,8 @@ const OrderTable = () => {
     try {
       const res = await fetch("/api/vieworders");
       if (!res.ok) throw new Error("Failed to fetch orders");
-
       const data = await res.json();
       setOrders(data.orders);
-      calculateStats(data.orders);
     } catch (error) {
       console.error("Error fetching orders:", error);
     } finally {
@@ -55,89 +33,46 @@ const OrderTable = () => {
     }
   };
 
-  const calculateStats = (orders) => {
-    if (!session?.user?.canteenNamecashier) return;
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const currentMealType = getCurrentMealType();
-
-    const todayOrders = orders.filter((order) => {
-      const orderDate = new Date(order.meals[0]?.timestamp);
-      return (
-        orderDate.toDateString() === today.toDateString() &&
-        order.canteenName === session.user.canteenNamecashier
-      );
-    });
-
-    setStats([
-      {
-        title: "New Orders",
-        value: todayOrders.filter(
-          (o) => o.orderStatus === "Pending" && o.orderType === currentMealType
-        ).length,
-        icon: <SquareArrowDown />,
-      },
-      {
-        title: "Orders Ready",
-        value: todayOrders.filter(
-          (o) => o.orderStatus === "Ready" && o.orderType === currentMealType
-        ).length,
-        icon: <ArrowBigUpDash />,
-      },
-      {
-        title: "Orders Cancelled",
-        value: todayOrders.filter((o) => o.orderStatus === "Cancelled").length,
-        icon: <OctagonAlert />,
-      },
-    ]);
-  };
-
-  const formatDate = (dateString) =>
-    new Date(dateString).toLocaleString();
+  const formatDate = (dateString) => new Date(dateString).toLocaleString();
 
   const getStatusClasses = (status) => {
     const statusClasses = {
       Accepted: "text-yellow-400",
       Picked: "text-green-400",
       Cancelled: "text-red-400",
-      Pending: "text-blue-400",
+      Pending: "text-blue-400"
     };
     return statusClasses[status] || "bg-gray-500 text-white rounded-xl";
   };
 
   const handleDescriptionClick = (orderId) => {
-    const selectedOrder = orders.find((o) => o._id === orderId);
-    if (selectedOrder) {
-      const mealDescriptions = selectedOrder.meals
-        .map(
-          (meal) =>
-            `${meal.mealName}: ${meal.mealQuantity} x ${meal.mealPrice}`
-        )
-        .join(", <br/> ");
-      setSelectedDescription(mealDescriptions);
-      setSelectedOrderId(orderId);
-      setIsDescriptionModelOpen(true);
-    }
+    const order = orders.find(o => o._id === orderId);
+    if (!order) return;
+
+    const mealDescriptions = order.meals
+      .map(meal => `${meal.mealName}: ${meal.mealQuantity} x ${meal.mealPrice}`)
+      .join(", <br/> ");
+
+    setSelectedDescription(mealDescriptions);
+    setSelectedOrderId(orderId);
+    setIsDescriptionModelOpen(true);
   };
 
   const updateStatus = async (orderId, status) => {
     try {
-      const res = await fetch(`/api/updateorderstatus?id=${orderId}`, {
+      const response = await fetch(`/api/updateorderstatus?id=${orderId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderStatus: status }),
+        body: JSON.stringify({ orderStatus: status })
       });
 
-      if (!res.ok) {
-        const errorData = await res.json();
+      if (!response.ok) {
+        const errorData = await response.json();
         alert(errorData.message || "Failed to update status");
       } else {
-        setOrders((prev) =>
-          prev.map((o) =>
-            o._id === orderId ? { ...o, orderStatus: status } : o
-          )
-        );
+        setOrders(prev => prev.map(order => 
+          order._id === orderId ? { ...order, orderStatus: status } : order
+        ));
         alert(`Status updated to ${status}`);
       }
     } catch (error) {
@@ -146,51 +81,40 @@ const OrderTable = () => {
     }
   };
 
-  const handlePagination = (action) => {
-    if (action === "prev" && currentPage > 1) {
-      setCurrentPage((prev) => prev - 1);
-    } else if (
-      action === "next" &&
-      currentPage < Math.ceil(filteredOrders.length / ROWS_PER_PAGE)
-    ) {
-      setCurrentPage((prev) => prev + 1);
-    }
+  const stats = [
+    { title: "New Orders", value: 3, icon: <SquareArrowDown /> },
+    { title: "Orders Ready", value: 5, icon: <ArrowBigUpDash /> },
+    { title: "Orders Cancelled", value: 2, icon: <OctagonAlert /> },
+  ];
+
+  const handlePagination = (action, totalPages) => {
+    if (action === "prev" && currentPage > 1) setCurrentPage(prev => prev - 1);
+    if (action === "next" && currentPage < totalPages) setCurrentPage(prev => prev + 1);
   };
 
-  // Filter, sort, and paginate
-  const filteredOrders = orders
-    .filter(
-      (o) =>
-        o.orderStatus === "Pending" &&
-        session?.user?.canteenNamecashier === o.selectCanteen
-    )
-    .sort(
-      (a, b) =>
-        new Date(b?.meals?.[0]?.timestamp || 0) -
-        new Date(a?.meals?.[0]?.timestamp || 0)
-    );
+  // Filter orders by Pending status and session canteen
+  const filteredOrders = useMemo(() => 
+    orders.filter(order => order.orderStatus === "Pending" && session?.user?.canteenNamecashier === order.canteenName),
+    [orders, session]
+  );
 
+  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / ROWS_PER_PAGE));
   const paginatedOrders = filteredOrders.slice(
     (currentPage - 1) * ROWS_PER_PAGE,
     currentPage * ROWS_PER_PAGE
   );
 
-  if (loading) {
-    return <div className="p-6 text-center text-white">Loading orders...</div>;
-  }
+  if (loading) return <div className="p-6 text-center text-white">Loading orders...</div>;
 
   return (
     <div className="space-y-2">
-      {/* Dashboard Cards */}
-      <div className="flex flex-wrap justify-center gap-6 xl:gap-16">
-        {stats.map(({ title, value, icon }, i) => (
-          <div
-            key={i}
-            className="relative flex flex-col h-32 w-60 items-center justify-center text-orange-500 bg-[#2B2623] rounded-lg"
-          >
+      {/* Dashboard Cards Section */}
+      <div className="flex flex-wrap justify-center gap-6 rounded-lg xl:gap-16">
+        {stats.map(({ title, value, icon }, idx) => (
+          <div key={idx} className="relative flex flex-col h-32 w-60 items-center justify-center text-orange-500 bg-[#2B2623] rounded-lg">
             <div className="flex items-center gap-2 text-5xl bg-[#4D423E] px-8 py-4 rounded-lg font-thin">
               <span>{String(value).padStart(2, "0")}</span>
-              <span className="absolute text-lg top-4 right-4">{icon}</span>
+              <span className="absolute top-4 w-[18px] h-[20px] right-4">{icon}</span>
             </div>
             <div className="mt-2 text-gray-300 text-md">{title}</div>
           </div>
@@ -211,84 +135,62 @@ const OrderTable = () => {
                   <th className="px-4 py-1">Order ID</th>
                   <th className="px-4 py-1">Customer</th>
                   <th className="px-4 py-1">Status</th>
-                  <th className="px-4 py-1">Date</th>
-                  <th className="px-4 py-1">Payment</th>
                   <th className="px-4 py-1">Description</th>
+                  <th className="px-4 py-1">Date</th>
+                  <th className="px-4 py-1">Payment Method</th>
                   <th className="px-4 py-1">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {paginatedOrders.map((order) => (
+                {paginatedOrders.map(order => (
                   <tr key={order._id} className="border-b-2 border-[#3B3737]">
-                    <td className="px-4 py-1">{order.orderId}</td>
+                    <td className="px-4 py-1">{order._id}</td>
                     <td className="px-4 py-1">{order.userName}</td>
                     <td className="px-4 py-1">
-                      <span
-                        className={`px-2 py-1 rounded ${getStatusClasses(
-                          order.orderStatus
-                        )}`}
-                      >
+                      <span className={`px-2 py-1 rounded ${getStatusClasses(order.orderStatus)}`}>
                         {order.orderStatus}
                       </span>
                     </td>
-                    <td className="px-4 py-1">
-                      {formatDate(order.meals?.[0]?.timestamp || new Date())}
-                    </td>
+                    <td className="px-4 py-1">{formatDate(order.meals?.[0]?.timestamp || new Date())}</td>
                     <td className="px-4 py-1">{order.paymentStatus}</td>
                     <td className="px-4 py-2">
-                      <button
-                        onClick={() => handleDescriptionClick(order._id)}
-                        className="text-orange-500 hover:underline"
-                      >
+                      <button onClick={() => handleDescriptionClick(order._id)} className="text-orange-500 hover:underline">
                         View
                       </button>
                     </td>
-                    <td className="px-4 py-1">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => updateStatus(order._id, "Accepted")}
-                          className="flex-1 text-green-400 hover:underline"
-                        >
-                          Accept
-                        </button>
-                        <button
-                          onClick={() => updateStatus(order._id, "Cancelled")}
-                          className="flex-1 text-red-400 hover:underline"
-                        >
-                          Cancel
-                        </button>
-                      </div>
+                    <td className="flex px-4 py-1 space-x-2">
+                      <button onClick={() => updateStatus(order._id, "Accepted")} className="flex-1 text-green-400 hover:underline">
+                        Accept
+                      </button>
+                      <button onClick={() => updateStatus(order._id, "Cancelled")} className="flex-1 text-red-400 hover:underline">
+                        Cancel
+                      </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
-        )}
 
-        {/* Pagination */}
-        {filteredOrders.length > 0 && (
-          <div className="flex items-center justify-end gap-2 mt-2">
-            <button
-              onClick={() => handlePagination("prev")}
-              disabled={currentPage === 1}
-              className="flex items-center gap-0 px-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
-            >
-              <ChevronLeft /> Prev
-            </button>
-
-            <span className="self-center text-white">
-              Page {currentPage} of{" "}
-              {Math.max(1, Math.ceil(filteredOrders.length / ROWS_PER_PAGE))}
-            </span>
-
-            <button
-              onClick={() => handlePagination("next")}
-              disabled={currentPage >= Math.ceil(filteredOrders.length / ROWS_PER_PAGE)}
-              className="flex items-center gap-0 px-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
-            >
-              Next <ChevronRight />
-            </button>
+            {/* Pagination */}
+            <div className="flex items-center justify-end gap-2 mt-2">
+              <button
+                onClick={() => handlePagination("prev", totalPages)}
+                disabled={currentPage === 1}
+                className="flex items-center gap-0 px-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
+              >
+                <ChevronLeft /> Prev
+              </button>
+              <span className="self-center text-white">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => handlePagination("next", totalPages)}
+                disabled={currentPage >= totalPages}
+                className="flex items-center gap-0 px-2 text-sm font-medium bg-[#3B3737] text-orange-500 border border-orange-500 rounded-xl hover:bg-black transition"
+              >
+                Next <ChevronRight />
+              </button>
+            </div>
           </div>
         )}
       </div>
