@@ -16,6 +16,16 @@ const OrderTable = () => {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const { data: session } = useSession();
 
+  // Get current meal type based on time (match canteen dashboard logic)
+  const getCurrentMealType = () => {
+    const now = new Date();
+    const hour = now.getHours();
+    if (hour >= 7 && hour < 11) return "Breakfast";
+    if (hour >= 11 && hour < 16) return "Lunch";
+    if (hour >= 16 && hour < 21) return "Dinner";
+    return "Dinner"; // Default fallback
+  };
+
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -81,10 +91,34 @@ const OrderTable = () => {
     }
   };
 
+  // Derive today's orders for the logged-in cashier's canteen
+  const { todayOrders, newOrdersCount, ordersReadyCount, ordersCancelledCount } = useMemo(() => {
+    const result = { todayOrders: [], newOrdersCount: 0, ordersReadyCount: 0, ordersCancelledCount: 0 };
+    if (!orders || orders.length === 0) return result;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const currentMealType = getCurrentMealType();
+    const canteenName = session?.user?.canteenNamecashier;
+
+    const todays = orders
+      .filter(order => {
+        const orderDate = new Date(order.meals?.[0]?.timestamp);
+        return orderDate.toDateString() === today.toDateString();
+      })
+      .filter(order => order.canteenName === canteenName);
+
+    const newOrders = todays.filter(order => order.orderStatus === "Pending" && order.orderType === currentMealType).length;
+    const readyOrders = todays.filter(order => order.orderStatus === "Ready" && order.orderType === currentMealType).length;
+    const cancelledOrders = todays.filter(order => order.orderStatus === "Cancelled").length;
+
+    return { todayOrders: todays, newOrdersCount: newOrders, ordersReadyCount: readyOrders, ordersCancelledCount: cancelledOrders };
+  }, [orders, session]);
+
   const stats = [
-    { title: "New Orders", value: 3, icon: <SquareArrowDown /> },
-    { title: "Orders Ready", value: 5, icon: <ArrowBigUpDash /> },
-    { title: "Orders Cancelled", value: 2, icon: <OctagonAlert /> },
+    { title: "New Orders", value: newOrdersCount, icon: <SquareArrowDown /> },
+    { title: "Orders Ready", value: ordersReadyCount, icon: <ArrowBigUpDash /> },
+    { title: "Orders Cancelled", value: ordersCancelledCount, icon: <OctagonAlert /> },
   ];
 
   const handlePagination = (action, totalPages) => {
@@ -92,11 +126,18 @@ const OrderTable = () => {
     if (action === "next" && currentPage < totalPages) setCurrentPage(prev => prev + 1);
   };
 
-  // Filter orders by Pending status and session canteen
-  const filteredOrders = useMemo(() => 
-    orders.filter(order => order.orderStatus === "Pending" && session?.user?.canteenNamecashier === order.canteenName),
-    [orders, session]
-  );
+  // Filter orders by Pending status, current meal type, session canteen, and today's date
+  const filteredOrders = useMemo(() => {
+    const currentMealType = getCurrentMealType();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return orders.filter(order => 
+      order.orderStatus === "Pending" &&
+      order.orderType === currentMealType &&
+      session?.user?.canteenNamecashier === order.canteenName &&
+      new Date(order.meals?.[0]?.timestamp).toDateString() === today.toDateString()
+    );
+  }, [orders, session]);
 
   const totalPages = Math.max(1, Math.ceil(filteredOrders.length / ROWS_PER_PAGE));
   const paginatedOrders = filteredOrders.slice(
