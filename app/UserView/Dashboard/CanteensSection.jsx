@@ -56,16 +56,17 @@ export default function CanteensSection() {
             key={index}
             className="overflow-hidden text-center bg-white shadow-md rounded-xl"
           >
-            <img
-              src={canteen.image || "/fallback.jpg"}
-              alt={canteen.name || "Canteen"}
-              className="object-cover w-full h-36"
-            />
             <Link
               href={`/UserView/Canteens/${encodeURIComponent(
                 canteen.canteenName || ""
               )}`}
             >
+            <img
+              src={canteen.image || "/fallback.jpg"}
+              alt={canteen.name || "Canteen"}
+              className="object-cover w-full h-36"
+            />
+            
               <div className="py-2 font-semibold text-white bg-orange-500 cursor-pointer">
                 {canteen.canteenName}
               </div>

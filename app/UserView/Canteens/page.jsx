@@ -78,7 +78,7 @@ const Page = () => {
           <div className="flex flex-wrap justify w-full gap-10 ">
  
             {canteens.map((canteen, index) => (
-              <div key={index} className="flex flex-col my-auto text-xl font-medium leading-none text-center text-white">
+              <div key={index} className="flex flex-col my-auto  font-medium leading-none text-center text-white">
                 <Link href={`/UserView/Canteens/${canteen.canteenName}`}>
                   <div className="flex flex-col h-40 rounded-t-3xl bg-white">
                     <Image
@@ -90,10 +90,11 @@ const Page = () => {
                       loading="lazy"
                     />
                   </div>
-                </Link>
-                <div className="rounded-b-xl py-2 bg-orange-500 min-h-[40px]">
+                
+                <div className="rounded-b-xl font-semibold py-2 bg-orange-500 min-h-[40px]">
                   {canteen.canteenName}
                 </div>
+                </Link>
                 
               </div>
             ))}
