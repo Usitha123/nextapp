@@ -7,17 +7,15 @@ import Topbar from '../../Topbar/page';
 import Header from '../../Header/Header';
 import Mealslist from './Mealslist';
 
-
 const Meals = () => {
   return (
-    <div className="flex bg-black">
+    <div className="flex bg-black min-h-screen">
       <Sidebar />
-      <div className="ml-20 md:ml-60 h-[100vh] w-[100vw]"> 
+      <div className="ml-20 md:ml-60 flex-1 flex flex-col bg-black"> 
         <Topbar />
-        <Header title="Meals" /> {/* Pass another route-specific title */}
-        <div className="p-4">
-          <Mealslist/>
-          {/* Meals content */}
+        <Header title="Meals" />
+        <div className="flex-1 p-4 bg-black overflow-auto">
+          <Mealslist />
         </div>
       </div>
     </div>
