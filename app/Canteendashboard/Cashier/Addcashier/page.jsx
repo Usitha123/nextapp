@@ -6,9 +6,9 @@ import Cashier from './Addowner';
 
 function page() {
   return (
-    <div className="flex bg-black">
-      <Sidebar/>
-<div className="w-full min-h-screen ml-20 bg-black md:ml-60">
+    <div className="flex bg-black min-h-screen">
+      <Sidebar />
+      <div className="ml-20 md:ml-60 flex-1 flex flex-col bg-black"> 
         <Topbar />
         <Header title="Add Cashier" />
         <div className="p-4">

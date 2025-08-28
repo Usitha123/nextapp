@@ -7,9 +7,9 @@ import Orderlist from './Orderslist';
 
 function page() {
   return (
-    <div className="flex bg-black">
-      <Sidebar/>
-      <div className="ml-20 md:ml-60 h-[100vh] w-[100vw]"> 
+    <div className="flex bg-black min-h-screen">
+      <Sidebar />
+      <div className="ml-20 md:ml-60 flex-1 flex flex-col bg-black"> 
         <Topbar />
         <Header title="Orders" />
         <div className="p-4">
