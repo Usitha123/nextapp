@@ -52,7 +52,7 @@ const OrdersTable = () => {
       Cancelled: "bg-red-500 text-white",
       Ready: "bg-blue-500 text-white",
     };
-    return `inline-block w-[70%] rounded-xl px-3 py-2 text-center ${
+    return `block w-auto md:w-[70%] md:mx-auto px-3 py-2 leading-none text-white rounded-xl   ${
       styles[status] || "bg-gray-500 text-white"
     }`;
   };

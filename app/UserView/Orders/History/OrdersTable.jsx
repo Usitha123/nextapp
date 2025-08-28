@@ -48,17 +48,18 @@ const OrdersTable = () => {
 
   const getStatusClasses = (status) => {
     const statusStyles = {
-      Accepted: "inline-block text-white w-[70%] rounded-xl bg-green-500",
-      Picked: "inline-block text-black w-[70%] rounded-xl bg-yellow-400",
-      Cancelled: "inline-block text-white w-[70%] rounded-xl bg-red-500",
-      Ready: "inline-block text-white w-[70%] rounded-xl bg-blue-500",
-      Drop: "inline-block text-white w-[70%] rounded-xl bg-gray-500",
+      Accepted: "bg-green-500",
+      Picked: "bg-yellow-400",
+      Cancelled: " bg-red-500",
+      Ready: "bg-blue-500",
+      Drop: "bg-gray-500",
     };
-    return (
-      statusStyles[status] ||
-      "bg-gray-400 text-white rounded-xl w-[70%] inline-block"
-    );
+    return `block w-auto md:w-[70%] md:mx-auto px-3 py-2 leading-none text-white rounded-xl   ${
+      statusStyles[status] || "bg-gray-500 text-white"
+    }`;
   };
+
+  
 
   const formatDate = (dateString) => {
     try {
