@@ -128,7 +128,7 @@ const OrderTable = () => {
                     <td className="px-4 py-1">{formatDate(order.meals?.[0]?.timestamp || new Date())}</td>
                     <td className="px-4 py-1">{order.paymentStatus}</td>
                     <td className="px-4 py-1">
-                      <button onClick={() => openModal("isDescriptionModelOpen", order._id, order.meals)} className="text-orange-400 hover:underline">
+                      <button onClick={() => openModal("isDescriptionModelOpen", order.orderId, order.meals)} className="text-orange-400 hover:underline">
                         View
                       </button>
                     </td>
@@ -160,7 +160,7 @@ const OrderTable = () => {
       )}
 
       {/* Modals */}
-      <DescriptionModel isOpen={modalState.isDescriptionModelOpen} onClose={() => closeModal("isDescriptionModelOpen")} description={modalState.selectedDescription} />
+      <DescriptionModel isOpen={modalState.isDescriptionModelOpen} onClose={() => closeModal("isDescriptionModelOpen")} description={modalState.selectedDescription} orderId={modalState.selectedOrderId} />
       <UpdateStatusModal
         isOpen={modalState.isModalOpen}
         onClose={() => closeModal("isModalOpen")}

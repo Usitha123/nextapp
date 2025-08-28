@@ -6,35 +6,35 @@ export async function middleware(req) {
   const { pathname } = req.nextUrl;
 
   // Debug logging
-  console.log('Middleware - Path:', pathname, 'Method:', req.method);
+ // console.log('Middleware - Path:', pathname, 'Method:', req.method);
 
   // Early return for NextAuth API routes - always allow
   if (pathname.startsWith('/api/auth')) {
-    console.log('Allowing NextAuth route:', pathname);
+    //console.log('Allowing NextAuth route:', pathname);
     return NextResponse.next();
   }
 
   // Early return for registration API routes - always allow
   if (pathname.startsWith('/api/register')) {
-    console.log('Allowing register route:', pathname);
+    //console.log('Allowing register route:', pathname);
     return NextResponse.next();
   }
 
   // Allow userExists API route (used for registration validation)
   if (pathname.startsWith('/api/userExists')) {
-    console.log('Allowing userExists route:', pathname);
+    //console.log('Allowing userExists route:', pathname);
     return NextResponse.next();
   }
 
   // Allow payment
   if (pathname.startsWith('/payment/complete')) {
-    console.log('Allowing payment route:', pathname);
+   // console.log('Allowing payment route:', pathname);
     return NextResponse.next();
   }
 
   // Allow payment
   if (pathname.startsWith('/payment/cancel')) {
-    console.log('Allowing payment route:', pathname);
+    //console.log('Allowing payment route:', pathname);
     return NextResponse.next();
   }
 

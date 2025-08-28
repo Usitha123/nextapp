@@ -59,12 +59,8 @@ const OrderTable = () => {
     const order = orders.find(o => o._id === orderId);
     if (!order) return;
 
-    const mealDescriptions = order.meals
-      .map(meal => `${meal.mealName}: ${meal.mealQuantity} x ${meal.mealPrice}`)
-      .join(", <br/> ");
-
-    setSelectedDescription(mealDescriptions);
-    setSelectedOrderId(orderId);
+    setSelectedDescription(order.meals);
+    setSelectedOrderId(order.orderId);
     setIsDescriptionModelOpen(true);
   };
 

@@ -68,7 +68,7 @@ const OrderTable = () => {
       setModalState((prev) => ({
         ...prev,
         selectedDescription: selected.meals,
-        selectedOrderId: orderId,
+        selectedOrderId: selected.orderId,
         isDescriptionModelOpen: true,
       }));
     }
@@ -230,6 +230,7 @@ const OrderTable = () => {
         isOpen={modalState.isDescriptionModelOpen}
         onClose={() => closeModals("isDescriptionModelOpen")}
         description={modalState.selectedDescription}
+        orderId={modalState.selectedOrderId}
       />
       <UpdateStatusModal
         isOpen={modalState.isModalOpen}

@@ -1,4 +1,4 @@
-// app/api/viewAdminDetails/route.js
+// app/api/viewadminprofile/route.js
 import { connectMongoDB } from '@/lib/mongodb'; // MongoDB connection utility
 import Admin from '@/models/Admin'; // Admin model
 
@@ -8,10 +8,7 @@ export async function GET() {
     await connectMongoDB();
 
     // Fetch the single admin document
-    const admin = await Admin.findOne(); // Assumes the collection has only one document
-    if (!admin) {
-      return new Response('No admin details found', { status: 404 });
-    }
+    const admin = await Admin.find(); // Assumes the collection has only one document 
 
     // Return the admin document
     return new Response(JSON.stringify(admin), { status: 200 });

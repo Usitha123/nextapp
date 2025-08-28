@@ -49,27 +49,27 @@ export default function Profile() {
   </div>
 
   {/* Profile Info */}
-  <div className="text-sm space-y-4 mt-6">
+  <div className="mt-6 space-y-4 text-sm">
     <div className="grid grid-cols-2 gap-4">
       <label className="text-orange-500">First Name</label>
       <span className="text-right text-gray-200">{targetStudent.firstName || "N/A"}</span>
     </div>
-    <hr className=" border-gray-500" />
+    <hr className="border-gray-500 " />
     <div className="grid grid-cols-2 gap-4">
       <label className="text-orange-500">Last Name</label>
       <span className="text-right text-gray-200">{targetStudent.lastName || "N/A"}</span>
     </div>
-    <hr className=" border-gray-500" />
+    <hr className="border-gray-500 " />
     <div className="grid grid-cols-2 gap-4">
       <label className="text-orange-500">Phone</label>
       <span className="text-right text-gray-200">{targetStudent.phoneNumber || "N/A"}</span>
     </div>
-    <hr className=" border-gray-500"/>
+    <hr className="border-gray-500 "/>
     <div className="grid grid-cols-2 gap-4">
       <label className="text-orange-500 ">Email</label>
       <span className="text-right text-gray-200">{targetStudent.email || "N/A"}</span>
     </div>
-    <hr className=" border-gray-500"/>
+    <hr className="border-gray-500 "/>
     <div className="grid grid-cols-2 gap-4">
       <label className="text-orange-500">NIC Number</label>
       <span className="text-right text-gray-200">{targetStudent.nicNumber || "N/A"}</span>

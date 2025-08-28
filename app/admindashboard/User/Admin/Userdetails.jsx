@@ -222,7 +222,6 @@ const OwnerTable = () => {
               <th className="p-3 font-medium">Email</th>
               <th className="p-3 font-medium">NIC</th>
               <th className="p-3 font-medium">Status</th>
-              <th className="p-3 font-medium">Registered</th>
               <th className="p-3 font-medium">Actions</th>
             </tr>
           </thead>
@@ -256,7 +255,7 @@ const OwnerTable = () => {
                     </span>
                   </td>
                   
-                  <td className="p-3 text-xs">{formatDate(owner.createdAt)}</td>
+                  
                   <td className="p-3">
                     <div className="flex items-center space-x-2">
                       <button

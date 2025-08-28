@@ -92,11 +92,9 @@ const OrdersTable = () => {
   const handleDescriptionClick = (orderId) => {
     const order = orders.find((o) => o._id === orderId);
     if (order) {
-      const mealDescriptions = order.meals
-        .map((meal) => `${meal.mealName}: ${meal.mealQuantity} x ${meal.mealPrice}`)
-        .join("\n"); // keep line breaks
-      setSelectedDescription(mealDescriptions);
-      setSelectedOrderId(orderId);
+      setSelectedDescription(order.meals);
+      
+      setSelectedOrderId(order.orderId);
       setIsDescriptionModalOpen(true);
     }
   };

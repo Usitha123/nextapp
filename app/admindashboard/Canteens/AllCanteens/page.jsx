@@ -12,7 +12,7 @@ function page() {
         <Topbar />
         <Header title="Canteens" />
         <div className="p-4">
-             <AllCanteens />
+          <AllCanteens />
         </div>
       </div>
     </div>

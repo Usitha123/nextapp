@@ -72,13 +72,8 @@ const OrdersTable = () => {
   const handleDescriptionClick = (orderId) => {
     const order = orders.find((order) => order._id === orderId);
     if (order) {
-      const mealDescriptions = order.meals
-        .map(
-          (meal) => `${meal.mealName}: ${meal.mealQuantity} x ${meal.mealPrice}`
-        )
-        .join(", <br/> ");
-      setSelectedDescription(mealDescriptions);
-      setSelectedOrderId(orderId);
+      setSelectedDescription(order.meals);
+      setSelectedOrderId(order.orderId);
       setIsDescriptionModalOpen(true);
     }
   };
