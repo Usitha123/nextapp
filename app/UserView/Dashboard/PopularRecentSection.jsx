@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import MealDetailCard from "./MealDetailCard";
 
 // Dummy popular items list (you might want to move this to a separate data file)
@@ -42,6 +43,7 @@ const recentItems = [
 ];
 
 export default function PopularRecentSection() {
+  const { data: session, status: sessionStatus } = useSession();
   const [activeTab, setActiveTab] = useState("popular");
   const [popularItems, setPopularItems] = useState([]);
   const [recentItems, setRecentItems] = useState([]);
@@ -62,6 +64,7 @@ export default function PopularRecentSection() {
   // Function to fetch recent meals for currently logged in user
   const fetchRecentMeals = async () => {
     try {
+      setLoading(true);
       // Get current meal type
       const currentMealType = getCurrentMealType();
       
@@ -78,10 +81,18 @@ export default function PopularRecentSection() {
       const { orders } = await ordersRes.json();
       const { meals } = await mealsRes.json();
 
+      // Guard: require logged-in user's email
+      const userEmail = session?.user?.email;
+      if (!userEmail) {
+        setRecentItems([]);
+        setLoading(false);
+        return;
+      }
+
       // Step 1: Select all orders from last 7 days for currently logged in user
       const userOrders = orders.filter(order => {
         const orderDate = new Date(order.meals[0]?.timestamp);
-        return orderDate >= sevenDaysAgo;
+        return orderDate >= sevenDaysAgo && order.userEmail === userEmail;
       });
 
       // Step 2: Filter orders by current meal type
@@ -125,9 +136,11 @@ export default function PopularRecentSection() {
       }
 
       setRecentItems(recentMeals);
+      setLoading(false);
     } catch (err) {
       console.error("Error fetching recent meals:", err);
       setError("Failed to load recent meals.");
+      setLoading(false);
     }
   };
 

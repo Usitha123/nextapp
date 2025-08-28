@@ -106,6 +106,15 @@ const PaymentComplete = () => {
     );
   }
 
+  const issuedAt = new Date();
+  const issuedAtText = issuedAt.toLocaleString();
+  const subtotal = Array.isArray(orderData?.meals)
+    ? orderData.meals.reduce(
+        (t, m) => t + Number(m.mealPrice || 0) * Number(m.mealQuantity || 0),
+        0
+      )
+    : 0;
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <div className="flex items-center justify-center flex-1 p-8">
@@ -132,35 +141,77 @@ const PaymentComplete = () => {
             {/* Order Details to PDF */}
             <div 
               ref={html2pdfRef} 
-              className="p-6 mb-6 rounded-lg bg-gray-50"
+              className="p-6 mb-6 bg-white rounded-2xl ring-1 ring-gray-200"
               style={{ backgroundColor: 'white' }} // Ensure white bg in PDF
             >
-              <h3 className="mb-4 text-xl font-semibold text-gray-800">Order Details</h3>
-              <div className="space-y-4">
-                <div className="flex justify-between p-3 bg-white rounded-md">
-                  <span className="font-medium text-gray-600">Order Id:</span>
-                  <span className="text-gray-800">{orderData.orderId}</span>
+              {/* Header */}
+              <div className="pb-4 mb-4 border-b">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">Payment Receipt</h3>
+                    <p className="text-sm text-gray-500">Order ID: <span className="font-medium text-gray-700">{orderData.orderId}</span></p>
+                  </div>
+                  <div className="px-3 py-1 text-sm font-semibold text-white bg-orange-500 rounded-full">
+                    {orderData.paymentStatus === 'by_Card' ? 'Paid by Card' : 'Payment'}
+                  </div>
                 </div>
-                <div className="flex justify-between p-3 bg-white rounded-md">
-                  <span className="font-medium text-gray-600">Canteen:</span>
-                  <span className="text-gray-800">{orderData.canteenName}</span>
+                <p className="mt-1 text-xs text-gray-500">Issued: {issuedAtText}</p>
+              </div>
+
+              {/* Meta */}
+              <div className="grid grid-cols-1 gap-3 mb-4 text-sm md:grid-cols-2">
+                <div className="p-3 bg-gray-50 rounded-xl">
+                  <p className="text-gray-500">Customer</p>
+                  <p className="font-medium text-gray-800">{orderData.userName}</p>
+                  <p className="text-gray-600">{orderData.userEmail}</p>
                 </div>
-                <div className="flex justify-between p-3 bg-white rounded-md">
-                  <span className="font-medium text-gray-600">Order Type:</span>
-                  <span className="text-gray-800">{orderData.orderType}</span>
-                </div>
-                <div className="p-3 bg-white rounded-md">
-                  <h4 className="mb-2 font-medium text-gray-600">Items Ordered:</h4>
-                  <ul className="space-y-2">
-                    {orderData.meals.map((meal, index) => (
-                      <li key={index} className="flex justify-between">
-                        <span className="text-gray-800">{meal.mealName}</span>
-                        <span className="text-gray-600">x {meal.mealQuantity}</span>
-                      </li>
-                    ))}
-                  </ul>
+                <div className="p-3 bg-gray-50 rounded-xl">
+                  <p className="text-gray-500">Order Details</p>
+                  <p className="font-medium text-gray-800">{orderData.canteenName}</p>
+                  <p className="text-gray-600">Type: {orderData.orderType}</p>
                 </div>
               </div>
+
+              {/* Items Table */}
+              <div className="overflow-hidden rounded-xl ring-1 ring-gray-200">
+                <table className="w-full text-sm">
+                  <thead className="text-white bg-orange-500">
+                    <tr>
+                      <th className="px-3 py-2 text-left">Item</th>
+                      <th className="px-3 py-2 text-right">Unit Price</th>
+                      <th className="px-3 py-2 text-right">Qty</th>
+                      <th className="px-3 py-2 text-right">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {orderData.meals.map((m, idx) => {
+                      const unit = Number(m.mealPrice || 0);
+                      const qty = Number(m.mealQuantity || 0);
+                      const line = unit * qty;
+                      return (
+                        <tr key={idx}>
+                          <td className="px-3 py-2 text-gray-800">{m.mealName}</td>
+                          <td className="px-3 py-2 text-right text-gray-700">Rs {unit.toFixed(2)}</td>
+                          <td className="px-3 py-2 text-right text-gray-700">{qty}</td>
+                          <td className="px-3 py-2 font-medium text-right text-gray-900">Rs {line.toFixed(2)}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                  <tfoot className="bg-gray-50">
+                    <tr>
+                      <td className="px-3 py-2 text-right" colSpan={3}><span className="text-sm text-gray-600">Subtotal</span></td>
+                      <td className="px-3 py-2 text-right"><span className="text-sm font-medium text-gray-800">Rs {subtotal.toFixed(2)}</span></td>
+                    </tr>
+                    <tr>
+                      <td className="px-3 py-2 text-right border-t" colSpan={3}><span className="text-base font-semibold text-gray-900">Total</span></td>
+                      <td className="px-3 py-2 text-right border-t"><span className="text-base font-semibold text-gray-900">Rs {subtotal.toFixed(2)}</span></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <p className="mt-4 text-xs text-center text-gray-500">Thank you for your order!</p>
             </div>
 
             {/* Buttons */}
