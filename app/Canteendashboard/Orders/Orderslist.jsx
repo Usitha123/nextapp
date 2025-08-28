@@ -40,12 +40,12 @@ const OrderTable = () => {
 
   const getStatusClasses = (status) => {
     const styles = {
-      Accepted: "bg-green-600",
-      Picked: "bg-yellow-500/10",
+      Accepted: "bg-green-500",
+      Picked: "bg-yellow-400",
       Cancelled: "bg-red-500",
-      Pending: "bg-red-900/70 text-red-400",
+      Pending: "bg-gray-500",
     };
-    return `inline-block w-[70%] text-white rounded-xl px-2 py-1 ${styles[status] || "bg-gray-500"}`;
+    return `block w-auto  md:mx-auto  py-1 text-white  rounded-xl ${styles[status] || "bg-blue-500"}`;
   };
 
   const formatDate = (dateString) => new Date(dateString).toLocaleString();
@@ -145,7 +145,7 @@ const OrderTable = () => {
         <div className="overflow-auto justify-center max-w-[75vw] lg:max-w-full rounded-xl">
           <table className="w-full text-sm text-center text-gray-400 rounded-xl bg-[#2B2623]">
             <thead className="text-black bg-orange-500">
-              <tr>
+              <tr className="px-4 py-1">
                 <th className="px-4 py-1">Order ID</th>
                 <th className="px-4 py-1">Customer</th>
                 <th className="px-4 py-1">Status</th>
