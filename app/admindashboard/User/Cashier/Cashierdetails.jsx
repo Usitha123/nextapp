@@ -16,6 +16,7 @@ const CashierTable = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedCashier, setSelectedCashier] = useState(null);
   const [error, setError] = useState(null);
+  const [updateTrigger, setUpdateTrigger] = useState(0); // Force re-render trigger
 
   // Fetch cashiers data
   const fetchCashiers = useCallback(async () => {
@@ -51,7 +52,7 @@ const CashierTable = () => {
   const currentCashiers = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     return cashiers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [cashiers, currentPage]);
+  }, [cashiers, currentPage, updateTrigger]); // Add updateTrigger as dependency
 
   // Pagination handlers
   const handlePagination = useCallback((direction) => {
@@ -115,6 +116,8 @@ const CashierTable = () => {
     if (!selectedCashier?._id) return;
 
     try {
+      setLoading(true);
+      
       const response = await fetch(`/api/updatestatuscashier?id=${selectedCashier._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -126,6 +129,7 @@ const CashierTable = () => {
         throw new Error(errorData.message || "Failed to update status");
       }
 
+      // Update the cashiers list immediately
       setCashiers(prev =>
         prev.map(cashier =>
           cashier._id === selectedCashier._id 
@@ -133,12 +137,21 @@ const CashierTable = () => {
             : cashier
         )
       );
+
+      // Update the selected cashier to reflect the change in modals
+      setSelectedCashier(prev => prev ? { ...prev, status: newStatus } : null);
+      
+      // Force re-render to ensure UI updates
+      setUpdateTrigger(prev => prev + 1);
       
       alert(`Status updated to ${newStatus}`);
       closeModals();
+      
     } catch (error) {
       console.error("Status update error:", error);
       alert(error.message || "An error occurred while updating status");
+    } finally {
+      setLoading(false);
     }
   }, [selectedCashier, closeModals]);
 
@@ -199,7 +212,7 @@ const CashierTable = () => {
             {currentCashiers.length === 0 ? (
               <tr>
                 <td colSpan="9" className="p-8 text-center text-gray-500">
-                  No cashiers found
+                  {cashiers.length === 0 ? "No cashiers found" : "No cashiers on this page"}
                 </td>
               </tr>
             ) : (
@@ -211,13 +224,20 @@ const CashierTable = () => {
                   <td className="p-3">{cashier.phoneNumber}</td>
                   <td className="p-3">{cashier.nicNumber}</td>
                   <td className="p-3">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      cashier.status === 'active' 
-                        ? 'bg-green-900/50 text-green-400' 
-                        : 'bg-red-900/50 text-red-400'
-                    }`}>
-                      {cashier.status}
-                    </span>
+                    <div className="flex justify-center">
+                      <span 
+                        key={`${cashier._id}-${cashier.status}-${updateTrigger}`} // Force re-render with key
+                        className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-medium min-w-[70px] transition-colors ${
+                          cashier.status?.toLowerCase() === 'active' 
+                            ? 'bg-green-900/50 text-green-400 border border-green-700/50' 
+                            : cashier.status?.toLowerCase() === 'pending'
+                            ? 'bg-yellow-900/50 text-yellow-400 border border-yellow-700/50'
+                            : 'bg-red-900/50 text-red-400 border border-red-700/50'
+                        }`}
+                      >
+                        {cashier.status || 'inactive'}
+                      </span>
+                    </div>
                   </td>
                   <td className="p-3">{cashier.selectCanteen}</td>
                   <td className="p-3 text-xs">{formatDate(cashier.createdAt)}</td>
