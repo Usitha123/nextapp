@@ -24,7 +24,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="w-20 min-h-screen p-4 text-black bg-white md:w-60">
+    <div className="w-20 fixed left-0 top-0 z-50 min-h-screen p-4 text-black bg-white md:w-60">
       <h1 className="mb-10 hidden md:block text-center text-2xl font-bold text-[#ff842f]">Meal Mate</h1>
       <ul className="space-y-4">
         {links.map((link) => {

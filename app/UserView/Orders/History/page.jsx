@@ -14,7 +14,7 @@ const Page = () => {
   return (
     <div className="flex bg-gray-100">
       <Sidebar activePath={currentPath} /> {/* Pass current path as activePath */}
-      <div className="flex-1">
+      <div className="ml-20 md:ml-60 h-[100vh] w-[100vw]">
         <Topbar />
         <Header title="Orders" />
         <div className="p-1">
