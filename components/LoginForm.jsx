@@ -74,7 +74,7 @@ export default function LoginForm() {
         pauseOnHover
       />
       <div className="w-full max-w-sm p-8 bg-white rounded-lg shadow-lg bg-opacity-90">
-        <h2 className="mb-6 text-2xl font-bold text-center text-orange-500">Jpura CMS</h2>
+        <h2 className="mb-6 text-3xl font-bold text-center text-orange-500">Meal Mate</h2>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

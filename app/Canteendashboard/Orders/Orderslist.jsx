@@ -40,10 +40,10 @@ const OrderTable = () => {
 
   const getStatusClasses = (status) => {
     const styles = {
-      Accepted: "bg-green-500",
-      Picked: "bg-yellow-400 text-black",
+      Accepted: "bg-green-600",
+      Picked: "bg-yellow-500/10",
       Cancelled: "bg-red-500",
-      Pending: "bg-blue-500",
+      Pending: "bg-red-900/70 text-red-400",
     };
     return `inline-block w-[70%] text-white rounded-xl px-2 py-1 ${styles[status] || "bg-gray-500"}`;
   };

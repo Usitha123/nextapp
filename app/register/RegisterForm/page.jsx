@@ -117,8 +117,8 @@ export default function RegisterForm() {
         pauseOnHover
       />
       <div className="w-full max-w-xl p-8 bg-white rounded-lg shadow-lg bg-opacity-90">
-        <h2 className="mb-8 text-2xl font-bold text-center text-orange-500">
-          Jpura CMS
+        <h2 className="mb-8 text-3xl font-bold text-center text-orange-500">
+          Meal Mate
         </h2>
 
         <form onSubmit={handleSubmit}>

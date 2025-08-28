@@ -172,11 +172,11 @@ const PaymentComplete = () => {
                 Download Receipt
               </button>
               <Link 
-                href="/UserView/Canteens" 
+                href="/UserView/Orders/Ongoing" 
                 className="flex items-center px-6 py-3 text-white transition-colors duration-200 bg-orange-500 rounded-md hover:bg-orange-600"
               >
                 <FaArrowLeft className="mr-2" />
-                Back to Dashboard
+                View on Orders
               </Link>
             </div>
 

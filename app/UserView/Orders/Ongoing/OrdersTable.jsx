@@ -162,7 +162,7 @@ const OrdersTable = () => {
           <tbody>
             {paginatedOrders.map((order) => (
               <tr key={order._id} className="text-center">
-                <td className="p-2">{order._id}</td>
+                <td className="p-2">{order.orderId}</td>
                 <td className="p-2">
                   <span className={getStatusClasses(order.orderStatus)}>{order.orderStatus}</span>
                 </td>
