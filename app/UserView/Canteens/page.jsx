@@ -75,30 +75,27 @@ const Page = () => {
         <Header title="Canteens" />
         <div className="max-h-[70%] m-8">
           {/* <div className="grid justify-between w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"> */}
-          <div className="flex flex-wrap justify w-full gap-10 ">
- 
-            {canteens.map((canteen, index) => (
-              <div key={index} className="flex flex-col my-auto  font-medium leading-none text-center text-white">
-                <Link href={`/UserView/Canteens/${canteen.canteenName}`}>
-                  <div className="flex flex-col h-40 rounded-t-3xl bg-white">
-                    <Image
-                      src={canteen.image}
-                      alt={`${canteen.canteenName} canteen`}
-                      className="object-cover h-full rounded-t-xl mx-auto"
-                      width={300} // Adjust as needed
-                      height={300} // Adjust as needed
-                      loading="lazy"
-                    />
-                  </div>
-                
-                <div className="rounded-b-xl font-semibold py-2 bg-orange-500 min-h-[40px]">
-                  {canteen.canteenName}
-                </div>
-                </Link>
-                
-              </div>
-            ))}
-          </div>
+          <div className="flex flex-wrap justify-between w-full gap-y-6">
+  {canteens.map((canteen, index) => (
+    <div key={index} className="flex flex-col font-medium leading-none text-center text-white">
+      <Link href={`/UserView/Canteens/${canteen.canteenName}`}>
+        <div className="flex flex-col h-36 w-72 rounded-t-3xl bg-white">
+          <Image
+            src={canteen.image}
+            alt={`${canteen.canteenName} canteen`}
+            className="object-cover h-full rounded-t-xl mx-auto"
+            width={300}
+            height={300}
+            loading="lazy"
+          />
+        </div>
+        <div className="rounded-b-xl font-semibold py-2 bg-orange-500 min-h-[40px]">
+          {canteen.canteenName}
+        </div>
+      </Link>
+    </div>
+  ))}
+</div>
         </div>
       </div>
     </div>
