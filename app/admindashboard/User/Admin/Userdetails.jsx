@@ -127,7 +127,7 @@ const OwnerTable = () => {
   }
 
   return (
-    <div className="p-4 rounded-lg">
+    <div className="p-2 rounded-lg">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>

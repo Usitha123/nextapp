@@ -191,7 +191,7 @@ const CashierTable = () => {
   }
 
   return (
-    <div className="p-4 rounded-lg">
+    <div className="p-2 rounded-lg">
       {/* Table */}
       <div className="overflow-auto max-w-[75vw] lg:max-w-full rounded-xl">
         <table className="w-full text-sm text-left text-gray-400 rounded-xl bg-[#2B2623]">
