@@ -21,7 +21,9 @@ export default function CanteensSection() {
           (canteen) =>
             canteen.ownerstatus !== "Inactive" && canteen.status === "Active"
         );
-        setCanteens(activeCanteens);
+        
+        // Limit to only 4 canteens for the dashboard
+        setCanteens(activeCanteens.slice(0, 4));
       } catch (err) {
         console.error("Error fetching canteens:", err);
         setError("Failed to load canteens.");
@@ -71,6 +73,8 @@ export default function CanteensSection() {
           </div>
         ))}
       </div>
+      
+      
     </section>
   );
-} 
+}
