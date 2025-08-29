@@ -11,7 +11,7 @@ import Link from "next/link";
 const Page = () => {
   const currentPath = usePathname();
   const [canteens, setCanteens] = useState([]);
-  const [cart, setCart] = useState([]); // Cart state
+  const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -39,19 +39,13 @@ const Page = () => {
     fetchCanteens();
   }, []);
 
-  // Handler for adding to cart
   const handleAddToCart = (canteen) => {
     setCart((prevCart) => {
       const updatedCart = [...prevCart, canteen];
-      console.log("Updated Cart (JSON):", JSON.stringify(updatedCart, null, 2)); // Log the cart as JSON
+      console.log("Updated Cart (JSON):", JSON.stringify(updatedCart, null, 2));
       return updatedCart;
     });
   };
-
-  /*// Log cart changes (optional)
-  useEffect(() => {
-    console.log("Cart updated:", cart);
-  }, [cart]);*/
 
   if (loading)
     return (
@@ -65,37 +59,56 @@ const Page = () => {
       </div>
     );
 
- 
-
   return (
-    <div className="flex h-full bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       <Sidebar activePath={currentPath} />
-      <div className="ml-20 md:ml-60 h-[100vh] w-[100vw]">
-        <Topbar />
+      
+      {/* Main Content Area */}
+      <div className="pt-16 md:pt-0 md:ml-60">
+        {/* Topbar - Hidden on mobile since we have the mobile header */}
+        <div className="hidden md:block">
+          <Topbar />
+        </div>
+        
+        {/* Header */}
         <Header title="Canteens" />
-        <div className="max-h-[70%] m-8">
-          {/* <div className="grid justify-between w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"> */}
-          <div className="flex flex-wrap justify-between w-full gap-y-6">
-  {canteens.map((canteen, index) => (
-    <div key={index} className="flex flex-col font-medium leading-none text-center text-white">
-      <Link href={`/UserView/Canteens/${canteen.canteenName}`}>
-        <div className="flex flex-col h-36 w-72 rounded-t-3xl bg-white">
-          <Image
-            src={canteen.image}
-            alt={`${canteen.canteenName} canteen`}
-            className="object-cover h-full rounded-t-xl mx-auto"
-            width={300}
-            height={300}
-            loading="lazy"
-          />
-        </div>
-        <div className="rounded-b-xl font-semibold py-2 bg-orange-500 min-h-[40px]">
-          {canteen.canteenName}
-        </div>
-      </Link>
-    </div>
-  ))}
-</div>
+        
+        {/* Content */}
+        <div className="p-4 md:p-8">
+          <div className="max-h-[calc(100vh-200px)] overflow-y-auto">
+            {error ? (
+              <div className="flex items-center justify-center h-64 text-red-500">
+                <p>{error}</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {canteens.map((canteen, index) => (
+                  <div key={index} className="flex flex-col overflow-hidden bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <Link href={`/UserView/Canteens/${canteen.canteenName}`}>
+                      {/* Image Container */}
+                      <div className="relative h-40 w-full">
+                        <Image
+                          src={canteen.image}
+                          alt={`${canteen.canteenName} canteen`}
+                          className="object-cover w-full h-full"
+                          width={300}
+                          height={160}
+                          loading="lazy"
+                        />
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="p-3 bg-orange-500">
+                        <h3 className="text-white font-semibold text-center text-sm md:text-base leading-tight">
+                          {canteen.canteenName}
+                        </h3>
+                      </div>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
