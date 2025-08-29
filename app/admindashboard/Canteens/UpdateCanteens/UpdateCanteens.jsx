@@ -2,11 +2,11 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSearchParams } from 'next/navigation'; // Import the useSearchParams hook
+import { useSearchParams } from 'next/navigation';
 
 const UpdateCanteen = () => {
   const router = useRouter();
-  const searchParams = useSearchParams(); // Get the search params (query parameters)
+  const searchParams = useSearchParams();
   const [canteen, setCanteen] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -107,11 +107,11 @@ const UpdateCanteen = () => {
         <div>
           {canteen.image && (
             <div>
-              <label className="block text-sm text-orange-500 mb-1">Image Preview</label>
+              <label className="block mb-1 text-sm text-orange-500">Image Preview</label>
               <img
                 src={canteen.image}
                 alt="Canteen Image"
-                className="object-cover w-full h-80 rounded-md"
+                className="object-cover w-full rounded-md h-80"
               />
             </div>
           )}
@@ -123,23 +123,70 @@ const UpdateCanteen = () => {
   
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              {['Canteen Name', 'Business Email', 'Open Hour', 'Closed Hour', 'Phone Number'].map((field) => (
-                <div key={field}>
-                  <label className="block text-sm text-orange-500 mb-1">{field}</label>
-                  <input
-                    type={field === 'Open Hour' || field === 'Closed Hour' ? 'time' : 'text'}
-                    name={field}
-                    value={canteen[field]}
-                    onChange={handleChange}
-                    required
-                    className="w-full p-2 text-gray-300 bg-[#3B3737] border border-gray-600 rounded-md"
-                  />
-                </div>
-              ))}
+              {/* Manual field mapping to match backend expectations */}
+              <div>
+                <label className="block mb-1 text-sm text-orange-500">Canteen Name</label>
+                <input
+                  type="text"
+                  name="canteenName"
+                  value={canteen.canteenName || canteen['Canteen Name'] || ''}
+                  onChange={handleChange}
+                  required
+                  className="w-full p-2 text-gray-300 bg-[#3B3737] border border-gray-600 rounded-md"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1 text-sm text-orange-500">Business Email</label>
+                <input
+                  type="email"
+                  name="businessEmail"
+                  value={canteen.businessEmail || canteen['Business Email'] || ''}
+                  onChange={handleChange}
+                  required
+                  className="w-full p-2 text-gray-300 bg-[#3B3737] border border-gray-600 rounded-md"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1 text-sm text-orange-500">Open Hour</label>
+                <input
+                  type="time"
+                  name="openHour"
+                  value={canteen.openHour || canteen['Open Hour'] || ''}
+                  onChange={handleChange}
+                  required
+                  className="w-full p-2 text-gray-300 bg-[#3B3737] border border-gray-600 rounded-md"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1 text-sm text-orange-500">Closed Hour</label>
+                <input
+                  type="time"
+                  name="closedHour"
+                  value={canteen.closedHour || canteen['Closed Hour'] || ''}
+                  onChange={handleChange}
+                  required
+                  className="w-full p-2 text-gray-300 bg-[#3B3737] border border-gray-600 rounded-md"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1 text-sm text-orange-500">Phone Number</label>
+                <input
+                  type="tel"
+                  name="phoneNumber"
+                  value={canteen.phoneNumber || canteen['Phone Number'] || ''}
+                  onChange={handleChange}
+                  required
+                  className="w-full p-2 text-gray-300 bg-[#3B3737] border border-gray-600 rounded-md"
+                />
+              </div>
   
               {/* Opening Date Field */}
               <div>
-                <label className="block text-sm text-orange-500 mb-1">Opening Date</label>
+                <label className="block mb-1 text-sm text-orange-500">Opening Date</label>
                 <input
                   type="date"
                   name="openingDate"
@@ -150,20 +197,31 @@ const UpdateCanteen = () => {
                 />
               </div>
   
-              {['status', 'ownerstatus'].map((field) => (
-                <div key={field}>
-                  <label className="block text-sm text-orange-500 mb-1">{field}</label>
-                  <select
-                    name={field}
-                    value={canteen[field]}
-                    onChange={handleChange}
-                    className="w-full p-2 text-gray-300 bg-[#3B3737] border border-gray-600 rounded-md"
-                  >
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                  </select>
-                </div>
-              ))}
+              <div>
+                <label className="block mb-1 text-sm text-orange-500">Status</label>
+                <select
+                  name="status"
+                  value={canteen.status || 'Active'}
+                  onChange={handleChange}
+                  className="w-full p-2 text-gray-300 bg-[#3B3737] border border-gray-600 rounded-md"
+                >
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block mb-1 text-sm text-orange-500">Owner Status</label>
+                <select
+                  name="ownerstatus"
+                  value={canteen.ownerstatus || canteen.ownerStatus || 'Active'}
+                  onChange={handleChange}
+                  className="w-full p-2 text-gray-300 bg-[#3B3737] border border-gray-600 rounded-md"
+                >
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+              </div>
             </div>
   
             {/* Submit Button */}
@@ -171,7 +229,7 @@ const UpdateCanteen = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 text-orange-500 bg-[#3B3737] border border-orange-500 rounded-xl hover:bg-black transition"
+                className="px-4 py-2 text-orange-500 bg-[#3B3737] border border-orange-500 rounded-xl hover:bg-black transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Updating...' : 'Update Canteen'}
               </button>

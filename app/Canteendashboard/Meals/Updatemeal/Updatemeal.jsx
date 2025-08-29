@@ -46,16 +46,51 @@ const UpdateCanteen = () => {
     }
   };
 
+  // ---------- API Calls ----------
+  const uploadImage = async (file) => {
+    if (!file) return null;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "my-uploads");
+
+    try {
+      const response = await fetch("https://api.cloudinary.com/v1_1/dtvsl05hw/image/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload image to Cloudinary");
+      }
+
+      const data = await response.json();
+      return data.secure_url;
+    } catch (error) {
+      throw new Error(`Image upload failed: ${error.message}`);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
+      let updatedMeal = { ...meal };
+
+      // If a new file is selected, upload it first
+      if (file) {
+        const imageUrl = await uploadImage(file);
+        if (imageUrl) {
+          updatedMeal.mealImage = imageUrl; // Assuming the field name is mealImage
+        }
+      }
+
       const res = await fetch(`/api/updatemeal?id=${meal._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(meal),
+        body: JSON.stringify(updatedMeal),
       });
 
       if (!res.ok) throw new Error(await res.text());
@@ -119,7 +154,8 @@ const UpdateCanteen = () => {
           <FileInputField
             label="Image"
             onChange={handleFileChange}
-            previewURL={localPreview}
+            previewURL={localPreview || meal.mealImage} // Show existing image if no new preview
+            existingImage={meal.mealImage}
           />
 
           <div className="flex justify-between text-sm">
@@ -131,9 +167,10 @@ const UpdateCanteen = () => {
             </Link>
             <button
               type="submit"
-              className="px-4 py-1 m-2 text-white bg-orange-500 rounded-xl hover:bg-orange-400 transition"
+              disabled={loading}
+              className="px-4 py-1 m-2 text-white transition bg-orange-500 rounded-xl hover:bg-orange-400 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Update
+              {loading ? 'Updating...' : 'Update'}
             </button>
           </div>
         </form>
@@ -186,11 +223,12 @@ const SelectField = ({ label, name, options, value, onChange }) => (
   </div>
 );
 
-const FileInputField = ({ label, onChange, previewURL }) => (
+const FileInputField = ({ label, onChange, previewURL, existingImage }) => (
   <div className="mb-4">
     <label className="block p-1 text-orange-500">{label}</label>
     <input
       type="file"
+      accept="image/*"
       onChange={onChange}
       className="w-full h-11 p-2 text-gray-300 bg-[#3B3737] rounded-md
                  file:cursor-pointer file:p-0.5 file:px-2
@@ -199,8 +237,10 @@ const FileInputField = ({ label, onChange, previewURL }) => (
     />
     {previewURL && (
       <div className="mt-4">
-        <p className="mb-2 text-sm text-gray-400">Preview:</p>
-        <img src={previewURL} alt="Preview" className=" h-[200px] w-auto mx-auto rounded-lg shadow" />
+        <p className="mb-2 text-sm text-gray-400">
+          {previewURL === existingImage ? 'Current Image:' : 'New Image Preview:'}
+        </p>
+        <img src={previewURL} alt="Preview" className="h-[200px] w-auto mx-auto rounded-lg shadow" />
       </div>
     )}
   </div>

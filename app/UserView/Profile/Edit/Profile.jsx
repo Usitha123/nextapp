@@ -92,12 +92,7 @@ export default function Profile() {
     <Container>
       <div className="relative flex items-center justify-center w-24 h-24 mx-auto text-orange-600 bg-orange-100 rounded-full">
         <User2Icon className="text-3xl font-bold" />
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="absolute bottom-0 right-0 p-1 text-white bg-orange-500 rounded-full"
-        >
-          <Pencil className="p-1" />
-        </button>
+        
       </div>
 
       <form className="mt-8 space-y-4" onSubmit={handleFormSubmit}>

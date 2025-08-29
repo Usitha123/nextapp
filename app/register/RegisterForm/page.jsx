@@ -162,7 +162,7 @@ export default function RegisterForm() {
               <input
                 className="w-full px-3 py-2 text-gray-700 border rounded shadow focus:outline-none focus:shadow-outline"
                 type="email"
-                placeholder="Email"
+                placeholder="Enter University Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

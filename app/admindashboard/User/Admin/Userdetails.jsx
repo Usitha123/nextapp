@@ -153,7 +153,6 @@ const OwnerTable = () => {
               <th className="p-3 font-medium">Phone</th>
               <th className="p-3 font-medium">Email</th>
               <th className="p-3 font-medium">NIC</th>
-              <th className="p-3 font-medium">Status</th>
               <th className="p-3 font-medium">Actions</th>
             </tr>
           </thead>
@@ -172,22 +171,7 @@ const OwnerTable = () => {
                   <td className="p-3">{owner.phone}</td>
                   <td className="p-3 break-all">{owner.email}</td>
                   <td className="p-3">{owner.nic}</td>
-                  <td className="p-3">
-                    <div className="flex justify-center">
-                      <span
-                        key={`${owner._id}-${owner.status}-${updateTrigger}`}
-                        className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-medium min-w-[70px] transition-colors ${
-                          owner.status?.toLowerCase() === 'active' 
-                            ? 'bg-green-900/50 text-green-400 border border-green-700/50' 
-                            : owner.status?.toLowerCase() === 'pending'
-                            ? 'bg-yellow-900/50 text-yellow-400 border border-yellow-700/50'
-                            : 'bg-red-900/50 text-red-400 border border-red-700/50'
-                        }`}
-                      >
-                        {owner.status || 'inactive'}
-                      </span>
-                    </div>
-                  </td>
+                  
                   <td className="p-3">
                     <div className="flex items-center space-x-2">
                       <button
